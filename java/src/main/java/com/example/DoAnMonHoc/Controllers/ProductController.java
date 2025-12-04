@@ -1,6 +1,7 @@
 package com.example.DoAnMonHoc.Controllers;
 
 import com.example.DoAnMonHoc.Models.Product;
+import com.example.DoAnMonHoc.Services.Impl.ProductServiceImpl;
 import com.example.DoAnMonHoc.Services.ProductService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,7 +17,7 @@ import java.util.List;
 @RequestMapping("/")
 public class ProductController {
 
-    private final ProductService   productService;
+    private final ProductService productService;
 
     @GetMapping
     public List<Product> getAll(){
