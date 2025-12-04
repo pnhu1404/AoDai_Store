@@ -1,5 +1,5 @@
-import "../css/style.css";
-
+import "../css/home.css";
+import { Link } from "react-router";
 export default function Home() {
   const products = [
     {
@@ -41,9 +41,9 @@ export default function Home() {
               <div className="card-body">
                 <h5 className="card-title">{p.name}</h5>
                 <p className="text-danger fw-bold">{p.price}</p>
-                <button className="btn btn-outline-danger w-100">
+                <Link to={`/detail/${p.id}`} className="home-btn">
                   Xem chi tiết
-                </button>
+                </Link>
               </div>
 
             </div>
