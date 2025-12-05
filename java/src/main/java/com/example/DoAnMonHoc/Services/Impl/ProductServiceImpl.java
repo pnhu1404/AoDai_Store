@@ -8,11 +8,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-
+@Service
 @AllArgsConstructor
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
 
+    @Override
     public List<Product> getAll(){
         return productRepository.findAll();
     }
