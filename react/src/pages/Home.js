@@ -1,6 +1,27 @@
 import "../css/home.css";
 import { Link } from "react-router";
+import {useEffect, useState} from "react";
 export default function Home() {
+
+  useEffect(()=>{
+    const fetchData= async ()=>{
+
+      const response= await fetch("http://localhost:8080/");
+
+      if(response.ok){
+        const data= await response.json();
+        setProduct(data.products);
+        console.log(data);
+      }
+
+
+
+    }
+    fetchData();
+
+
+  },[])
+  const [product,setProduct]=useState([]);
   const products = [
     {
       id: 1,
@@ -33,7 +54,7 @@ export default function Home() {
       <h3 className="mb-4">Sản phẩm nổi bật</h3>
 
       <div className="row g-4">
-        {products.map((p) => (
+        {product.map((p) => (
           <div className="col-md-3" key={p.id}>
             <div className="card product-card">
               <img src={p.img} alt={p.name} className="card-img-top" />

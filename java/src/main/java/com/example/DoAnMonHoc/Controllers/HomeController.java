@@ -27,7 +27,7 @@ public class HomeController {
         Map<String,Object> responseData= new HashMap<>();
 
         responseData.put("products",productService.getAll());
-        responseData.put("categories",productService.getAll());
+        responseData.put("categories",categoryService.getAll());
 
         return ResponseEntity.ok(responseData);
     }
