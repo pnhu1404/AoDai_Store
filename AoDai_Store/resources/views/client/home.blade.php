@@ -25,20 +25,21 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {{-- Giả lập lặp dữ liệu --}}
-            @foreach(range(1, 4) as $index)
+            @foreach($data["product"] as $s)
             <div class="group bg-white overflow-hidden shadow-sm hover:shadow-xl transition duration-300">
                 <div class="relative h-96 overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1621259182978-fbf93132d53d?q=80&w=1932" 
+                    <img src="{{ $s->hinhanh }}" 
                          class="w-full h-full object-cover group-hover:scale-110 transition duration-500" 
                          alt="Áo Dài">
                     <div class="absolute top-4 left-4 bg-red-600 text-white text-xs px-2 py-1 uppercase">Mới</div>
                 </div>
                 <div class="p-6 text-center">
-                    <h3 class="serif text-lg font-semibold text-stone-700 uppercase">Áo Dài Tứ Thân - Mẫu {{ $index }}</h3>
-                    <p class="text-red-800 font-bold mt-2 italic">1.250.000 đ</p>
-                    <button class="mt-4 border-b border-stone-800 text-sm hover:text-red-700 hover:border-red-700 transition uppercase tracking-widest pb-1">
+                    <h3 class="serif text-lg font-semibold text-stone-700 uppercase">{{$s->TenSanPham}}</h3>
+                    <p class="text-red-800 font-bold mt-2 italic">{{ $s->GiaBan }}</p>
+                    <a href="{{ route('product.detail', $s->MaSanPham) }}" class="mt-4 border-b border-stone-800 text-sm hover:text-red-700 hover:border-red-700 transition uppercase tracking-widest pb-1">
                         Xem chi tiết
-                    </button>
+                    </a>
+                    
                 </div>
             </div>
             @endforeach

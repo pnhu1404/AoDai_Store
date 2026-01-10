@@ -1,13 +1,11 @@
 <?php
 
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('client.home');
-});
-Route::get('/admin', function () {
-    return view('admin.home');
-})->name('admin.home');
-Route::get('/admin/product', function () {
-    return view('admin.products.index');
-})->name('product.home');
+Route::get('/',[ProductController::class,'index'])->name('home');
+Route::get('/aodai/{id}',[ProductController::class,'detail'])->name('product.detail');
+Route::post('/cart/add/{id}',[CartController::class,'addToCart'])->name('cart.add');
+Route::delete('/cart/remove/{id}',[CartController::class,'removeFromCart'])->name('cart.remove');
+Route::get('/cart',[CartController::class,'viewCart'])->name('cart.index');
