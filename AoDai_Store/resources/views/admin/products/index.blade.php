@@ -49,6 +49,7 @@
                 <tr class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider font-bold">
                     <th class="px-6 py-4 border-b">Sản phẩm</th>
                     <th class="px-6 py-4 border-b">Chất liệu</th>
+                    <th class="px-6 py-4 border-b">Mô tả</th>
                     <th class="px-6 py-4 border-b">Giá niêm yết</th>
                     <th class="px-6 py-4 border-b">Ngày tạo</th>
                     <th class="px-6 py-4 border-b">Chức năng</th>
@@ -70,7 +71,11 @@
                             </div>
                         </div>
                     </td>
-    
+                    <td class="px-6 py-4">
+                         <span class="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">
+                            {{ $product->MoTa }}
+                        </span>
+                    </td>
                     <td class="px-6 py-4 font-bold text-red-600">
                         {{ number_format($product->GiaBan) }} đ
                     </td>
@@ -127,7 +132,6 @@
             confirmButtonText: 'Xác nhận xóa',
             cancelButtonText: 'Hủy bỏ',
             reverseButtons: true,
-            
             
             customClass: {
                 popup: 'glass-popup',

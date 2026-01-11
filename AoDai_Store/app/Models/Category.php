@@ -12,4 +12,10 @@ class Category extends Model
     protected $table = 'loaisanpham';
     protected $primaryKey = 'MaLoaiSP';
 
+    protected $fillable = [
+        'TenLoaiSP',
+        'MoTa',
+        'TrangThai',
+        'CreatedDate',
+    ];
 }
