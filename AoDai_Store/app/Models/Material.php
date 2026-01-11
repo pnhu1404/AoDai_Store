@@ -12,4 +12,5 @@ class Material extends Model
     protected $table = 'chatlieu';
     public $timestamps = false;
     protected $primaryKey = 'MaChatLieu';
+    protected $fillable = ['TenChatLieu'];
 }

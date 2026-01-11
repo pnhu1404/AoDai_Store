@@ -1,0 +1,52 @@
+    <!DOCTYPE html>
+    <html lang="vi">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Admin - @yield('title')</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    </head>
+    <body class="bg-gray-100 font-sans">
+
+        <div class="flex min-h-screen">
+            <aside class="w-64 bg-slate-900 text-white fixed h-full">
+                <div class="p-6 text-2xl font-bold border-b border-slate-800 text-center">
+                    AD HERITAGE
+                </div>
+                <nav class="mt-6">
+                    <a href="{{ route('admin.home') }}" class="flex items-center py-3 px-6 bg-blue-600 text-white">
+                        <i class="fas fa-chart-line mr-3"></i> Dashboard
+                    </a>
+                    <a href="{{ route('admin.products.index') }}" class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                        <i class="fas fa-tshirt mr-3"></i> Quản lý sản phẩm
+                    </a>
+                    <a href="#" class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                        <i class="fas fa-shopping-cart mr-3"></i> Đơn hàng
+                    </a>
+                    <a href="#" class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                        <i class="fas fa-users mr-3"></i> Khách hàng
+                    </a>
+                    <a href="#" class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition mt-10 text-red-400">
+                        <i class="fas fa-sign-out-alt mr-3"></i> Đăng xuất
+                    </a>
+                </nav>
+            </aside>
+
+            <main class="flex-1 ml-64">
+                <header class="bg-white shadow-sm px-8 py-4 flex justify-between items-center">
+                    <h2 class="text-xl font-semibold text-gray-700">@yield('title')</h2>
+                    <div class="flex items-center">
+                        <span class="mr-4 text-gray-600">Xin chào, Admin</span>
+                        <img src="https://ui-avatars.com/api/?name=Admin" class="w-8 h-8 rounded-full">
+                    </div>
+                </header>
+
+                <div class="p-8">
+                    @yield('content')
+                </div>
+            </main>
+        </div>
+
+    </body> 
+    </html>

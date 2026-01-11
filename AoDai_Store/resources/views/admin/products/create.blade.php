@@ -16,28 +16,28 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="col-span-2">
                     <label class="block font-semibold mb-2">Tên sản phẩm</label>
-                    <input type="text" name="name" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-green-500 outline-none @error('name') border-red-500 @enderror" placeholder="Ví dụ: Áo dài lụa tơ tằm thêu hoa">
-                    @error('name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                    <input type="text" name="TenSanPham" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-green-500 outline-none @error('name') border-red-500 @enderror" placeholder="Ví dụ: Áo dài lụa tơ tằm thêu hoa">
+                    @error('TenSanPham') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
 
                 <div>
                     <label class="block font-semibold mb-2">Giá bán (VNĐ)</label>
-                    <input type="number" name="price" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-green-500" placeholder="0">
+                    <input type="number" name="GiaBan" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-green-500" placeholder="0">
                 </div>
 
                 <div>
                     <label class="block font-semibold mb-2">Chất liệu</label>
-                    <input type="text" name="material" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-green-500" placeholder="Lụa, Gấm, Nhung...">
+                    <input type="text" name="ChatLieu" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-green-500" placeholder="Lụa, Gấm, Nhung...">
                 </div>
 
                 <div class="col-span-2">
                     <label class="block font-semibold mb-2">Hình ảnh đại diện</label>
-                    <input type="file" name="image" class="w-full border border-dashed p-4 rounded-lg bg-gray-50">
+                    <input type="file" name="HinhAnh" class="w-full border border-dashed p-4 rounded-lg bg-gray-50">
                 </div>
 
                 <div class="col-span-2">
                     <label class="block font-semibold mb-2">Mô tả sản phẩm</label>
-                    <textarea name="description" rows="4" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-green-500"></textarea>
+                    <textarea name="MoTa" rows="4" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-green-500"></textarea>
                 </div>
             </div>
 

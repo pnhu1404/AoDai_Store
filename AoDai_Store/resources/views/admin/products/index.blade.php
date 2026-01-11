@@ -11,7 +11,7 @@
             </div>
             <div>
                 <p class="text-sm text-gray-500 uppercase">Tổng mẫu thiết kế</p>
-                <p class="text-xl font-bold text-gray-800">{{ $products->total() }}</p>
+                <p class="text-xl font-bold text-gray-800">{{$totalProducts}}</p>
             </div>
         </div>
         </div>
@@ -48,10 +48,10 @@
             <thead>
                 <tr class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider font-bold">
                     <th class="px-6 py-4 border-b">Sản phẩm</th>
-                    <th class="px-6 py-4 border-b">Thông tin vải</th>
+                    <th class="px-6 py-4 border-b">Chất liệu</th>
                     <th class="px-6 py-4 border-b">Giá niêm yết</th>
                     <th class="px-6 py-4 border-b">Ngày tạo</th>
-                    <th class="px-6 py-4 border-b text-center">Thao tác</th>
+                    <th class="px-6 py-4 border-b">Chức năng</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
@@ -59,37 +59,37 @@
                 <tr class="hover:bg-blue-50/30 transition duration-150">
                     <td class="px-6 py-4">
                         <div class="flex items-center">
-                            <img src="{{ asset('storage/' . $product->image) }}" class="w-12 h-16 object-cover rounded shadow-sm mr-4" onerror="this.src='https://placehold.co/400x600?text=No+Image'">
+                            <img src="{{ asset('storage/' . $product->HinhAnh) }}" class="w-12 h-16 object-cover rounded shadow-sm mr-4" onerror="this.src='https://placehold.co/400x600?text=No+Image'">
                             <div>
-                                <p class="font-bold text-gray-800">{{ $product->name }}</p>
-                                <p class="text-xs text-gray-400 font-mono">ID: #{{ str_pad($product->id, 5, '0', STR_PAD_LEFT) }}</p>
+                                <p class="font-bold text-gray-800">{{ $product->TenSanPham }}</p>
+                                 <td class="px-6 py-4">
+                                    <span class="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">
+                                        {{ $product->chatlieu->TenChatLieu ?? 'Chưa cập nhật' }}
+                                    </span>
+                                </td>
                             </div>
                         </div>
                     </td>
-                    <td class="px-6 py-4">
-                        <span class="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">
-                            {{ $product->material ?? 'Chưa cập nhật' }}
-                        </span>
-                    </td>
+    
                     <td class="px-6 py-4 font-bold text-red-600">
-                        {{ number_format($product->price) }} đ
+                        {{ number_format($product->GiaBan) }} đ
                     </td>
                     <td class="px-6 py-4 text-sm text-gray-500">
-                        {{ $product->created_at->format('d/m/Y') }}
+                        {{ $product->CreatedDate ? date('d/m/Y', strtotime($product->CreatedDate)) : '---' }}
                     </td>
                     <td class="px-6 py-4">
                         <div class="flex justify-center space-x-3 text-sm">
-                            <a href="{{ route('admin.products.edit', $product->id) }}" class="text-blue-600 hover:text-blue-800 transition p-2 bg-blue-50 rounded-full" title="Chỉnh sửa">
+                            <a href="{{ route('admin.products.edit', $product->MaSanPham) }}" class="text-blue-600 hover:text-blue-800 transition p-2 bg-blue-50 rounded-full" title="Chỉnh sửa">
                                 <i class="fas fa-edit"></i>
                             </a>
                             
                             <button type="button" 
-                                    onclick="confirmDelete('{{ $product->id }}', '{{ $product->name }}')" 
+                                    onclick="confirmDelete('{{ $product->MaSanPham }}', '{{ $product->TenSanPham }}')" 
                                     class="text-red-600 hover:text-red-800 transition p-2 bg-red-50 rounded-full" title="Xóa">
                                 <i class="fas fa-trash-alt"></i>
                             </button>
 
-                            <form id="delete-form-{{ $product->id }}" action="{{ route('admin.products.destroy', $product->id) }}" method="POST" class="hidden">
+                            <form id="delete-form-{{ $product->MaSanPham }}" action="{{ route('admin.products.destroy', $product->MaSanPham) }}" method="POST" class="hidden">
                                 @csrf @method('DELETE')
                             </form>
                         </div>
@@ -106,27 +106,35 @@
             </tbody>
         </table>
 
-        <div class="px-6 py-4 bg-gray-50">
-            {{ $products->links() }}
-        </div>
     </div>
 </div>
 
-{{-- Nhúng SweetAlert2 --}}
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
     function confirmDelete(id, name) {
         Swal.fire({
-            title: 'Xác nhận xóa?',
-            text: `Bạn chuẩn bị xóa mẫu "${name}". Hành động này không thể hoàn tác!`,
-            icon: 'warning',
+            title: '<span style="font-family: serif; color: #1f2937;">Xác nhận xóa mẫu</span>',
+            html: `
+                <div class="mt-3 text-stone-500 text-sm">
+                    Mẫu thiết kế <b class="text-stone-900 italic">"${name}"</b> sẽ bị xóa khỏi kho lưu trữ.
+                </div>
+            `,
+            icon: 'question', 
+            iconColor: '#991b1b',
             showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#6c757d',
-            confirmButtonText: 'Xóa ngay',
+            confirmButtonText: 'Xác nhận xóa',
             cancelButtonText: 'Hủy bỏ',
-            reverseButtons: true
+            reverseButtons: true,
+            
+            
+            customClass: {
+                popup: 'glass-popup',
+                confirmButton: 'btn-delete-confirm',
+                cancelButton: 'btn-delete-cancel'
+            },
+            buttonsStyling: false, 
         }).then((result) => {
             if (result.isConfirmed) {
                 document.getElementById('delete-form-' + id).submit();
@@ -134,4 +142,47 @@
         })
     }
 </script>
+
+<style>
+    
+    .glass-popup {
+        background: rgba(255, 255, 255, 0.95) !important;
+        backdrop-filter: blur(10px);
+        border-radius: 24px !important;
+        padding: 2rem !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1) !important;
+    }
+
+    .btn-delete-confirm {
+        background-color: #991b1b !important;
+        color: white !important;
+        padding: 10px 25px !important;
+        border-radius: 12px !important;
+        font-weight: 600 !important;
+        margin-left: 10px !important;
+        transition: all 0.3s !important;
+        font-size: 14px !important;
+    }
+
+    .btn-delete-confirm:hover {
+        background-color: #7f1d1d !important;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(153, 27, 27, 0.3);
+    }
+
+    .btn-delete-cancel {
+        background-color: #f3f4f6 !important;
+        color: #4b5563 !important;
+        padding: 10px 25px !important;
+        border-radius: 12px !important;
+        font-weight: 600 !important;
+        transition: all 0.3s !important;
+        font-size: 14px !important;
+    }
+
+    .btn-delete-cancel:hover {
+        background-color: #e5e7eb !important;
+    }
+</style>
 @endsection
