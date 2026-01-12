@@ -33,11 +33,20 @@ class Product extends Model
         return $this->belongsToMany(Size::class, 'sanpham_size', 'MaSanPham', 'MaSize')
             ->withPivot('SoLuong');
     }
+    public function nhacungcap()
+    {
+        return $this->belongsTo(Supplier::class, 'MaNCC', 'MaNCC');
+    }
+
     protected $fillable = [
         'TenSanPham',
         'GiaBan',
+        'MaLoaiSP',
         'MaChatLieu',
+        'MaNCC',
+        'MaLoaiMau',
         'HinhAnh',
+        'TrangThai',
         'CreatedDate',
         'MoTa'
     ];

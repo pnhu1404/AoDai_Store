@@ -1,8 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Category;
+use App\Models\Color;
 use App\Models\Product;
 use App\Models\Material;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
 
 class AdminProductController extends Controller
@@ -25,19 +28,29 @@ class AdminProductController extends Controller
         return view('admin.products.index', compact('products', 'totalProducts'));
     }
 
-    // Form thêm áo dài
+
     public function create()
     {
-        return view('admin.products.create');
+        return view('admin.products.create', [
+            'materials' => Material::all(),
+            'categories' => Category::all(),
+            'suppliers' => Supplier::all(),
+            'colors' => Color::all(),
+        ]);
     }
 
-    // Lưu áo dài mới
+
     public function store(Request $request)
     {
         $request->validate([
             'TenSanPham' => 'required|string|max:255',
+            'MoTa' => 'required|string',
+            'HinhAnh' => 'nullable|image',
             'GiaBan' => 'required|numeric',
-            'HinhAnh' => 'nullable|image'
+            'MaLoaiSP' => 'required|exists:loaisanpham,MaLoaiSP',
+            'MaChatLieu' => 'required|exists:chatlieu,MaChatLieu',
+            'MaNCC' => 'required|exists:nhacungcap,MaNCC',
+            'MaLoaiMau' => 'required|exists:loaimau,MaLoaiMau',
         ]);
 
         $imagePath = null;
@@ -48,51 +61,70 @@ class AdminProductController extends Controller
         Product::create([
             'TenSanPham' => $request->TenSanPham,
             'GiaBan' => $request->GiaBan,
+            'MaLoaiSP' => $request->MaLoaiSP,
             'MaChatLieu' => $request->MaChatLieu,
+            'MaNCC' => $request->MaNCC,
+            'MaLoaiMau' => $request->MaLoaiMau,
             'HinhAnh' => $imagePath,
+            'TrangThai' => 1,
+            'MoTa' => $request->MoTa,
+            'CreatedDate' => now(),
         ]);
 
         return redirect()->route('admin.products.index')
             ->with('success', 'Thêm áo dài thành công');
     }
 
-    // Form sửa áo dài
+
     public function edit($MaSanPham)
     {
         $product = Product::findOrFail($MaSanPham);
         $materials = Material::all();
-        return view('admin.products.edit', compact('product', 'materials'));
+        $categories = Category::all();
+        $suppliers = Supplier::all();
+        $colors = Color::all();
+
+        return view('admin.products.edit', compact('product','materials','categories', 'suppliers', 'colors'));
     }
 
-    // Cập nhật áo dài
+
     public function update(Request $request, $MaSanPham)
     {
         $product = Product::findOrFail($MaSanPham);
-
         $request->validate([
-        'TenSanPham' => 'required|string|max:255',
-        'GiaBan'     => 'required|numeric',
-        'MaChatLieu' => 'required|exists:chatlieu,MaChatLieu',
-        'HinhAnh'    => 'nullable|image',
+            'TenSanPham' => 'required|string|max:255',
+            'MoTa' => 'required|string',
+            'HinhAnh' => 'nullable|image',
+            'GiaBan' => 'required|numeric',
+            'MaLoaiSP' => 'required|exists:loaisanpham,MaLoaiSP',
+            'MaChatLieu' => 'required|exists:chatlieu,MaChatLieu',
+            'MaNCC' => 'required|exists:nhacungcap,MaNCC',
+            'MaLoaiMau' => 'required|exists:loaimau,MaLoaiMau',
         ]);
 
         $data = [
-        'TenSanPham' => $request->TenSanPham,
-        'GiaBan'     => $request->GiaBan,
-        'MaChatLieu' => $request->MaChatLieu,
+            'TenSanPham' => $request->TenSanPham,
+            'GiaBan' => $request->GiaBan,
+            'MaLoaiSP' => $request->MaLoaiSP,
+            'MaChatLieu' => $request->MaChatLieu,
+            'MaNCC' => $request->MaNCC,
+            'MaLoaiMau' => $request->MaLoaiMau,
+            'TrangThai' => 1,
+            'MoTa' => $request->MoTa,
+
         ];
 
         if ($request->hasFile('HinhAnh')) {
-        $data['HinhAnh'] = $request->file('HinhAnh')->store('products', 'public');
+            $data['HinhAnh'] = $request->file('HinhAnh')->store('products', 'public');
         }
 
         $product->update($data);
 
         return redirect()->route('admin.products.index')
-        ->with('success', 'Cập nhật áo dài thành công');
+            ->with('success', 'Cập nhật áo dài thành công');
     }
 
-    // Xóa áo dài
+
     public function destroy($MaSanPham)
     {
         Product::findOrFail($MaSanPham)->delete();
