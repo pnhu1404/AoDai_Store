@@ -50,6 +50,7 @@
                     <th class="px-6 py-4 border-b">Sản phẩm</th>
                     <th class="px-6 py-4 border-b">Chất liệu</th>
                     <th class="px-6 py-4 border-b">Mô tả</th>
+                    <th class="px-6 py-4 border-b">Số lượng</th>
                     <th class="px-6 py-4 border-b">Giá niêm yết</th>
                     <th class="px-6 py-4 border-b">Ngày tạo</th>
                     <th class="px-6 py-4 border-b">Chức năng</th>
@@ -72,8 +73,13 @@
                         </div>
                     </td>
                     <td class="px-6 py-4">
-                         <span class="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">
+                        <span class="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">
                             {{ $product->MoTa }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">
+                            {{ $product->tong_so_luong ?? 0 }} sản phẩm
                         </span>
                     </td>
                     <td class="px-6 py-4 font-bold text-red-600">
@@ -120,19 +126,14 @@
 <script>
     function confirmDelete(id, name) {
         Swal.fire({
-            title: '<span style="font-family: serif; color: #1f2937;">Xác nhận xóa mẫu</span>',
-            html: `
-                <div class="mt-3 text-stone-500 text-sm">
-                    Mẫu thiết kế <b class="text-stone-900 italic">"${name}"</b> sẽ bị xóa khỏi kho lưu trữ.
-                </div>
-            `,
+            title: '<span style="font-family: serif; color: #1f2937;">Xác nhận xóa danh mục</span>',
+            html: `<div class="mt-3 text-stone-500 text-sm">Sản phẩm <b class="text-stone-900 italic">"${name}"</b> sẽ bị xóa. <br><span class="text-red-600 font-bold">Lưu ý: Hành động này không thể hoàn tác!</span></div>`,
             icon: 'question', 
             iconColor: '#991b1b',
             showCancelButton: true,
             confirmButtonText: 'Xác nhận xóa',
             cancelButtonText: 'Hủy bỏ',
             reverseButtons: true,
-            
             customClass: {
                 popup: 'glass-popup',
                 confirmButton: 'btn-delete-confirm',
@@ -145,6 +146,18 @@
             }
         })
     }
+    @if(session('success'))
+        Swal.fire({
+            title: '<span style="font-family: serif; color: #15803d;">Thành công</span>',
+            text: "{{ session('success') }}",
+            icon: 'success',
+            timer: 2000,
+            showConfirmButton: false,
+            customClass: {
+                popup: 'glass-popup'
+            }
+        });
+    @endif
 </script>
 
 <style>
