@@ -29,7 +29,7 @@ class Product extends Model
 
     public function sizes()
     {
-        // Quan hệ nhiều-nhiều để quản lý tồn kho chi tiết từng size
+        
         return $this->belongsToMany(Size::class, 'sanpham_size', 'MaSanPham', 'MaSize')
             ->withPivot('SoLuong');
     }
@@ -45,6 +45,8 @@ class Product extends Model
         'MaChatLieu',
         'MaNCC',
         'MaLoaiMau',
+        'MaSize',
+        'SoLuong',
         'HinhAnh',
         'TrangThai',
         'CreatedDate',

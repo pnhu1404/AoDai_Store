@@ -5,6 +5,7 @@ use App\Models\Category;
 use App\Models\Color;
 use App\Models\Product;
 use App\Models\Material;
+use App\Models\Size;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 
@@ -12,8 +13,9 @@ class AdminProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::query();
+
         $query = Product::with('chatlieu');
+        $query->withSum('sizes as tong_so_luong', 'sanpham_size.SoLuong');
         if ($request->filled('search')) {
             $query->where('TenSanPham', 'like', '%' . $request->search . '%')
                 ->orWhere('MaSanPham', 'like', '%' . $request->search . '%');
@@ -31,17 +33,19 @@ class AdminProductController extends Controller
 
     public function create()
     {
+
         return view('admin.products.create', [
             'materials' => Material::all(),
             'categories' => Category::all(),
             'suppliers' => Supplier::all(),
             'colors' => Color::all(),
+            'sizes' => Size::all()
         ]);
     }
 
-
     public function store(Request $request)
     {
+
         $request->validate([
             'TenSanPham' => 'required|string|max:255',
             'MoTa' => 'required|string',
@@ -51,6 +55,8 @@ class AdminProductController extends Controller
             'MaChatLieu' => 'required|exists:chatlieu,MaChatLieu',
             'MaNCC' => 'required|exists:nhacungcap,MaNCC',
             'MaLoaiMau' => 'required|exists:loaimau,MaLoaiMau',
+            'sizes' => 'required|array',
+            'sizes.*' => 'integer|min:0'
         ]);
 
         $imagePath = null;
@@ -58,7 +64,7 @@ class AdminProductController extends Controller
             $imagePath = $request->file('HinhAnh')->store('products', 'public');
         }
 
-        Product::create([
+        $product = Product::create([
             'TenSanPham' => $request->TenSanPham,
             'GiaBan' => $request->GiaBan,
             'MaLoaiSP' => $request->MaLoaiSP,
@@ -71,6 +77,14 @@ class AdminProductController extends Controller
             'CreatedDate' => now(),
         ]);
 
+        foreach ($request->sizes as $sizeId => $soLuong) {
+            if ($soLuong > 0) {
+                $product->sizes()->attach($sizeId, [
+                    'SoLuong' => $soLuong
+                ]);
+            }
+        }
+
         return redirect()->route('admin.products.index')
             ->with('success', 'Thêm áo dài thành công');
     }
@@ -78,18 +92,21 @@ class AdminProductController extends Controller
 
     public function edit($MaSanPham)
     {
+
         $product = Product::findOrFail($MaSanPham);
         $materials = Material::all();
         $categories = Category::all();
         $suppliers = Supplier::all();
         $colors = Color::all();
+        $sizes = Size::all();
 
-        return view('admin.products.edit', compact('product','materials','categories', 'suppliers', 'colors'));
+        return view('admin.products.edit', compact('product', 'materials', 'categories', 'suppliers', 'colors', 'sizes'));
     }
 
 
     public function update(Request $request, $MaSanPham)
     {
+
         $product = Product::findOrFail($MaSanPham);
         $request->validate([
             'TenSanPham' => 'required|string|max:255',
@@ -100,6 +117,8 @@ class AdminProductController extends Controller
             'MaChatLieu' => 'required|exists:chatlieu,MaChatLieu',
             'MaNCC' => 'required|exists:nhacungcap,MaNCC',
             'MaLoaiMau' => 'required|exists:loaimau,MaLoaiMau',
+            'sizes' => 'required|array',
+            'sizes.*' => 'integer|min:0'
         ]);
 
         $data = [
@@ -120,6 +139,16 @@ class AdminProductController extends Controller
 
         $product->update($data);
 
+        $syncData = [];
+        foreach($request->sizes as $sizeId  => $soluong) {
+            if($soluong > 0) {
+                $syncData[$sizeId] = [
+                    'SoLuong' => $soluong
+                ];
+            }
+        }
+        $product->sizes()->sync($syncData);
+        
         return redirect()->route('admin.products.index')
             ->with('success', 'Cập nhật áo dài thành công');
     }
@@ -127,6 +156,7 @@ class AdminProductController extends Controller
 
     public function destroy($MaSanPham)
     {
+
         Product::findOrFail($MaSanPham)->delete();
 
         return redirect()->route('admin.products.index')
