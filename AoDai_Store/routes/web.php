@@ -32,3 +32,8 @@ Route::post('/admin/categories/store', [AdminCategoryController::class, 'store']
 Route::get('/admin/categories/edit/{MaSanPham}', [AdminCategoryController::class, 'edit'])->name('admin.categories.edit');
 Route::put('/admin/categories/update/{MaSanPham}', [AdminCategoryController::class, 'update'])->name('admin.categories.update');
 Route::delete('/admin/categories/delete/{MaSanPham}', [AdminCategoryController::class, 'destroy'])->name('admin.categories.destroy');
+
+//promotion
+Route::resource('/admin/promotions', App\Http\Controllers\Adminpromotion::class)->names('promotions');
+//order
+Route::resource('/admin/orders', App\Http\Controllers\AdminOrder::class)->names('orders');

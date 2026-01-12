@@ -25,11 +25,15 @@
                     <a href="{{ route('admin.categories.index') }}" class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition">
                         <i class="fas fa-tshirt mr-3"></i> Quản lý danh mục
                     </a>
-                    <a href="#" class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition">
+
+                    <a href="{{ route('orders.index') }}" class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition">
                         <i class="fas fa-shopping-cart mr-3"></i> Đơn hàng
                     </a>
                     <a href="#" class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition">
                         <i class="fas fa-users mr-3"></i> Khách hàng
+                    </a>
+                    <a href="{{ route('promotions.index') }}" class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                        <i class="fas fa-tags mr-3"></i> Khuyến mãi
                     </a>
                     <a href="#" class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition mt-10 text-red-400">
                         <i class="fas fa-sign-out-alt mr-3"></i> Đăng xuất
