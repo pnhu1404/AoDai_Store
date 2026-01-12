@@ -10,7 +10,7 @@ Route::get('/aodai/{id}',[ProductController::class,'detail'])->name('product.det
 Route::post('/cart/add/{id}',[CartController::class,'addToCart'])->name('cart.add');
 Route::delete('/cart/remove/{id}',[CartController::class,'removeFromCart'])->name('cart.remove');
 Route::get('/cart',[CartController::class,'viewCart'])->name('cart.index');
-
+Route::post('/update-quantity', [CartController::class, 'updateQuantity'])->name('update.quantity');
 // Quản lý áo dài (sản phẩm)
 Route::get('/admin', [AdminProductController::class, 'index'])->name('admin.home');
 Route::get('/admin/products', [AdminProductController::class, 'index'])->name('admin.products.index');
@@ -19,3 +19,6 @@ Route::post('/admin/products/store', [AdminProductController::class, 'store'])->
 Route::get('/admin/products/edit/{MaSanPham}', [AdminProductController::class, 'edit'])->name('admin.products.edit');
 Route::put('/admin/products/update/{MaSanPham}', [AdminProductController::class, 'update'])->name('admin.products.update');
 Route::delete('/admin/products/delete/{MaSanPham}', [AdminProductController::class, 'destroy'])->name('admin.products.destroy');
+
+//check out 
+Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout.home');

@@ -25,4 +25,7 @@ class Cart extends Model
         // Đảm bảo 'MaSanPham' (hoặc id) là tên cột thực tế trong DB của bạn
         return $this->belongsTo(Product::class, 'MaSanPham', 'MaSanPham'); 
     }
+    public function size(){
+        return $this->belongsTo(Size::class, 'MaSize', 'MaSize');
+    }
 }
