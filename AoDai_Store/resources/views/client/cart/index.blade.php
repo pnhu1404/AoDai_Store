@@ -4,15 +4,36 @@
 
 @section('content')
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <section class="max-w-7xl mx-auto py-16 px-4 min-h-screen">
     <div class="text-center mb-12">
         <h2 class="serif text-3xl font-bold text-stone-800 uppercase tracking-widest">Túi hàng của bạn</h2>
         <div class="h-1 w-20 bg-red-800 mx-auto mt-4"></div>
     </div>
-
+    @if(isset($message))
+    <div class="bg-red-100 text-red-700 px-4 py-2 rounded mb-4">
+        ⚠️ Vui lòng <a href="{{ route('login') }}" class="underline font-bold">
+        đăng nhập</a> để tiến hành thanh toán
+    </div>
+    @endif
     @if(count($cartItems) > 0)
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
         <div class="lg:col-span-2 space-y-8">
+            
+            <div class="flex justify-end mb-4">
+                <form action="{{ route('cart.clear') }}" method="POST" id="formClearCart">
+                    @csrf
+                    @method('DELETE')
+                    <button type="button" onclick="confirmClearCart()" class="flex items-center gap-2 text-sm text-stone-400 hover:text-red-700 transition duration-300 group">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        <span class="border-b border-transparent group-hover:border-red-700 uppercase tracking-wider font-medium">Xóa sạch giỏ hàng</span>
+                    </button>
+                </form>
+            </div>
+
             @foreach($cartItems as $item)
             <div class="flex flex-col md:flex-row bg-white shadow-sm border border-stone-100 p-6 group hover:shadow-md transition">
                 <div class="w-full md:w-32 h-44 overflow-hidden mb-4 md:mb-0 bg-stone-100">
@@ -23,14 +44,15 @@
                     <div>
                         <div class="flex justify-between items-start">
                             <h3 class="serif text-xl font-semibold text-stone-700 uppercase">{{ $item->sanpham->TenSanPham }}</h3>
-                            <form action="{{ Route('cart.remove',$item->sanpham->MaSanPham) }}" method="post" >
-                            @csrf
-                            @method('DELETE')
-                            <button class="text-stone-400 hover:text-red-700 transition">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
+                            
+                            <form action="{{ Route('cart.remove',$item->sanpham->MaSanPham) }}" method="post" class="form-remove-item">
+                                @csrf
+                                @method('DELETE')
+                                <button type="button" onclick="confirmRemoveItem(this)" class="text-stone-400 hover:text-red-700 transition">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
                             </form>
                         </div>
                         
@@ -96,12 +118,9 @@
                     </div>
                 </div>
 
-                <button class="w-full bg-red-800 hover:bg-red-900 text-white font-bold py-4 mt-8 transition duration-300 uppercase tracking-widest shadow-lg">
-                <a href="{{ route('checkout.home') }}" class="text-decoration-none">
+                <a href="{{ route('checkout.home') }}" class="block w-full text-center bg-red-800 hover:bg-red-900 text-white font-bold py-4 mt-8 transition duration-300 uppercase tracking-widest shadow-lg no-underline">
                     Đặt hàng ngay
-                </a>   
-                
-                </button>
+                </a>
 
                 <div class="mt-8 space-y-4">
                     <div class="flex items-center gap-3 text-xs text-stone-500 italic">
@@ -128,10 +147,58 @@
     </div>
     @endif
 </section>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+// Cấu hình chung cho Toast (thông báo nhỏ)
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 2000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+});
+
+// Hàm xác nhận xóa sạch giỏ hàng
+function confirmClearCart() {
+    Swal.fire({
+        title: 'Xóa toàn bộ giỏ hàng?',
+        text: "Bạn sẽ không thể hoàn tác hành động này!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#991b1b', // red-800
+        cancelButtonColor: '#78716c',  // stone-500
+        confirmButtonText: 'Đồng ý, xóa hết!',
+        cancelButtonText: 'Hủy bỏ'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('formClearCart').submit();
+        }
+    })
+}
+
+// Hàm xác nhận xóa 1 sản phẩm
+function confirmRemoveItem(button) {
+    Swal.fire({
+        title: 'Xóa sản phẩm này?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#991b1b',
+        cancelButtonColor: '#78716c',
+        confirmButtonText: 'Xóa',
+        cancelButtonText: 'Hủy'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            button.closest('form').submit();
+        }
+    })
+}
+
 $(document).ready(function() {
-    // Sử dụng $(document).on để đảm bảo nút bấm luôn nhận sự kiện
     $(document).on('click', '.btn-update', function(e) {
         e.preventDefault();
         
@@ -148,20 +215,27 @@ $(document).ready(function() {
                 type: type
             },
             beforeSend: function() {
-                // Có thể thêm hiệu ứng loading ở đây
+                // Hiển thị loading nhẹ nếu cần
             },
             success: function(response) {
                 if(response.success) {
-                    // Cập nhật số lượng trên ô input
                     inputField.val(response.new_qty);
                     
-                    // Cách đơn giản nhất để cập nhật lại tất cả giá tiền là reload trang
-                    location.reload(); 
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Đã cập nhật số lượng'
+                    }).then(() => {
+                        location.reload(); 
+                    });
                 }
             },
             error: function(xhr) {
-                console.error(xhr.responseText);
-                alert('Có lỗi xảy ra khi cập nhật số lượng!');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Rất tiếc...',
+                    text: 'Có lỗi xảy ra khi cập nhật số lượng!',
+                    confirmButtonColor: '#991b1b'
+                });
             }
         });
     });

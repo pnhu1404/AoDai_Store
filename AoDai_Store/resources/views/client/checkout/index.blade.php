@@ -11,7 +11,7 @@
             <p class="text-stone-500 text-sm mt-2 font-light">Hoàn tất các bước cuối cùng để sở hữu bộ Áo Dài ưng ý.</p>
         </div>
 
-        <form id="checkout-form" action="#" method="POST">
+        <form id="checkout-form" action="{{ route('order.store') }}" method="POST">
             @csrf
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 
@@ -25,19 +25,54 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="md:col-span-2">
                                 <label class="block text-xs font-bold text-stone-600 mb-2 ml-1">Họ và tên *</label>
-                                <input type="text" name="name" required class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 focus:bg-white focus:border-red-800 focus:ring-4 focus:ring-red-800/5 transition-all outline-none text-stone-700">
+                                <input type="text" name="TenNguoiNhan" value="{{ old('TenNguoiNhan', $info->HoTen ?? '') }}" required 
+                                    class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 focus:bg-white focus:border-red-800 transition-all outline-none text-stone-700">
                             </div>
+
                             <div>
                                 <label class="block text-xs font-bold text-stone-600 mb-2 ml-1">Số điện thoại *</label>
-                                <input type="tel" name="phone" required class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 focus:bg-white focus:border-red-800 focus:ring-4 focus:ring-red-800/5 transition-all outline-none text-stone-700">
+                                <input type="tel" name="SDTNguoiNhan" value="{{ old('SDTNguoiNhan', $info->SoDienThoai ?? '') }}" required 
+                                    class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 focus:bg-white focus:border-red-800 transition-all outline-none text-stone-700">
                             </div>
-                            <div>
-                                <label class="block text-xs font-bold text-stone-600 mb-2 ml-1">Email</label>
-                                <input type="email" name="email" class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 focus:bg-white focus:border-red-800 focus:ring-4 focus:ring-red-800/5 transition-all outline-none text-stone-700">
-                            </div>
+
                             <div class="md:col-span-2">
-                                <label class="block text-xs font-bold text-stone-600 mb-2 ml-1">Địa chỉ cụ thể *</label>
-                                <input type="text" name="address" required class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 focus:bg-white focus:border-red-800 focus:ring-4 focus:ring-red-800/5 transition-all outline-none text-stone-700">
+                                <label class="block text-xs font-bold text-stone-600 mb-2 ml-1">Ghi chú (tùy chọn)</label>
+                                <textarea name="GhiChu" rows="3" 
+                                    placeholder="Ví dụ: Giao giờ hành chính, gọi trước khi đến..."
+                                    class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 focus:bg-white focus:border-red-800 transition-all outline-none text-stone-700 resize-none"></textarea>
+                            </div>
+
+                            <div class="md:col-span-2">
+                                <label class="block text-xs font-bold text-stone-600 mb-2 ml-1">Số nhà, tên đường *</label>
+                                <input type="text" name="so_nha" value="{{ old('so_nha', $addressData['soNha']) }}" required 
+                                    placeholder="Ví dụ: 123 Lê Lợi"
+                                    class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 focus:bg-white focus:border-red-800 transition-all outline-none text-stone-700">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-stone-600 mb-2 ml-1">Phường / Xã *</label>
+                                <input type="text" name="phuong_xa" value="{{ old('phuong_xa', $addressData['phuongXa']) }}" required 
+                                    class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 focus:bg-white focus:border-red-800 transition-all outline-none text-stone-700">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-stone-600 mb-2 ml-1">Quận / Huyện *</label>
+                                <input type="text" name="quan_huyen" value="{{ old('quan_huyen', $addressData['quanHuyen']) }}" required 
+                                    class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 focus:bg-white focus:border-red-800 transition-all outline-none text-stone-700">
+                            </div>
+
+                            <div class="md:col-span-2">
+                                <label class="block text-xs font-bold text-stone-600 mb-2 ml-1">Tỉnh / Thành phố *</label>
+                                <select name="tinh_thanh" required 
+                                        class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 focus:bg-white focus:border-red-800 outline-none text-stone-700">
+                                    <option value="">Chọn Tỉnh/Thành phố</option>
+                                    @php $tinhs = ['Hà Nội', 'Hồ Chí Minh', 'Đà Nẵng', 'Cần Thơ', 'Hải Phòng']; @endphp
+                                    @foreach($tinhs as $tinh)
+                                        <option value="{{ $tinh }}" {{ (old('tinh_thanh', $addressData['tinhThanh']) == $tinh) ? 'selected' : '' }}>
+                                            {{ $tinh }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -49,11 +84,11 @@
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <label class="flex items-center gap-4 p-4 border border-stone-200 rounded-xl cursor-pointer hover:border-red-800 transition-all has-[:checked]:bg-red-50/50 has-[:checked]:border-red-800">
-                                <input type="radio" name="payment" value="cod" checked class="text-red-800 focus:ring-0">
+                                <input type="radio" name="PhuongThucThanhToan" value="cod" checked class="text-red-800 focus:ring-0">
                                 <span class="text-sm font-medium text-stone-700">Thanh toán khi nhận hàng</span>
                             </label>
                             <label class="flex items-center gap-4 p-4 border border-stone-200 rounded-xl cursor-pointer hover:border-red-800 transition-all has-[:checked]:bg-red-50/50 has-[:checked]:border-red-800">
-                                <input type="radio" name="payment" value="vnpay" class="text-red-800 focus:ring-0">
+                                <input type="radio" name="PhuongThucThanhToan" value="vnpay" class="text-red-800 focus:ring-0">
                                 <span class="text-sm font-medium text-stone-700">Chuyển khoản VNPAY</span>
                             </label>
                         </div>
@@ -64,7 +99,7 @@
                     <div class="bg-white rounded-2xl shadow-md border border-stone-100 p-6 sticky top-8">
                         <h3 class="font-bold text-stone-800 uppercase text-xs tracking-widest mb-6">Đơn hàng của bạn</h3>
                         
-                        <div class="space-y-4 mb-6 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
+                       <div class="space-y-4 mb-6 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
                             @foreach($cartItems as $item)
                             <div class="flex gap-4 items-center">
                                 <div class="w-12 h-16 rounded-lg overflow-hidden flex-shrink-0">
@@ -72,9 +107,20 @@
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <p class="text-[11px] font-bold text-stone-800 truncate">{{ $item->sanpham->TenSanPham }}</p>
-                                    <p class="text-[10px] text-stone-400">Size: {{ $item->size->TenSize }} x{{ $item->SoLuong }}</p>
+                                    
+                                    <input type="hidden" name="MaSanPham[]" value="{{ $item->MaSanPham }}">
+                                    
+                                    <p class="text-[10px] text-stone-400">Size: {{ $item->size->TenSize }}</p>
+                                    <input type="hidden" name="MaSize[]" value="{{ $item->MaSize }}">
+                                    
+                                    <p class="text-[10px] text-stone-400">Quantity: {{ $item->SoLuong }}</p>
+                                    <input type="hidden" name="SoLuong[]" value="{{ $item->SoLuong }}">
                                 </div>
+                                
                                 <span class="text-xs font-bold text-stone-700">{{ number_format($item->sanpham->GiaBan * $item->SoLuong, 0, ',', '.') }}đ</span>
+                                
+                                <input type="hidden" name="DonGia[]" value="{{ $item->sanpham->GiaBan }}">
+                                <input type="hidden" name="ThanhTien[]" value="{{ $item->sanpham->GiaBan * $item->SoLuong }}">
                             </div>
                             @endforeach
                         </div>
@@ -104,6 +150,7 @@
                             <div class="flex justify-between text-xs text-stone-500">
                                 <span>Tạm tính</span>
                                 <span>{{ number_format($totalPrice, 0, ',', '.') }}đ</span>
+                                <input type="hidden" name="Tongtien" id="total_payment" value="{{ $totalPrice }}">
                             </div>
                             <div id="discount_row" class="hidden flex justify-between text-xs text-red-600 font-bold">
                                 <span>Giảm giá</span>
@@ -112,6 +159,7 @@
                             <div class="flex justify-between items-center pt-4 mt-2 border-t border-stone-200">
                                 <span class="text-sm font-bold text-stone-800 uppercase tracking-tighter">Tổng thanh toán</span>
                                 <span id="final_total" class="text-xl font-bold text-red-800" data-base="{{ $totalPrice }}">{{ number_format($totalPrice, 0, ',', '.') }}đ</span>
+                                
                             </div>
                         </div>
 

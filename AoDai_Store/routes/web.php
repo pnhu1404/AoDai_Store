@@ -26,6 +26,7 @@ Route::get('/',[ProductController::class,'index'])->name('home');
 Route::get('/aodai/{id}',[ProductController::class,'detail'])->name('product.detail');
 Route::post('/cart/add/{id}',[CartController::class,'addToCart'])->name('cart.add');
 Route::delete('/cart/remove/{id}',[CartController::class,'removeFromCart'])->name('cart.remove');
+Route::delete('/cart/clear',[CartController::class,'clearCart'])->name('cart.clear');
 Route::get('/cart',[CartController::class,'viewCart'])->name('cart.index');
 Route::post('/update-quantity', [CartController::class, 'updateQuantity'])->name('update.quantity');
 Route::get('/category/{id}', [ProductController::class, 'showByCategory'])->name('category.show');
@@ -41,7 +42,7 @@ Route::delete('/admin/products/delete/{MaSanPham}', [AdminProductController::cla
 
 
 //check out 
-Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout.home');
+Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout.home')->middleware('auth');
 
 Route::get('/admin', [AdminCategoryController::class, 'index'])->name('admin.home');
 Route::get('/admin/categories', [AdminCategoryController::class, 'index'])->name('admin.categories.index');
@@ -56,6 +57,9 @@ Route::delete('/admin/categories/delete/{MaSanPham}', [AdminCategoryController::
 Route::resource('/admin/promotions', App\Http\Controllers\Adminpromotion::class)->names('promotions');
 //order
 Route::resource('/admin/orders', App\Http\Controllers\AdminOrder::class)->names('orders');
+
+Route::resource(('/order'), App\Http\Controllers\OrderController::class)->names('order');
+
 //suppliers
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('suppliers', AdminSupplierController::class);
@@ -63,6 +67,3 @@ Route::prefix('admin')->name('admin.')->group(function () {
 });
 
 //promotion
-Route::resource('/admin/promotions', App\Http\Controllers\Adminpromotion::class)->names('promotions');
-//order
-Route::resource('/admin/orders', App\Http\Controllers\AdminOrder::class)->names('orders');

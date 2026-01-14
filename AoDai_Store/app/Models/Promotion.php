@@ -12,4 +12,17 @@ class Promotion extends Model
     protected $table = 'khuyenmai';
     public $timestamps = false;
     protected $primaryKey = 'MaKhuyenMai';
+
+    protected $fillable = [
+        'TenKhuyenMai',
+        'MaCode',
+        'LoaiGiam',
+        'GiamToiDa',
+        'GiaTriGiam',
+        'DieuKienKhuyenMai',
+        'Soluong',
+        'NgayBatDau',
+        'NgayKetThuc',
+        'TrangThai',
+    ];
 }
