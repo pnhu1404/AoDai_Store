@@ -3,6 +3,7 @@
 @section('title', 'Giỏ hàng của bạn')
 
 @section('content')
+
 <section class="max-w-7xl mx-auto py-16 px-4 min-h-screen">
     <div class="text-center mb-12">
         <h2 class="serif text-3xl font-bold text-stone-800 uppercase tracking-widest">Túi hàng của bạn</h2>
@@ -42,10 +43,15 @@
                     </div>
 
                     <div class="flex justify-between items-center mt-6">
-                        <div class="flex items-center border border-stone-300 rounded">
-                            <button class="px-3 py-1 hover:bg-stone-100 border-r border-stone-300 text-stone-600">-</button>
-                            <input type="text" value="{{ $item->SoLuong }}" class="w-12 text-center border-none focus:ring-0 text-stone-700 font-semibold" readonly>
-                            <button class="px-3 py-1 hover:bg-stone-100 border-l border-stone-300 text-stone-600">+</button>
+                       <div class="flex items-center border border-stone-300 rounded">
+                            <button class="btn-update px-3 py-1 hover:bg-stone-100 border-r border-stone-300 text-stone-600" 
+                                    data-id="{{ $item->MaSanPham }}" data-type="decrease">-</button>
+                            
+                            <input type="text" id="qty-{{ $item->MaSanPham }}" value="{{ $item->SoLuong }}" 
+                                class="w-12 text-center border-none focus:ring-0 text-stone-700 font-semibold" readonly>
+                            
+                            <button class="btn-update px-3 py-1 hover:bg-stone-100 border-l border-stone-300 text-stone-600" 
+                                    data-id="{{ $item->MaSanPham }}" data-type="increase">+</button>
                         </div>
                         
                         <div class="text-right">
@@ -91,9 +97,12 @@
                 </div>
 
                 <button class="w-full bg-red-800 hover:bg-red-900 text-white font-bold py-4 mt-8 transition duration-300 uppercase tracking-widest shadow-lg">
+                <a href="{{ route('checkout.home') }}" class="text-decoration-none">
                     Đặt hàng ngay
-                </button>
+                </a>   
                 
+                </button>
+
                 <div class="mt-8 space-y-4">
                     <div class="flex items-center gap-3 text-xs text-stone-500 italic">
                         <svg class="w-5 h-5 text-stone-400" fill="currentColor" viewBox="0 0 20 20"><path d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"></path></svg>
@@ -119,4 +128,43 @@
     </div>
     @endif
 </section>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    // Sử dụng $(document).on để đảm bảo nút bấm luôn nhận sự kiện
+    $(document).on('click', '.btn-update', function(e) {
+        e.preventDefault();
+        
+        let id = $(this).data('id');
+        let type = $(this).data('type');
+        let inputField = $('#qty-' + id);
+
+        $.ajax({
+            url: "{{ route('update.quantity') }}",
+            method: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                id: id,
+                type: type
+            },
+            beforeSend: function() {
+                // Có thể thêm hiệu ứng loading ở đây
+            },
+            success: function(response) {
+                if(response.success) {
+                    // Cập nhật số lượng trên ô input
+                    inputField.val(response.new_qty);
+                    
+                    // Cách đơn giản nhất để cập nhật lại tất cả giá tiền là reload trang
+                    location.reload(); 
+                }
+            },
+            error: function(xhr) {
+                console.error(xhr.responseText);
+                alert('Có lỗi xảy ra khi cập nhật số lượng!');
+            }
+        });
+    });
+});
+</script>
 @endsection

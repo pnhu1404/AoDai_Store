@@ -63,7 +63,36 @@
                         @endforeach
                     </select>
                 </div>
+                
+                <div class="col-span-2">
+                    <label class="block font-semibold mb-2 text-gray-700">
+                        Size & số lượng
+                    </label>
 
+                    @foreach ($sizes as $item)
+                        @php
+                            $pivotSize = $product->sizes->firstWhere('MaSize', $item->MaSize);
+                        @endphp
+
+                        <div class="flex items-center gap-4 mb-2">
+                            <span class="w-20 font-medium">
+                                {{ $item->TenSize }}
+                            </span>
+
+                            <input type="number" name="sizes[{{ $item->MaSize }}]" min="0"
+                                value="{{ old(
+                                    'sizes.' . $item->MaSize,
+                                    $pivotSize ? $pivotSize->pivot->SoLuong : 0
+                                ) }}"
+                                class="border rounded-lg p-2 w-32 focus:ring-2 focus:ring-blue-500">
+                        </div>
+                     @endforeach
+
+                    @error('sizes')
+                        <span class="text-red-500 text-xs">{{ $message }}</span>
+                    @enderror
+                </div>
+                
                 <div>
                     <label class="block font-semibold mb-2 text-gray-700">Nhà cung cấp</label>
                     <select name="MaNCC" class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none">

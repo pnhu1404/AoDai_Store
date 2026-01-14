@@ -63,6 +63,57 @@ public function addToCart(Request $request, $id)
     return redirect()->back()->with('success', 'Sản phẩm đã được thêm vào giỏ hàng!');
 }
 
+   public function updateQuantity(Request $request)
+{
+    if(Auth::check()){
+        $item = Cart::where('MaSanPham', $request->id)
+            ->where('MaTaiKhoan', Auth::id())
+            ->first();
+    }
+    else{
+        $sessionId=session()->getId();
+        $item = Cart::where('MaSanPham', $request->id)
+            ->where('SessionID', $sessionId)
+            ->first();
+    }
+    if (!$item) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Không tìm thấy sản phẩm trong giỏ hàng'
+        ], 404);
+    }
+    if ($request->type == 'increase') {
+        $item->SoLuong += 1;
+    } else {
+        if ($item->SoLuong > 1) {
+            $item->SoLuong -= 1;
+        }
+    }
+    
+    $item->save();
+
+    return response()->json([
+        'success' => true,
+        'new_qty' => $item->SoLuong
+    ]);
+}
+    public function checkout()
+    {
+        if(Auth::check()){
+            $cartItems = Cart::with('sanpham','size')
+            ->where('MaTaiKhoan',Auth::id())->get();
+        }
+        else{
+            $sessionId=session()->getId();
+            $cartItems=Cart::with('sanpham','size')->where('SessionID', $sessionId)->get();
+        }
+        $totalPrice = $cartItems->sum(function($item) {
+        // Kiểm tra nếu sản phẩm tồn tại để tránh lỗi null
+        return $item->sanpham ? ($item->sanpham->GiaBan * $item->SoLuong) : 0;
+        });
+        // Logic for checkout page
+        return view('client.checkout.index', compact('cartItems', 'totalPrice'));
+    }
     public function removeFromCart($id){
         if(Auth::check()){
             Cart::where('MaSanpham',$id)
@@ -82,12 +133,12 @@ public function addToCart(Request $request, $id)
         // Fetch cart items from database or session
         if(Auth::check()){
 
-            $cartItems = Cart::with('sanpham')
+            $cartItems = Cart::with('sanpham','size')
             ->where('MaTaiKhoan', Auth::id())->get();
         }
         else{
             $sessionId=session()->getId();
-            $cartItems=Cart::with('sanpham')->where('SessionID', $sessionId)->get();
+            $cartItems=Cart::with('sanpham','size')->where('SessionID', $sessionId)->get();
         }
         $totalPrice = $cartItems->sum(function($item) {
         // Kiểm tra nếu sản phẩm tồn tại để tránh lỗi null

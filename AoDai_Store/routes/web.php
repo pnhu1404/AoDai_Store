@@ -6,13 +6,28 @@ use App\Http\Controllers\AdminProductController;
 use App\Http\Controllers\AdminCategoryController;
 use App\Http\Controllers\AdminSupplierController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+//login
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'login']);
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::get('/admin', function () {
+    return view('admin.home'); // Blade admin
+})->middleware(['auth']);
+Route::get('/', function () {
+    return view('client.home'); // Blade user
+})->middleware('auth');
+//register
+Route::get('/register', [RegisterController::class, 'showRegisterForm'])->name('register');
+Route::post('/register', [RegisterController::class, 'register']);
 
 Route::get('/',[ProductController::class,'index'])->name('home');
 Route::get('/aodai/{id}',[ProductController::class,'detail'])->name('product.detail');
 Route::post('/cart/add/{id}',[CartController::class,'addToCart'])->name('cart.add');
 Route::delete('/cart/remove/{id}',[CartController::class,'removeFromCart'])->name('cart.remove');
 Route::get('/cart',[CartController::class,'viewCart'])->name('cart.index');
-
+Route::post('/update-quantity', [CartController::class, 'updateQuantity'])->name('update.quantity');
 // Quản lý áo dài (sản phẩm)
 Route::get('/admin', [AdminProductController::class, 'index'])->name('admin.home');
 Route::get('/admin/products', [AdminProductController::class, 'index'])->name('admin.products.index');
@@ -21,6 +36,10 @@ Route::post('/admin/products/store', [AdminProductController::class, 'store'])->
 Route::get('/admin/products/edit/{MaSanPham}', [AdminProductController::class, 'edit'])->name('admin.products.edit');
 Route::put('/admin/products/update/{MaSanPham}', [AdminProductController::class, 'update'])->name('admin.products.update');
 Route::delete('/admin/products/delete/{MaSanPham}', [AdminProductController::class, 'destroy'])->name('admin.products.destroy');
+
+
+//check out 
+Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout.home');
 
 Route::get('/admin', [AdminCategoryController::class, 'index'])->name('admin.home');
 Route::get('/admin/categories', [AdminCategoryController::class, 'index'])->name('admin.categories.index');
@@ -41,3 +60,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 });
 
+//promotion
+Route::resource('/admin/promotions', App\Http\Controllers\Adminpromotion::class)->names('promotions');
+//order
+Route::resource('/admin/orders', App\Http\Controllers\AdminOrder::class)->names('orders');
