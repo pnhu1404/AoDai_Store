@@ -42,7 +42,7 @@ Route::delete('/admin/products/delete/{MaSanPham}', [AdminProductController::cla
 
 
 //check out 
-Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout.home');
+Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout.home')->middleware('auth');
 
 Route::get('/admin', [AdminCategoryController::class, 'index'])->name('admin.home');
 Route::get('/admin/categories', [AdminCategoryController::class, 'index'])->name('admin.categories.index');

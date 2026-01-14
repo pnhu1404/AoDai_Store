@@ -103,10 +103,8 @@ public function addToCart(Request $request, $id)
     if(Auth::check()){
         $cartItems = Cart::with('sanpham','size')
             ->where('MaTaiKhoan', Auth::id())->get();
-        // $info = Auth::user(); // Lấy user đang đăng nhập thay vì fix cứng id(1)
-    } else {
-        return redirect()->route('cart.index')->with('error', 'Vui lòng đăng nhập để tiến hành thanh toán.');
-    }
+        
+    } 
 
     $totalPrice = $cartItems->sum(function($item) {
         return $item->sanpham ? ($item->sanpham->GiaBan * $item->SoLuong) : 0;
@@ -119,7 +117,7 @@ public function addToCart(Request $request, $id)
         'quanHuyen' => '',
         'tinhThanh' => ''
     ];
-    $info = User::where('MaTaiKhoan',1)->first();
+    $info = User::where('MaTaiKhoan',Auth::id())->first();
     if ($info && $info->DiaChi) {
         // Giả sử lưu dạng: "Số 123 Lê Lợi, Phường Hải Châu I, Quận Hải Châu, Đà Nẵng"
         $parts = explode(', ', $info->DiaChi);

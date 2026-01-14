@@ -11,7 +11,12 @@
         <h2 class="serif text-3xl font-bold text-stone-800 uppercase tracking-widest">Túi hàng của bạn</h2>
         <div class="h-1 w-20 bg-red-800 mx-auto mt-4"></div>
     </div>
-
+    @if(isset($message))
+    <div class="bg-red-100 text-red-700 px-4 py-2 rounded mb-4">
+        ⚠️ Vui lòng <a href="{{ route('login') }}" class="underline font-bold">
+        đăng nhập</a> để tiến hành thanh toán
+    </div>
+    @endif
     @if(count($cartItems) > 0)
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
         <div class="lg:col-span-2 space-y-8">
