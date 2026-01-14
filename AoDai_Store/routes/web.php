@@ -4,6 +4,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AdminProductController;
 use App\Http\Controllers\AdminCategoryController;
+use App\Http\Controllers\AdminSupplierController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/',[ProductController::class,'index'])->name('home');
@@ -28,3 +29,16 @@ Route::post('/admin/categories/store', [AdminCategoryController::class, 'store']
 Route::get('/admin/categories/edit/{MaSanPham}', [AdminCategoryController::class, 'edit'])->name('admin.categories.edit');
 Route::put('/admin/categories/update/{MaSanPham}', [AdminCategoryController::class, 'update'])->name('admin.categories.update');
 Route::delete('/admin/categories/delete/{MaSanPham}', [AdminCategoryController::class, 'destroy'])->name('admin.categories.destroy');
+<<<<<<< Updated upstream
+=======
+
+//promotion
+Route::resource('/admin/promotions', App\Http\Controllers\Adminpromotion::class)->names('promotions');
+//order
+Route::resource('/admin/orders', App\Http\Controllers\AdminOrder::class)->names('orders');
+//suppliers
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::resource('suppliers', AdminSupplierController::class);
+
+});
+>>>>>>> Stashed changes
