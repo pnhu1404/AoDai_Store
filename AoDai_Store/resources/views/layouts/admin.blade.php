@@ -26,6 +26,15 @@
                         <i class="fas fa-tshirt mr-3"></i> Quản lý danh mục
                     </a>
 
+                    
+
+                    <a href="{{ route('admin.suppliers.index') }}"
+                    class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                        <i class="fas fa-truck mr-3"></i> Quản lý nhà cung cấp
+                    </a>
+
+                    <a href="{{ route('orders.index') }}" class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition">
+
                     <a href="{{ route('orders.index') }}" class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition">
                         <i class="fas fa-shopping-cart mr-3"></i> Đơn hàng
                     </a>
