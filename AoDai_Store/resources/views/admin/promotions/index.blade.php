@@ -21,7 +21,8 @@
             </div>
             <div>
                 <p class="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Đang chạy</p>
-                <p class="text-xl font-bold text-gray-800">{{ $promotions->where('TrangThai', 1)->count() }}</p>
+                {{-- Lưu ý: Nên truyền $activeCount từ Controller để con số chính xác trên toàn hệ thống --}}
+                <p class="text-xl font-bold text-gray-800">{{ $activeCount ?? $promotions->where('TrangThai', 1)->count() }}</p>
             </div>
         </div>
     </div>
@@ -34,6 +35,41 @@
     </div>
 
     <div class="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
+        <div class="bg-stone-50/50 p-4 border-b border-stone-100">
+            <form action="{{ route('promotions.index') }}" method="GET" class="flex flex-wrap items-center gap-3">
+                <div class="relative flex-1 min-w-[250px]">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-stone-400">
+                        <i class="fas fa-search text-xs"></i>
+                    </span>
+                    <input type="text" name="search" value="{{ request('search') }}" 
+                        class="block w-full pl-9 pr-3 py-2 border border-stone-200 rounded-xl focus:ring-stone-500 focus:border-stone-500 text-sm" 
+                        placeholder="Tìm tên hoặc mã code...">
+                </div>
+
+                <select name="loai_giam" class="border border-stone-200 rounded-xl px-4 py-2 text-sm focus:ring-stone-500 focus:border-stone-500 text-stone-600">
+                    <option value="">Tất cả loại ưu đãi</option>
+                    <option value="1" {{ request('loai_giam') == '1' ? 'selected' : '' }}>Giảm theo %</option>
+                    <option value="2" {{ request('loai_giam') == '2' ? 'selected' : '' }}>Giảm theo số tiền</option>
+                </select>
+
+                <select name="status" class="border border-stone-200 rounded-xl px-4 py-2 text-sm focus:ring-stone-500 focus:border-stone-500 text-stone-600">
+                    <option value="">Mọi trạng thái</option>
+                    <option value="1" {{ request('status') === '1' ? 'selected' : '' }}>Đang chạy</option>
+                    <option value="0" {{ request('status') === '0' ? 'selected' : '' }}>Đã dừng</option>
+                </select>
+
+                <button type="submit" class="bg-stone-800 text-white px-5 py-2 rounded-xl hover:bg-stone-700 transition-colors text-xs font-bold uppercase tracking-wider">
+                    Lọc
+                </button>
+                
+                @if(request()->anyFilled(['search', 'loai_giam', 'status']))
+                    <a href="{{ route('promotions.index') }}" class="text-stone-400 hover:text-red-600 text-xs font-bold uppercase tracking-wider ml-2">
+                        Xóa lọc
+                    </a>
+                @endif
+            </form>
+        </div>
+
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
@@ -63,13 +99,15 @@
                             </span>
                         </td>
                         <td class="px-6 py-5 text-center">
-                            @if($promotion->LoaiGiam == 1) <div class="flex flex-col items-center">
+                            @if($promotion->LoaiGiam == 1) 
+                                <div class="flex flex-col items-center">
                                     <span class="text-red-700 font-bold text-base">{{ $promotion->GiaTriGiam }}%</span>
                                     @if($promotion->GiamToiDa)
                                         <span class="text-[9px] text-stone-400 whitespace-nowrap">Tối đa: {{ number_format($promotion->GiamToiDa, 0, ',', '.') }}đ</span>
                                     @endif
                                 </div>
-                            @else <span class="text-stone-800 font-bold text-sm">-{{ number_format($promotion->GiaTriGiam, 0, ',', '.') }}đ</span>
+                            @else 
+                                <span class="text-stone-800 font-bold text-sm">-{{ number_format($promotion->GiaTriGiam, 0, ',', '.') }}đ</span>
                             @endif
                         </td>
                         <td class="px-6 py-5 text-center">
@@ -115,7 +153,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="px-6 py-20 text-center text-stone-400 italic">Dữ liệu hiện đang trống.</td>
+                        <td colspan="7" class="px-6 py-20 text-center text-stone-400 italic">Không tìm thấy dữ liệu phù hợp.</td>
                     </tr>
                     @endforelse
                 </tbody>
@@ -124,6 +162,7 @@
     </div>
 
     <div class="mt-8">
+        {{-- .withQueryString() giúp giữ lại các tham số lọc khi chuyển trang --}}
         {{ $promotions->links() }}
     </div>
 </div>

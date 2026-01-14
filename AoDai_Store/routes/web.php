@@ -10,6 +10,7 @@ Route::get('/',[ProductController::class,'index'])->name('home');
 Route::get('/aodai/{id}',[ProductController::class,'detail'])->name('product.detail');
 Route::post('/cart/add/{id}',[CartController::class,'addToCart'])->name('cart.add');
 Route::delete('/cart/remove/{id}',[CartController::class,'removeFromCart'])->name('cart.remove');
+Route::delete('/cart/clear',[CartController::class,'clearCart'])->name('cart.clear');
 Route::get('/cart',[CartController::class,'viewCart'])->name('cart.index');
 Route::post('/update-quantity', [CartController::class, 'updateQuantity'])->name('update.quantity');
 // Quản lý áo dài (sản phẩm)
@@ -37,3 +38,5 @@ Route::delete('/admin/categories/delete/{MaSanPham}', [AdminCategoryController::
 Route::resource('/admin/promotions', App\Http\Controllers\Adminpromotion::class)->names('promotions');
 //order
 Route::resource('/admin/orders', App\Http\Controllers\AdminOrder::class)->names('orders');
+
+Route::resource(('/order'), App\Http\Controllers\OrderController::class)->names('order');
