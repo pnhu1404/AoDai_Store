@@ -12,5 +12,14 @@ class Material extends Model
     protected $table = 'chatlieu';
     public $timestamps = false;
     protected $primaryKey = 'MaChatLieu';
-    protected $fillable = ['TenChatLieu'];
+    protected $fillable = [
+        'TenChatLieu',
+        'Xuatxu',
+        'HuongDanBaoQuan',
+        'TrangThai'
+    ];
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'MaChatLieu', 'MaChatLieu');
+    }
 }

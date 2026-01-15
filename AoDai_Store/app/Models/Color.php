@@ -12,4 +12,14 @@ class Color extends Model
     protected $table = 'loaimau';
     public $timestamps = false;
     protected $primaryKey = 'MaLoaiMau';
+    protected $fillable = [
+        'TenLoaiMau',
+        'HinhAnhMau',
+        'MoTa',
+        'TrangThai',
+    ];
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'MaLoaiMau', 'MaLoaiMau');
+    }
 }
