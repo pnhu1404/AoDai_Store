@@ -91,9 +91,8 @@ class AdminProductController extends Controller
         if ($request->hasFile('AlbumHinh')) {
             foreach ($request->file('AlbumHinh') as $file) {
                 $fileNameSub = time() . '_album_' . $file->getClientOriginalName();
-                $file->move(public_path('img/products'), $fileNameSub);
+                $file->move(public_path('img/details'), $fileNameSub);
 
-                // Lưu vào CSDL theo cấu trúc bảng của bạn (MaSanPham, TenHinh)
                 ProductImage::create([
                     'MaSanPham' => $product->MaSanPham,
                     'TenHinh' => $fileNameSub,
@@ -101,7 +100,6 @@ class AdminProductController extends Controller
             }
         }
 
-        // 5. Lưu kích thước và số lượng
         foreach ($request->sizes as $sizeId => $soLuong) {
             if ($soLuong > 0) {
                 $product->sizes()->attach($sizeId, [
@@ -114,16 +112,18 @@ class AdminProductController extends Controller
             ->with('success', 'Thêm áo dài và ảnh thành công');
     }
     public function edit($MaSanPham)
-    {
-        $product = Product::with('hinhanhsanpham')->where('MaSanPham', $MaSanPham)->firstOrFail();
-        $materials = Material::all();
-        $categories = Category::all();
-        $suppliers = Supplier::all();
-        $colors = Color::all();
-        $sizes = Size::all();
+{
+    $product = Product::with('hinhanhsanpham')->where('MaSanPham', $MaSanPham)->firstOrFail();
 
-        return view('admin.products.edit', compact('product', 'materials', 'categories', 'suppliers', 'colors', 'sizes'));
-    }
+    return view('admin.products.edit', [
+        'product' => $product,
+        'materials' => Material::all(),
+        'categories' => Category::all(),
+        'suppliers' => Supplier::all(),
+        'colors' => Color::all(),
+        'sizes' => Size::all(),
+    ]);
+}
     public function update(Request $request, $MaSanPham)
     {
         $product = Product::findOrFail($MaSanPham);
@@ -155,7 +155,12 @@ class AdminProductController extends Controller
         $data['TrangThai'] = $request->TrangThai ?? 1;
 
         if ($request->hasFile('HinhAnh')) {
-            if ($product->HinhAnh && file_exists(public_path('img/products/' . $product->HinhAnh))) {
+
+            if (
+                $product->HinhAnh &&
+                file_exists(public_path('img/products/' . $product->HinhAnh)) &&
+                is_file(public_path('img/products/' . $product->HinhAnh))
+            ) {
                 unlink(public_path('img/products/' . $product->HinhAnh));
             }
 
@@ -167,66 +172,83 @@ class AdminProductController extends Controller
 
         $product->update($data);
 
-        // Xử lý Album ảnh chi tiết (Quan hệ: hinhanhsanpham)
-
-        // THAY THẾ ảnh cũ bằng ảnh mới
         if ($request->hasFile('replace_images')) {
             foreach ($request->file('replace_images') as $id => $file) {
+
                 $imageRecord = ProductImage::find($id);
-                if ($imageRecord) {
-                    // Xóa file cũ 
-                    if (file_exists(public_path('img/products/' . $imageRecord->TenHinh))) {
-                        unlink(public_path('img/products/' . $imageRecord->TenHinh));
-                    }
-                    // Lưu file mới
-                    $newFileName = time() . '_replaced_' . $file->getClientOriginalName();
-                    $file->move(public_path('img/products'), $newFileName);
-                    $imageRecord->update(['TenHinh' => $newFileName]);
+                if (!$imageRecord || !$imageRecord->TenHinh)
+                    continue;
+
+                $oldPath = public_path('img/details/' . $imageRecord->TenHinh);
+
+                if (file_exists($oldPath) && is_file($oldPath)) {
+                    unlink($oldPath);
                 }
+
+                $newFileName = time() . '_replace_' . $file->getClientOriginalName();
+                $file->move(public_path('img/details'), $newFileName);
+
+                $imageRecord->update([
+                    'TenHinh' => $newFileName
+                ]);
             }
         }
 
-        // XÓA ảnh nếu người dùng tích chọn
         if ($request->has('delete_images')) {
             foreach ($request->delete_images as $id) {
+
                 $imageRecord = ProductImage::find($id);
-                if ($imageRecord) {
-                    $filePath = public_path('img/products/' . $imageRecord->TenHinh);
-                    if (file_exists($filePath)) {
-                        unlink($filePath);
-                    }
-                    $imageRecord->delete();
+                if (!$imageRecord || !$imageRecord->TenHinh)
+                    continue;
+
+                $filePath = public_path('img/details/' . $imageRecord->TenHinh);
+
+                if (file_exists($filePath) && is_file($filePath)) {
+                    unlink($filePath);
                 }
+
+                $imageRecord->delete();
             }
         }
 
-        // THÊM ẢNH MỚI hoàn toàn vào album
         if ($request->hasFile('AlbumHinh')) {
             foreach ($request->file('AlbumHinh') as $file) {
-                $fileNameAdd = time() . '_album_' . $file->getClientOriginalName();
-                $file->move(public_path('img/products'), $fileNameAdd);
+
+                $fileName = time() . '_album_' . $file->getClientOriginalName();
+                $file->move(public_path('img/details'), $fileName);
 
                 ProductImage::create([
                     'MaSanPham' => $product->MaSanPham,
-                    'TenHinh' => $fileNameAdd
+                    'TenHinh' => $fileName
                 ]);
             }
         }
 
         $syncData = [];
-        foreach ($request->sizes as $sizeId => $soluong) {
-            $syncData[$sizeId] = ['SoLuong' => $soluong];
+        foreach ($request->sizes as $sizeId => $soLuong) {
+            $syncData[$sizeId] = ['SoLuong' => $soLuong];
         }
         $product->sizes()->sync($syncData);
 
         return redirect()->route('admin.products.index')
-            ->with('success', 'Cập nhật sản phẩm và album ảnh thành công');
+            ->with('success', 'Cập nhật sản phẩm thành công');
     }
+
     public function destroy($MaSanPham)
     {
         Product::findOrFail($MaSanPham)->delete();
 
         return redirect()->route('admin.products.index')
             ->with('success', 'Xóa áo dài thành công');
+    }
+    public function toggleStatus($MaSanPham) {
+        $products = Product::findOrFail($MaSanPham);
+        $products->TrangThai = $products->TrangThai == 1 ? 0 : 1;
+        $products->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Đã cập nhật trạng thái danh mục thành công.'
+        ]);
     }
 }

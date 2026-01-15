@@ -132,7 +132,7 @@
                         <div class="grid grid-cols-2 md:grid-cols-3 gap-6 mb-8">
                             @foreach($product->hinhanhsanpham as $hinh)
                                 <div class="bg-white p-3 rounded-xl border border-stone-100 shadow-sm relative group">
-                                    <img src="{{ asset('img/products/' . $hinh->TenHinh) }}" 
+                                    <img src="{{ asset('img/details/' . $hinh->TenHinh) }}" 
                                          class="w-full h-32 object-cover rounded-lg mb-3">
                                     
                                     <div class="space-y-2">

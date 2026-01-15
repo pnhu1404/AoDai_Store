@@ -20,7 +20,7 @@
                 </div>
             </div>
             <a href="#" class="hover:text-red-700 transition">Hướng dẫn chọn size</a>
-            <a href="#" class="hover:text-red-700 transition">Liên hệ</a>
+            <a href="/contact" class="hover:text-red-700 transition">Liên hệ</a>
         </div>
 
         <div class="flex items-center space-x-5">

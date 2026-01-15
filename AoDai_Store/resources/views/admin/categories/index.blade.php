@@ -15,13 +15,13 @@
                 </div>
             </div>
             
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-stone-100 flex items-center opacity-50">
-                <div class="p-3 bg-stone-50 rounded-xl text-stone-400 mr-4">
-                    <i class="fas fa-info-circle fa-lg"></i>
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-stone-100 flex items-center">
+                <div class="p-3 bg-green-50 rounded-xl text-green-600 mr-4">
+                    <i class="fas fa-check-circle fa-lg"></i>
                 </div>
                 <div>
-                    <p class="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Trạng thái</p>
-                    <p class="text-xl font-bold text-gray-400 italic text-sm">Đang cập nhật</p>
+                    <p class="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Đang hoạt động</p>
+                    <p class="text-xl font-bold text-stone-800">{{ $categories->where('TrangThai', 1)->count() }}</p>
                 </div>
             </div>
         </div>
@@ -52,7 +52,7 @@
                     <thead>
                         <tr class="bg-stone-50/50 text-stone-500 text-[10px] uppercase tracking-[0.2em] font-bold border-b border-stone-100">
                             <th class="px-6 py-5">Tên danh mục</th>
-                            <th class="px-6 py-5">Mô tả chi tiết</th>
+                            <th class="px-6 py-5">Trạng thái</th> {{-- Cột trạng thái mới --}}
                             <th class="px-6 py-5 text-center">Sản phẩm</th>
                             <th class="px-6 py-5 text-center">Ngày tạo</th>
                             <th class="px-6 py-5 text-right">Thao tác</th>
@@ -69,8 +69,17 @@
                                         <p class="text-[10px] text-stone-400 font-mono mt-0.5">#{{ $category->MaLoaiSP }}</p>
                                     </div>
                                 </td>
-                                <td class="px-6 py-5 text-stone-500 italic text-xs max-w-xs truncate">
-                                    {{ $category->MoTa ?? 'Không có mô tả' }}
+                                {{-- Badge Trạng thái --}}
+                                <td class="px-6 py-5">
+                                    @if($category->TrangThai == 1)
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide bg-green-50 text-green-700 border border-green-100">
+                                            <span class="w-1 h-1 mr-1.5 rounded-full bg-green-600"></span> Đang bán
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide bg-stone-100 text-stone-400 border border-stone-200">
+                                            <span class="w-1 h-1 mr-1.5 rounded-full bg-stone-400"></span> Tạm ngưng
+                                        </span>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-5 text-center">
                                     <span class="px-3 py-1 bg-stone-50 text-stone-600 rounded-full text-[10px] font-bold uppercase tracking-wider border border-stone-100">
@@ -82,6 +91,14 @@
                                 </td>
                                 <td class="px-6 py-5">
                                     <div class="flex justify-end space-x-2">
+                                        {{-- Nút Ẩn/Hiện nhanh --}}
+                                        <button onclick="toggleStatus('{{ $category->MaLoaiSP }}', {{ $category->TrangThai }})"
+                                            title="{{ $category->TrangThai == 1 ? 'Tạm dừng bán' : 'Kích hoạt bán' }}"
+                                            class="flex items-center px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest {{ $category->TrangThai == 1 ? 'text-amber-600 border-amber-100 hover:bg-amber-600' : 'text-green-600 border-green-100 hover:bg-green-600' }} hover:text-white transition-all rounded-lg border">
+                                            <i class="fas {{ $category->TrangThai == 1 ? 'fa-eye-slash' : 'fa-eye' }} mr-1.5"></i>
+                                            {{ $category->TrangThai == 1 ? 'Ẩn' : 'Hiện' }}
+                                        </button>
+
                                         <a href="{{ route('admin.categories.edit', $category->MaLoaiSP) }}"
                                             class="flex items-center px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-blue-600 hover:bg-blue-600 hover:text-white transition-all rounded-lg border border-blue-100">
                                             <i class="fas fa-edit mr-1.5"></i> Sửa
@@ -111,6 +128,48 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        // Hàm chuyển đổi trạng thái Ẩn/Hiện
+        function toggleStatus(id, currentStatus) {
+            const newStatus = currentStatus === 1 ? 0 : 1;
+            const actionText = newStatus === 1 ? 'hiển thị và bán lại' : 'tạm ẩn';
+            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            Swal.fire({
+                title: '<span class="serif">Cập nhật trạng thái</span>',
+                html: `<div class="text-stone-500 text-sm">Bạn muốn ${actionText} danh mục này?</div>`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Xác nhận',
+                cancelButtonText: 'Hủy',
+                confirmButtonColor: '#1c1917',
+                customClass: { popup: 'glass-popup', confirmButton: 'btn-delete-confirm', cancelButton: 'btn-delete-cancel' },
+                buttonsStyling: false,
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/admin/categories/toggle-status/${id}`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': token,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ status: newStatus })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({ icon: 'success', title: 'Thành công', text: data.message, timer: 1000, showConfirmButton: false, customClass: { popup: 'glass-popup' } });
+                            refreshTable();
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Không thể cập nhật trạng thái', customClass: { popup: 'glass-popup' } });
+                    });
+                }
+            });
+        }
+
         function refreshTable() {
             const container = document.getElementById('category-table-container');
             const currentUrl = window.location.href;
