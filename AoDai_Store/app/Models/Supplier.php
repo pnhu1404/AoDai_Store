@@ -12,7 +12,9 @@ class Supplier extends Model
     protected $fillable = [
         'TenNCC',
         'DiaChi',
-        'SDT'
+        'SDT',
+        'Email',
+        'TrangThai'
     ];
 
     public function products()

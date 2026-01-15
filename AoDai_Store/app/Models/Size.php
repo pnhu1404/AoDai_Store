@@ -12,4 +12,9 @@ class Size extends Model
     protected $table = 'size';
     public $timestamps = false;
     protected $primaryKey = 'MaSize';
+    public function products()
+    {
+        return $this->belongsToMany( Product::class,'sanpham_size', 'MaSize', 'MaSanPham')
+            ->withPivot('SoLuong');
+    }
 }

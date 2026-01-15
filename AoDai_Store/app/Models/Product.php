@@ -21,15 +21,18 @@ class Product extends Model
     {
         return $this->belongsTo(Color::class, 'MaLoaiMau', 'MaLoaiMau');
     }
-
     public function loaisanpham()
     {
         return $this->belongsTo(Category::class, 'MaLoaiSP', 'MaLoaiSP');
     }
+    public function hinhanhsanpham()
+    {
+        return $this->hasMany(ProductImage::class, 'MaSanPham', 'MaSanPham');
+    }
 
     public function sizes()
     {
-        // Quan hệ nhiều-nhiều để quản lý tồn kho chi tiết từng size
+
         return $this->belongsToMany(Size::class, 'sanpham_size', 'MaSanPham', 'MaSize')
             ->withPivot('SoLuong');
     }
@@ -45,6 +48,8 @@ class Product extends Model
         'MaChatLieu',
         'MaNCC',
         'MaLoaiMau',
+        'MaSize',
+        'SoLuong',
         'HinhAnh',
         'TrangThai',
         'CreatedDate',
