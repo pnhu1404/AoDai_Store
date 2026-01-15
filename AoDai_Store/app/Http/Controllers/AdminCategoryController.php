@@ -45,24 +45,56 @@ class AdminCategoryController extends Controller
         return redirect()->route('admin.categories.index')
             ->with('success', 'Thêm danh mục thành công');
     }
+    public function edit($MaLoaiSP)
+    {
+        $category = Category::findOrFail($MaLoaiSP);
+        return view('admin.categories.edit', compact('category'));
+    }
+    public function update(Request $request, $MaLoaiSP)
+    {
+        $category = Category::findOrFail($MaLoaiSP);
+        $request->validate([
+            'TenLoaiSP' => 'required|string|max:255',
+            'MoTa' => 'required|string',
+        ]);
+        $category->update([
+            'TenLoaiSP' => $request->TenLoaiSP,
+            'MoTa' => $request->MoTa,
+            'TrangThai' => 1
+        ]);
 
-    public function destroy($MaLoaiSP) {
+        return redirect()->route('admin.categories.index')
+            ->with('success', 'Cập nhật danh mục thành công');
+    }
+    public function destroy($MaLoaiSP)
+    {
 
         $category = Category::findOrFail($MaLoaiSP);
         $productCount = Product::where('MaLoaiSP', $MaLoaiSP)->count();
 
-        if($productCount > 0) {
+        if ($productCount > 0) {
             return response()->json([
                 'success' => false,
                 'message' => 'Không thể xóa! Danh mục tồn tại sản phẩm'
             ]);
-        } 
+        }
 
         $category->delete();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Xóa thành công!'
+        ]);
+    }
+    public function toggleStatus($MaLoaiSP)
+    {
+        $category = Category::findOrFail($MaLoaiSP);
+        $category->TrangThai = $category->TrangThai == 1 ? 0 : 1;
+        $category->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Đã cập nhật trạng thái danh mục thành công.'
         ]);
     }
 }

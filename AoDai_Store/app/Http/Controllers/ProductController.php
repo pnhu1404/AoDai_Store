@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\Size;
 use App\Models\Color;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -53,10 +54,16 @@ class ProductController extends Controller
 
     public function detail($id)
     {
-        $product = Product::with(['loaisanpham', 'chatlieu', 'loaimau', 'sizes'])
-            ->where('MaSanPham', $id)
-            ->firstOrFail();
+        $product = Product::with([
+            'loaisanpham',
+            'chatlieu',
+            'loaimau',
+            'sizes',
+            'hinhanhsanpham'
+        ])->where('MaSanPham', $id)->firstOrFail();
+
         $allSizes = Size::where('TrangThai', 1)->get();
+
         return view('client.products.detail', compact('product', 'allSizes'));
     }
     public function showByCategory(Request $request, $id)

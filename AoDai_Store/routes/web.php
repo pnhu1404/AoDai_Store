@@ -20,7 +20,7 @@ Route::get('/admin', function () {
     return view('admin.home'); // Blade admin
 })->middleware(['auth']);
 Route::get('/', function () {
-    return view('client.home'); // Blade user
+ return view('client.home'); // Blade user
 })->middleware('auth');
 //register
 Route::get('/register', [RegisterController::class, 'showRegisterForm'])->name('register');
@@ -62,6 +62,7 @@ Route::post('/admin/products/store', [AdminProductController::class, 'store'])->
 Route::get('/admin/products/edit/{MaSanPham}', [AdminProductController::class, 'edit'])->name('admin.products.edit');
 Route::put('/admin/products/update/{MaSanPham}', [AdminProductController::class, 'update'])->name('admin.products.update');
 Route::delete('/admin/products/delete/{MaSanPham}', [AdminProductController::class, 'destroy'])->name('admin.products.destroy');
+Route::post('/admin/products/toggle-status/{id}', [AdminProductController::class, 'toggleStatus'])->name('admin.products.toggleStatus');
 
 
 //check out 
@@ -74,6 +75,7 @@ Route::post('/admin/categories/store', [AdminCategoryController::class, 'store']
 Route::get('/admin/categories/edit/{MaSanPham}', [AdminCategoryController::class, 'edit'])->name('admin.categories.edit');
 Route::put('/admin/categories/update/{MaSanPham}', [AdminCategoryController::class, 'update'])->name('admin.categories.update');
 Route::delete('/admin/categories/delete/{MaSanPham}', [AdminCategoryController::class, 'destroy'])->name('admin.categories.destroy');
+Route::post('/admin/categories/toggle-status/{id}', [AdminCategoryController::class, 'toggleStatus'])->name('admin.categories.toggleStatus');
 
 
 //promotion

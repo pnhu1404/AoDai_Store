@@ -11,7 +11,6 @@
     </div>
 
     <div class="bg-white p-8 rounded-2xl shadow-sm border border-stone-100 relative overflow-hidden">
-        {{-- Đường kẻ accent phía trên --}}
         <div class="absolute top-0 left-0 w-full h-1.5 bg-stone-900"></div>
 
         <h2 class="serif text-2xl font-bold text-stone-800 mb-8 italic">Khởi tạo danh mục sản phẩm mới</h2>
@@ -20,7 +19,6 @@
             @csrf
             
             <div class="grid grid-cols-1 gap-8">
-                {{-- Tên danh mục --}}
                 <div>
                     <label class="block text-[10px] uppercase tracking-widest font-bold mb-2 text-stone-500">Tên danh mục (Tên Loại)</label>
                     <input type="text" name="TenLoaiSP" value="{{ old('TenLoaiSP') }}" required
@@ -32,7 +30,6 @@
                     @enderror
                 </div>
 
-                {{-- Mô tả danh mục --}}
                 <div>
                     <label class="block text-[10px] uppercase tracking-widest font-bold mb-2 text-stone-500">Mô tả & Ý nghĩa danh mục</label>
                     <textarea name="MoTa" rows="6" 
@@ -41,7 +38,6 @@
                 </div>
             </div>
 
-            {{-- Nút lưu --}}
             <div class="mt-12">
                 <button type="submit" class="w-full bg-stone-900 text-white py-4 rounded-xl font-bold hover:bg-red-900 shadow-xl transition-all duration-300 flex justify-center items-center uppercase tracking-[0.2em] text-xs">
                     <i class="fas fa-save mr-2 text-sm"></i> Lưu danh mục thiết kế
@@ -52,7 +48,6 @@
 </div>
 
 <style>
-    /* Nhúng font chữ Serif nếu layout chính chưa có */
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
     .serif { font-family: 'Playfair Display', serif; }
 </style>

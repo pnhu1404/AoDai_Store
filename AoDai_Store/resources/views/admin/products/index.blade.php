@@ -3,7 +3,8 @@
 @section('title', 'Danh sách Áo Dài')
 
 @section('content')
-<div class="space-y-6">
+<div class="space-y-6" id="full-container">
+    {{-- Thẻ thống kê --}}
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-stone-100 flex items-center">
             <div class="p-3 bg-stone-50 rounded-xl text-stone-600 mr-4">
@@ -15,17 +16,18 @@
             </div>
         </div>
         
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-stone-100 flex items-center opacity-50">
-             <div class="p-3 bg-stone-50 rounded-xl text-stone-400 mr-4">
-                <i class="fas fa-boxes fa-lg"></i>
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-stone-100 flex items-center">
+            <div class="p-3 bg-green-50 rounded-xl text-green-600 mr-4">
+                <i class="fas fa-check-circle fa-lg"></i>
             </div>
             <div>
-                <p class="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Trạng thái</p>
-                <p class="text-xl font-bold text-gray-400 italic text-sm">Đang cập nhật</p>
+                <p class="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Đang kinh doanh</p>
+                <p class="text-xl font-bold text-stone-800">{{ $products->where('TrangThai', 1)->count() }}</p>
             </div>
         </div>
     </div>
 
+    {{-- Bộ lọc --}}
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-50">
         <form action="{{ route('admin.products.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-5 gap-4">
             <div class="relative md:col-span-2">
@@ -55,13 +57,14 @@
         </form>
     </div>
 
-    <div class="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden text-sm">
+    {{-- Bảng sản phẩm --}}
+    <div id="product-table-container" class="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden text-sm">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-stone-50 text-stone-500 text-[10px] uppercase tracking-[0.2em] font-bold">
                         <th class="px-6 py-5 border-b border-stone-100">Sản Phẩm</th>
-                        <th class="px-6 py-5 border-b border-stone-100 text-center">Chất Liệu</th>
+                        <th class="px-6 py-5 border-b border-stone-100 text-center">Trạng Thái</th>
                         <th class="px-6 py-5 border-b border-stone-100 text-center">Số Lượng</th>
                         <th class="px-6 py-5 border-b border-stone-100 text-center">Giá Niêm Yết</th>
                         <th class="px-6 py-5 border-b border-stone-100 text-center">Ngày Tạo</th>
@@ -83,9 +86,15 @@
                             </div>
                         </td>
                         <td class="px-6 py-5 text-center">
-                            <span class="px-3 py-1 bg-stone-100 text-stone-600 rounded-full text-[10px] font-bold uppercase tracking-wider border border-stone-200">
-                                {{ $product->chatlieu->TenChatLieu ?? 'Chưa rõ' }}
-                            </span>
+                            @if($product->TrangThai == 1)
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide bg-green-50 text-green-700 border border-green-100">
+                                    <span class="w-1 h-1 mr-1.5 rounded-full bg-green-600"></span> Đang bán
+                                </span>
+                            @else
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide bg-stone-100 text-stone-400 border border-stone-200">
+                                    <span class="w-1 h-1 mr-1.5 rounded-full bg-stone-400"></span> Tạm ngưng
+                                </span>
+                            @endif
                         </td>
                         <td class="px-6 py-5 text-center">
                             <span class="text-xs font-mono font-bold px-2 py-1 bg-blue-50 text-blue-700 rounded-md shadow-inner">
@@ -100,6 +109,12 @@
                         </td>
                         <td class="px-6 py-5">
                             <div class="flex justify-end space-x-2">
+                                <button onclick="toggleProductStatus('{{ $product->MaSanPham }}', {{ $product->TrangThai }})"
+                                    class="flex items-center px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest {{ $product->TrangThai == 1 ? 'text-amber-600 border-amber-100 hover:bg-amber-600' : 'text-green-600 border-green-100 hover:bg-green-600' }} hover:text-white transition-all rounded-lg border">
+                                    <i class="fas {{ $product->TrangThai == 1 ? 'fa-eye-slash' : 'fa-eye' }} mr-1.5"></i>
+                                    {{ $product->TrangThai == 1 ? 'Ẩn' : 'Hiện' }}
+                                </button>
+
                                 <a href="{{ route('admin.products.edit', $product->MaSanPham) }}" 
                                    class="flex items-center px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-blue-600 hover:bg-blue-600 hover:text-white transition-all rounded-lg border border-blue-100">
                                     <i class="fas fa-edit mr-1.5"></i> Sửa
@@ -110,10 +125,6 @@
                                         class="flex items-center px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-red-600 hover:bg-red-700 hover:text-white transition-all rounded-lg border border-red-100">
                                     <i class="fas fa-trash-alt mr-1.5"></i> Xóa
                                 </button>
-
-                                <form id="delete-form-{{ $product->MaSanPham }}" action="{{ route('admin.products.destroy', $product->MaSanPham) }}" method="POST" class="hidden">
-                                    @csrf @method('DELETE')
-                                </form>
                             </div>
                         </td>
                     </tr>
@@ -137,6 +148,57 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+    // Hàm Toggle Trạng thái Sản phẩm
+    function toggleProductStatus(id, currentStatus) {
+        const newStatus = currentStatus === 1 ? 0 : 1;
+        const actionText = newStatus === 1 ? 'mở bán lại' : 'tạm ngưng kinh doanh';
+        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        Swal.fire({
+            title: '<span class="serif">Trạng thái kinh doanh</span>',
+            html: `<div class="text-stone-500 text-sm">Bạn muốn ${actionText} mẫu thiết kế này?</div>`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Xác nhận',
+            cancelButtonText: 'Hủy',
+            confirmButtonColor: '#1c1917',
+            customClass: { popup: 'glass-popup', confirmButton: 'btn-delete-confirm', cancelButton: 'btn-delete-cancel' },
+            buttonsStyling: false,
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`/admin/products/toggle-status/${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': token,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ status: newStatus })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({ icon: 'success', title: 'Đã cập nhật', timer: 1000, showConfirmButton: false, customClass: { popup: 'glass-popup' } });
+                        refreshProductTable();
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        });
+    }
+
+    function refreshProductTable() {
+        const container = document.getElementById('full-container');
+        fetch(window.location.href)
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                container.innerHTML = doc.getElementById('full-container').innerHTML;
+            });
+    }
+
     function confirmDelete(id, name) {
         Swal.fire({
             title: '<span class="serif">Xác nhận xóa bỏ</span>',
@@ -146,38 +208,24 @@
             confirmButtonText: 'Đồng ý xóa',
             cancelButtonText: 'Hủy bỏ',
             confirmButtonColor: '#1c1917',
-            cancelButtonColor: '#f3f4f6',
-            reverseButtons: true,
-            customClass: {
-                popup: 'glass-popup',
-                confirmButton: 'btn-delete-confirm',
-                cancelButton: 'btn-delete-cancel'
-            },
+            customClass: { popup: 'glass-popup', confirmButton: 'btn-delete-confirm', cancelButton: 'btn-delete-cancel' },
             buttonsStyling: false,
+            reverseButtons: true,
         }).then((result) => {
             if (result.isConfirmed) {
-                document.getElementById('delete-form-' + id).submit();
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/admin/products/${id}`;
+                form.innerHTML = `@csrf @method('DELETE')`;
+                document.body.appendChild(form);
+                form.submit();
             }
         })
     }
-
-    @if(session('success'))
-        Swal.fire({
-            title: '<span class="serif text-stone-800">Thành công</span>',
-            text: "{{ session('success') }}",
-            icon: 'success',
-            timer: 2000,
-            showConfirmButton: false,
-            customClass: {
-                popup: 'glass-popup'
-            }
-        });
-    @endif
 </script>
 
 <style>
     .serif { font-family: 'Playfair Display', serif; }
-    
     .glass-popup {
         background: rgba(255, 255, 255, 0.95) !important;
         backdrop-filter: blur(10px);
@@ -186,9 +234,8 @@
         border: 1px solid rgba(255, 255, 255, 0.3) !important;
         box-shadow: 0 20px 40px rgba(0,0,0,0.1) !important;
     }
-
     .btn-delete-confirm {
-        background-color: #1c1917 !important; /* Stone-900 */
+        background-color: #1c1917 !important;
         color: white !important;
         padding: 10px 25px !important;
         border-radius: 12px !important;
@@ -199,12 +246,7 @@
         letter-spacing: 0.1em;
         transition: all 0.3s;
     }
-
-    .btn-delete-confirm:hover {
-        background-color: #991b1b !important;
-        transform: translateY(-2px);
-    }
-
+    .btn-delete-confirm:hover { background-color: #991b1b !important; transform: translateY(-2px); }
     .btn-delete-cancel {
         background-color: #f3f4f6 !important;
         color: #4b5563 !important;
