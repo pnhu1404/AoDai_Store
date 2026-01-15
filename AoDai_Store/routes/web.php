@@ -9,6 +9,7 @@ use App\Http\Controllers\AdminSupplierController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\AdminMaterialController;
 use App\Http\Controllers\AdminColorController;
 //login
@@ -89,3 +90,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 });
 
 //promotion
+Route::resource('/admin/promotions', App\Http\Controllers\Adminpromotion::class)->names('promotions');
+//order
+Route::resource('/admin/orders', App\Http\Controllers\AdminOrder::class)->names('orders');
+//contact
+Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
