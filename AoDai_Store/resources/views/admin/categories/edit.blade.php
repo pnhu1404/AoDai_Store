@@ -4,14 +4,12 @@
 
 @section('content')
 <div class="max-w-4xl mx-auto">
-    {{-- Nút quay lại danh sách --}}
     <div class="mb-4">
         <a href="{{ route('admin.categories.index') }}" class="text-indigo-600 hover:underline flex items-center transition">
             <i class="fas fa-arrow-left mr-2"></i> Quay lại danh sách danh mục
         </a>
     </div>
 
-    {{-- Thẻ nội dung chính --}}
     <div class="bg-white p-8 rounded-xl shadow-lg border-t-4 border-indigo-600">
         <div class="mb-6 border-b pb-4">
             <h2 class="text-xl font-bold text-gray-800 uppercase tracking-wide">Cập nhật thông tin phân loại</h2>
@@ -23,7 +21,6 @@
             @method('PUT')
             
             <div class="grid grid-cols-1 gap-6">
-                {{-- Tên danh mục --}}
                 <div class="col-span-1">
                     <label class="block font-semibold mb-2 text-gray-700 uppercase text-xs tracking-widest">
                         Tên danh mục (TenLoaiSP)

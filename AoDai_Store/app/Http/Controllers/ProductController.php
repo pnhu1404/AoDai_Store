@@ -2,26 +2,81 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Product;
 use App\Models\Size;
+use App\Models\Color;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    //
-    public function index() 
+    public function index(Request $request)
     {
-        $data["product"]= Product::all();
+        $query = Product::with('chatlieu');
 
-        return view('client.home')->with('data',$data);
+        if ($request->filled('search')) {
+            $query->where('TenSanPham', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('category')) {
+            $query->where('MaLoaiSP', $request->category);
+        }
+
+        if ($request->filled('color')) {
+            $query->where('MaLoaiMau', $request->color);
+        }
+
+        if ($request->sort == 'price_asc') {
+            $query->orderBy('GiaBan', 'asc');
+        } elseif ($request->sort == 'price_desc') {
+            $query->orderBy('GiaBan', 'desc');
+        } else {
+            $query->orderBy('CreatedDate', 'desc');
+        }
+
+        $data["product"] = $query->paginate(8);
+        $data["categories"] = Category::all();
+        $data["colors"] = Color::all();
+
+        // XỬ LÝ AJAX
+        if ($request->ajax()) {
+            $view = view('client.home', compact('data'));
+            $sections = $view->getFactory()->make('client.home', compact('data'))->renderSections();
+
+            return response()->json([
+                'html' => $sections['product_list']
+            ]);
+        }
+
+        return view('client.home', compact('data'));
     }
-   public function detail($id)
-{
-    // Nạp sản phẩm cùng các quan hệ liên quan để tối ưu truy vấn
-    $product = Product::with(['loaisanpham', 'chatlieu', 'loaimau', 'sizes'])
-                      ->where('MaSanPham', $id)
-                      ->firstOrFail();
-    $allSizes = Size::where('TrangThai', 1)->get();
-    return view('client.products.detail', compact('product', 'allSizes'));
-}
+
+    public function detail($id)
+    {
+        $product = Product::with(['loaisanpham', 'chatlieu', 'loaimau', 'sizes'])
+            ->where('MaSanPham', $id)
+            ->firstOrFail();
+        $allSizes = Size::where('TrangThai', 1)->get();
+        return view('client.products.detail', compact('product', 'allSizes'));
+    }
+    public function showByCategory(Request $request, $id)
+    {
+        $category = Category::where('MaLoaiSP', $id)->firstOrFail();
+        $products = Product::with('chatlieu')->where('MaLoaiSP', $id)->paginate(8);
+
+        return view('client.products.showByCategory', compact('category', 'products'));
+    }
+    public function category(Request $request)
+    {
+        $categories = Category::all();
+        $query = Product::with(['chatlieu', 'loaisanpham']);
+
+        if ($request->filled('category')) {
+            $query->where('MaLoaiSP', $request->category);
+        }
+
+        $products = $query->paginate(8);
+
+        return view('client.products.category', compact('categories', 'products'));
+    }
 }

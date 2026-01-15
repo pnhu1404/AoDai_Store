@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Psy\Readline\Hoa\Console;
@@ -99,20 +100,56 @@ public function addToCart(Request $request, $id)
 }
     public function checkout()
     {
+    if(Auth::check()){
+        $cartItems = Cart::with('sanpham','size')
+            ->where('MaTaiKhoan', Auth::id())->get();
+        
+    } 
+
+    $totalPrice = $cartItems->sum(function($item) {
+        return $item->sanpham ? ($item->sanpham->GiaBan * $item->SoLuong) : 0;
+    });
+
+    // Xử lý tách địa chỉ
+    $addressData = [
+        'soNha' => '',
+        'phuongXa' => '',
+        'quanHuyen' => '',
+        'tinhThanh' => ''
+    ];
+    $info = User::where('MaTaiKhoan',Auth::id())->first();
+    if ($info && $info->DiaChi) {
+        // Giả sử lưu dạng: "Số 123 Lê Lợi, Phường Hải Châu I, Quận Hải Châu, Đà Nẵng"
+        $parts = explode(', ', $info->DiaChi);
+        $addressData['soNha'] = $parts[0] ?? '';
+        $addressData['phuongXa'] = $parts[1] ?? '';
+        $addressData['quanHuyen'] = $parts[2] ?? '';
+        $addressData['tinhThanh'] = $parts[3] ?? '';
+    }
+
+    return view('client.checkout.index', compact('cartItems', 'totalPrice', 'info', 'addressData'));
+    }
+
+    public function checkoutSuccess(Request $request)
+    {
+        $request->validate([
+            'fullName' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|string|max:20',
+            'address' => 'required|string|max:500',
+        ]);
+
+        return view('client.checkout.success');
+    }
+    public function clearCart(){
         if(Auth::check()){
-            $cartItems = Cart::with('sanpham','size')
-            ->where('MaTaiKhoan',Auth::id())->get();
+            Cart::where('MaTaiKhoan',Auth::id())->delete();
         }
         else{
             $sessionId=session()->getId();
-            $cartItems=Cart::with('sanpham','size')->where('SessionID', $sessionId)->get();
+            Cart::where('SessionID',$sessionId)->delete();
         }
-        $totalPrice = $cartItems->sum(function($item) {
-        // Kiểm tra nếu sản phẩm tồn tại để tránh lỗi null
-        return $item->sanpham ? ($item->sanpham->GiaBan * $item->SoLuong) : 0;
-        });
-        // Logic for checkout page
-        return view('client.checkout.index', compact('cartItems', 'totalPrice'));
+        return redirect()->back()->with('success', 'Giỏ hàng đã được làm trống!');
     }
     public function removeFromCart($id){
         if(Auth::check()){
