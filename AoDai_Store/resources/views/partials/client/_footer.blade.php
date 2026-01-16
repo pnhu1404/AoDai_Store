@@ -1,17 +1,15 @@
 <footer class="bg-stone-900 text-stone-300 pt-16 pb-8">
     <div class="max-w-7xl mx-auto px-4">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
-            
             <div>
+                <img src="{{ asset('img/logo/logo.jpg') }}" alt="Logo"  class="w-16 h-auto mb-4">
                 <h3 class="serif text-2xl text-white mb-6 tracking-wider">ÁO DÀI HERITAGE</h3>
                 <p class="text-sm leading-relaxed mb-6">
                     Sứ mệnh của chúng tôi là gìn giữ và tôn vinh nét đẹp vĩnh cửu của chiếc Áo dài Việt Nam thông qua những thiết kế tinh xảo và chất liệu cao cấp nhất.
                 </p>
-                <div class="flex space-x-4">
-                    <a href="#" class="hover:text-red-500 transition-colors">Facebook</a>
-                    <a href="#" class="hover:text-red-500 transition-colors">Instagram</a>
-                    <a href="#" class="hover:text-red-500 transition-colors">Zalo</a>
-                </div>
+                <p class="text-sm mb-1">Địa chỉ: 132 Đường Lê Lợi, Quận 1, TP. Hồ Chí Minh</p>
+                <p class="text-sm leading-relaxed">Hotline: <a href="tel:+84987654321" class="hover:text-white transition">+84 987 654 321</a></p>
+                <p class="text-sm leading-relaxed">Email: <a href="mailto:info@aodaiheritage.com" class="hover:text-white transition">info@aodaiheritage.com</a></p>
             </div>
 
             <div>
@@ -41,12 +39,18 @@
                     <input type="email" placeholder="Email của bạn..." class="bg-stone-800 border-none px-4 py-2 w-full text-sm focus:ring-1 focus:ring-red-800 outline-none">
                     <button class="bg-red-900 text-white px-4 py-2 hover:bg-red-800 transition">Gửi</button>
                 </form>
+                <div class="flex items-center gap-4">
+                    <img src="{{ asset('img/logo/Facebook-logo.png') }}" alt="Facebook" class="w-15 h-10"> 
+                    <img src="{{ asset('img/logo/ins.png') }}" alt="Instagram" class="w-8 h-8 ">
+                    <img src="{{ asset('img/logo/tiktok2.png') }}" alt="TikTok" class="w-8 h-8">
+                </div>
+
             </div>
 
         </div>
 
         <div class="border-t border-stone-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs">
-            <p>&copy; 2024 Ao Dai Heritage. All rights reserved. Designed with ❤️ in Vietnam.</p>
+            <p>&copy; 2026 Ao Dai Heritage. All rights reserved. Designed with ❤️ in Vietnam.</p>
             <div class="mt-4 md:mt-0 flex space-x-6">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/2560px-Visa_Inc._logo.svg.png" class="h-4 grayscale hover:grayscale-0 transition opacity-50" alt="Visa">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png" class="h-4 grayscale hover:grayscale-0 transition opacity-50" alt="Mastercard">
