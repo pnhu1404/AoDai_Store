@@ -9,6 +9,7 @@ use App\Http\Controllers\AdminSupplierController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\AdminMaterialController;
 use App\Http\Controllers\AdminColorController;
 use App\Http\Controllers\AdminContactController;
@@ -20,7 +21,7 @@ Route::get('/admin', function () {
     return view('admin.home'); // Blade admin
 })->middleware(['auth']);
 Route::get('/', function () {
-    return view('client.home'); // Blade user
+ return view('client.home'); // Blade user
 })->middleware('auth');
 //register
 Route::get('/register', [RegisterController::class, 'showRegisterForm'])->name('register');
@@ -67,6 +68,7 @@ Route::post('/admin/products/store', [AdminProductController::class, 'store'])->
 Route::get('/admin/products/edit/{MaSanPham}', [AdminProductController::class, 'edit'])->name('admin.products.edit');
 Route::put('/admin/products/update/{MaSanPham}', [AdminProductController::class, 'update'])->name('admin.products.update');
 Route::delete('/admin/products/delete/{MaSanPham}', [AdminProductController::class, 'destroy'])->name('admin.products.destroy');
+Route::post('/admin/products/toggle-status/{id}', [AdminProductController::class, 'toggleStatus'])->name('admin.products.toggleStatus');
 
 
 //check out 
@@ -79,6 +81,7 @@ Route::post('/admin/categories/store', [AdminCategoryController::class, 'store']
 Route::get('/admin/categories/edit/{MaSanPham}', [AdminCategoryController::class, 'edit'])->name('admin.categories.edit');
 Route::put('/admin/categories/update/{MaSanPham}', [AdminCategoryController::class, 'update'])->name('admin.categories.update');
 Route::delete('/admin/categories/delete/{MaSanPham}', [AdminCategoryController::class, 'destroy'])->name('admin.categories.destroy');
+Route::post('/admin/categories/toggle-status/{id}', [AdminCategoryController::class, 'toggleStatus'])->name('admin.categories.toggleStatus');
 
 
 //promotion
@@ -95,3 +98,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 });
 
 //promotion
+Route::resource('/admin/promotions', App\Http\Controllers\Adminpromotion::class)->names('promotions');
+//order
+Route::resource('/admin/orders', App\Http\Controllers\AdminOrder::class)->names('orders');
+//contact
+Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');

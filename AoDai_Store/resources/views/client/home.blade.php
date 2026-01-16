@@ -11,13 +11,13 @@
         <div class="relative z-10 text-center text-white px-4">
             <h1 class="serif text-5xl md:text-7xl mb-4 drop-shadow-lg">Dáng Việt Kiêu Sa</h1>
             <p class="text-lg mb-8 drop-shadow-md italic">Tôn vinh vẻ đẹp vĩnh cửu của phụ nữ Việt</p>
-            <a href="#new-arrival" class="bg-red-800 hover:bg-red-900 text-white px-8 py-3 rounded-full transition duration-300">
+            <a href="#product-section" class="bg-red-800 hover:bg-red-900 text-white px-8 py-3 rounded-full transition duration-300 font-bold uppercase tracking-widest text-xs">
                 Khám phá ngay
             </a>
         </div>
     </section>
 
-   <section id="product-section" class="bg-stone-50 border-y border-stone-200 py-8 sticky top-0 z-20 shadow-sm">
+    <section id="product-section" class="bg-stone-50 border-y border-stone-200 py-8 sticky top-0 z-20 shadow-sm">
         <div class="max-w-7xl mx-auto px-4">
             <form id="filter-form" action="{{ route('home') }}" method="GET" class="flex flex-col md:flex-row gap-4 items-center justify-between">
                 <div class="relative w-full md:w-1/3">
@@ -30,13 +30,15 @@
                 </div>
 
                 <div class="flex flex-wrap gap-4 w-full md:w-auto">
-                    <select name="color" class="filter-select ..."> <option value="">Tất cả màu sắc</option>
+                    <select name="color" class="filter-select border-stone-300 focus:border-red-800 focus:ring-0 rounded-lg text-sm min-w-[150px] cursor-pointer bg-white">
+                        <option value="">Tất cả màu sắc</option>
                         @foreach($data['colors'] as $color)
                             <option value="{{ $color->MaLoaiMau }}" {{ request('color') == $color->MaLoaiMau ? 'selected' : '' }}>
                                 {{ $color->TenLoaiMau }}
                             </option>
                         @endforeach
                     </select>
+
                     <select name="category" class="filter-select border-stone-300 focus:border-red-800 focus:ring-0 rounded-lg text-sm min-w-[150px] cursor-pointer bg-white">
                         <option value="">Tất cả danh mục</option>
                         @foreach($data['categories'] as $cat)
@@ -57,7 +59,6 @@
         </div>
     </section>
 
-    {{-- 3. Danh sách Sản phẩm --}}
     <section class="max-w-7xl mx-auto py-16 px-4">
         <div class="text-center mb-12">
             <h2 class="serif text-3xl font-bold text-stone-800 uppercase tracking-widest">Sản Phẩm Thiết Kế</h2>
@@ -70,60 +71,47 @@
                     @forelse($data["product"] as $s)
                     <div class="group bg-white overflow-hidden shadow-sm hover:shadow-xl transition duration-300 border border-stone-100 flex flex-col h-full">
                         <div class="relative h-96 overflow-hidden">
-                            <img src="{{ asset('img/products/' . $s->HinhAnh) }}" 
-                                 class="w-full h-full object-cover group-hover:scale-105 transition duration-700" 
-                                 onerror="this.src='https://placehold.co/400x600?text=No+Image'" alt="{{ $s->TenSanPham }}">
-                            @if($loop->iteration <= 4 && !request('search') && !request('category'))
-                                <div class="absolute top-4 left-4 bg-stone-900 text-white text-[9px] px-3 py-1 uppercase font-bold tracking-widest shadow-sm">Mới nhất</div>
-                            @endif
+                            <img src="{{ asset('img/products/' . $s->HinhAnh) }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
                         </div>
-
                         <div class="p-6 text-center flex-grow flex flex-col justify-between">
                             <div>
-                                <h3 class="serif text-md font-semibold text-stone-700 uppercase tracking-tight line-clamp-1 mb-1">{{$s->TenSanPham}}</h3>
+                                <h3 class="serif text-md font-semibold text-stone-700 uppercase tracking-tight mb-1">{{$s->TenSanPham}}</h3>
                                 <p class="text-[10px] text-stone-400 uppercase tracking-[0.1em] mb-3 italic">
-                                   {{ $s->chatlieu->TenChatLieu ?? 'Vải lụa truyền thống' }}
+                                    {{ $s->chatlieu->TenChatLieu ?? 'Vải lụa truyền thống' }}
                                 </p>
                             </div>
                             <div>
                                 <p class="text-red-800 font-bold text-lg mb-4">{{ number_format($s->GiaBan, 0, ',', '.') }}đ</p>
                                 <div class="pt-4 border-t border-stone-50">
-                                    <a href="{{ route('product.detail', $s->MaSanPham) }}" 
-                                       class="inline-block border-b border-stone-800 text-[10px] hover:text-red-700 hover:border-red-700 transition-all uppercase tracking-[0.2em] pb-1 font-bold">
-                                        Xem chi tiết
-                                    </a>
+                                    <a href="{{ route('product.detail', $s->MaSanPham) }}" class="inline-block border-b border-stone-800 text-[10px] hover:text-red-700 hover:border-red-700 transition-all uppercase tracking-[0.2em] pb-1 font-bold">Xem chi tiết</a>
                                 </div>
                             </div>
                         </div>
                     </div>
                     @empty
-                        <div class="col-span-full text-center py-20 text-stone-500 italic text-lg">Không tìm thấy sản phẩm nào phù hợp.</div>
+                        <div class="col-span-full text-center py-20 text-stone-500 italic">Không tìm thấy sản phẩm phù hợp.</div>
                     @endforelse
                 </div>
 
-                {{-- Pagination --}}
                 <div class="mt-12 flex justify-center ajax-pagination">
-                    {{ $data["product"]->links() }}
+                    {{ $data["product"]->appends(request()->all())->links() }}
                 </div>
             @show
         </div>
     </section>
 
-    {{-- Khám phá danh mục --}}
     <section class="py-16 bg-stone-50 border-t border-stone-200">
         <div class="max-w-7xl mx-auto px-4 text-center">
-            <h2 class="serif text-3xl font-bold text-stone-800 italic mb-8">
-                Khám phá danh mục
-            </h2>
+            <div class="mb-12">
+                <h2 class="serif text-3xl font-bold text-stone-800 uppercase tracking-widest">Khám phá danh mục</h2>
+                <div class="h-1 w-20 bg-red-800 mx-auto mt-4"></div>
+            </div>
 
-            {{-- Hiển thị giới hạn 4 danh mục --}}
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                 @foreach($data['categories']->take(4) as $cat)
                     <a href="{{ route('category.show', $cat->MaLoaiSP) }}"
                     class="relative h-48 group overflow-hidden rounded-xl shadow-md bg-stone-400 flex items-center justify-center">
-
                         <div class="absolute inset-0 bg-stone-900/40 group-hover:bg-red-900/60 transition-colors duration-500"></div>
-
                         <span class="relative text-white font-bold uppercase tracking-[0.15em] text-sm px-4 text-center">
                             {{ $cat->TenLoaiSP }}
                         </span>
@@ -131,66 +119,45 @@
                 @endforeach
             </div>
 
-            {{-- Nút Xem tất cả --}}
             <div class="mt-10">
                 <a href="{{ route('products.category') }}"
-                class="inline-block border border-stone-800 px-8 py-3 text-sm uppercase tracking-widest 
-                        hover:bg-stone-800 hover:text-white transition-all duration-300 rounded-full">
+                class="inline-block border border-stone-800 px-8 py-3 text-sm uppercase tracking-widest hover:bg-stone-800 hover:text-white transition-all duration-300 rounded-full font-bold">
                     Xem tất cả
                 </a>
             </div>
         </div>
     </section>
 
-    {{-- AJAX SCRIPT --}}
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
             function fetchProducts(url) {
-                let search = $('input[name="search"]').val();
-                let category = $('select[name="category"]').val();
-                let sort = $('select[name="sort"]').val();
-                let color = $('select[name="color"]').val();
-
+                let params = $('#filter-form').serialize();
                 $.ajax({
                     url: url,
                     type: "GET",
-                    data: { search, category, sort, color },
-                    beforeSend: function() {
-                        $('#product-data-container').css('opacity', '0.5'); // Hiệu ứng làm mờ
-                    },
+                    data: params,
+                    beforeSend: function() { $('#product-data-container').css('opacity', '0.5'); },
                     success: function(response) {
                         $('#product-data-container').html(response.html).css('opacity', '1');
-                        
-                        // Cập nhật thanh địa chỉ mà không load lại trang
-                        let newUrl = url + (url.indexOf('?') !== -1 ? '&' : '?') + $.param({search, category, sort});
-                        window.history.pushState({}, "", newUrl);
-                    },
-                    error: function() {
-                        $('#product-data-container').css('opacity', '1');
-                        console.error('Lỗi khi tải dữ liệu sản phẩm.');
+                        window.history.pushState({}, "", url + (url.indexOf('?') !== -1 ? '&' : '?') + params);
                     }
                 });
             }
 
+            $('.filter-select').on('change', function() { fetchProducts("{{ route('home') }}"); });
+            
             let timer;
             $('input[name="search"]').on('input', function() {
                 clearTimeout(timer);
                 timer = setTimeout(() => fetchProducts("{{ route('home') }}"), 500);
             });
 
-            $('.filter-select').on('change', function() {
-                fetchProducts("{{ route('home') }}");
-            });
-
             $(document).on('click', '.ajax-pagination a', function(e) {
                 e.preventDefault();
-                let url = $(this).attr('href');
-                fetchProducts(url);
+                fetchProducts($(this).attr('href'));
                 $('html, body').animate({ scrollTop: $("#product-section").offset().top - 100 }, 500);
             });
-
-            $('#filter-form').on('submit', function(e) { e.preventDefault(); });
         });
     </script>
 @endsection
