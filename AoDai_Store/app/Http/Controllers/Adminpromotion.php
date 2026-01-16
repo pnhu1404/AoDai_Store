@@ -59,4 +59,8 @@ class Adminpromotion extends Controller
         $promotion->delete();
         return redirect()->route('promotions.index');
     }
+    public function show($id){
+        $promotion = Promotion::findOrFail($id);
+        return view('admin.promotions.show', compact('promotion'));
+    }
 }

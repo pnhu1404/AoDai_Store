@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\Product;
+use App\Models\Promotion;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -98,11 +99,17 @@ public function addToCart(Request $request, $id)
         'new_qty' => $item->SoLuong
     ]);
 }
+
     public function checkout()
     {
     if(Auth::check()){
         $cartItems = Cart::with('sanpham','size')
             ->where('MaTaiKhoan', Auth::id())->get();
+        $promotions = Promotion::where('TrangThai', 1)
+            ->where('NgayBatDau', '<=', now())
+            ->where('NgayKetThuc', '>=', now())
+            ->where('Soluong', '>', 0)
+            ->get();
         
     } 
 
@@ -127,7 +134,7 @@ public function addToCart(Request $request, $id)
         $addressData['tinhThanh'] = $parts[3] ?? '';
     }
 
-    return view('client.checkout.index', compact('cartItems', 'totalPrice', 'info', 'addressData'));
+    return view('client.checkout.index', compact('cartItems', 'totalPrice', 'info', 'addressData', 'promotions'));
     }
 
     public function checkoutSuccess(Request $request)
