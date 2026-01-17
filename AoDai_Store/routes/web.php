@@ -12,6 +12,14 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\AdminMaterialController;
 use App\Http\Controllers\AdminColorController;
+<<<<<<< Updated upstream
+=======
+use App\Http\Controllers\AdminContactController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StatisticsController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\AdminPostController;
+>>>>>>> Stashed changes
 //login
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
@@ -96,3 +104,33 @@ Route::resource('/admin/orders', App\Http\Controllers\AdminOrder::class)->names(
 //contact
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+<<<<<<< Updated upstream
+=======
+//profile
+Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+//statistics
+Route::get('/admin/statistics', [StatisticsController::class, 'index'])
+    ->name('statistics.index');
+// post-client
+Route::get('/gioi-thieu', [PostController::class, 'gioiThieu'])->name('gioithieu');
+Route::get('/blog', [PostController::class, 'index'])->name('blog.index');
+Route::get('/blog/{slug}', [PostController::class, 'show'])->name('blog.show');
+// post-admin
+Route::get('/admin/bai-viet', [AdminPostController::class, 'index'])
+    ->name('admin.baiviet.index');
+
+Route::get('/admin/bai-viet/create', [AdminPostController::class, 'create'])
+    ->name('admin.baiviet.create');
+
+Route::post('/admin/bai-viet', [AdminPostController::class, 'store'])
+    ->name('admin.baiviet.store');
+
+Route::get('/admin/bai-viet/{id}/edit', [AdminPostController::class, 'edit'])
+    ->name('admin.baiviet.edit');
+
+Route::put('/admin/bai-viet/{id}', [AdminPostController::class, 'update'])
+    ->name('admin.baiviet.update');
+
+Route::delete('/admin/bai-viet/{id}', [AdminPostController::class, 'destroy'])
+    ->name('admin.baiviet.destroy');
+>>>>>>> Stashed changes
