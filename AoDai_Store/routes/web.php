@@ -12,14 +12,13 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\AdminMaterialController;
 use App\Http\Controllers\AdminColorController;
-<<<<<<< Updated upstream
-=======
 use App\Http\Controllers\AdminContactController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\AdminPostController;
->>>>>>> Stashed changes
+use App\Http\Controllers\AdminContactController;
+use App\Http\Controllers\ProfileController;
 //login
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
@@ -52,6 +51,11 @@ Route::get('/admin/accounts', [AdminAccountController::class, 'index'])->name('a
 Route::get('/admin/accounts/edit/{MaTaiKhoan}', [AdminAccountController::class, 'edit'])->name('admin.accounts.edit');
 Route::post('/admin/accounts/update/{MaTaiKhoan}', [AdminAccountController::class, 'update'])->name('admin.accounts.update');
 Route::post('/admin/accounts/lock/{MaTaiKhoan}', [AdminAccountController::class, 'lock'])->name('admin.accounts.lock');
+//contact admin
+Route::get('/admin/contacts', [AdminContactController::class, 'index'])->name('admin.contacts.index');
+Route::get('/admin/contacts/{MaLienHe}/edit', [AdminContactController::class, 'edit'])->name('admin.contacts.edit');
+Route::put('/admin/contacts/{MaLienHe}', [AdminContactController::class, 'update'])->name('admin.contacts.update');
+Route::delete('/admin/contacts/{MaLienHe}', [AdminContactController::class, 'destroy'])->name('admin.contacts.destroy');
 
 Route::get('/',[ProductController::class,'index'])->name('home');
 Route::get('/aodai/{id}',[ProductController::class,'detail'])->name('product.detail');
@@ -97,15 +101,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 });
 
-//promotion
-Route::resource('/admin/promotions', App\Http\Controllers\Adminpromotion::class)->names('promotions');
-//order
-Route::resource('/admin/orders', App\Http\Controllers\AdminOrder::class)->names('orders');
+
 //contact
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
-<<<<<<< Updated upstream
-=======
 //profile
 Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
 //statistics
@@ -133,4 +132,6 @@ Route::put('/admin/bai-viet/{id}', [AdminPostController::class, 'update'])
 
 Route::delete('/admin/bai-viet/{id}', [AdminPostController::class, 'destroy'])
     ->name('admin.baiviet.destroy');
->>>>>>> Stashed changes
+//profile
+Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+

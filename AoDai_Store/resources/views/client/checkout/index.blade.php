@@ -181,29 +181,26 @@
         </div>
         <div class="p-6 space-y-4 max-h-[60vh] overflow-y-auto custom-scrollbar">
             
+            @foreach ($promotions as $p )
             <div class="flex border border-stone-200 rounded-xl overflow-hidden group hover:border-red-800 transition-all cursor-pointer" onclick="selectVoucher('GIAM50', 50000, 'Giảm 50k - Khai xuân rực rỡ')">
                 <div class="w-24 bg-red-800 flex flex-col items-center justify-center text-white p-2">
                     <span class="text-xs uppercase font-bold tracking-tighter">Giảm</span>
-                    <span class="text-xl font-bold">50K</span>
-                </div>
-                <div class="p-4 flex-1">
-                    <h4 class="text-xs font-bold text-stone-800 uppercase">Khai xuân rực rỡ</h4>
-                    <p class="text-[10px] text-stone-400 mt-1">Đơn tối thiểu 500k</p>
-                    <p class="text-[9px] text-red-800 font-bold mt-2 italic">HSD: 30/01/2026</p>
-                </div>
-            </div>
+                    @if ($p->LoaiGiam==1)
+                    <span class="text-xl font-bold">{{ $p->GiaTriGiam }}%</span>
+                    @else
+                    <span class="text-xl font-bold">{{ number_format($p->GiaTriGiam,0,',','.') }}đ</span>
+                    @endif
 
-            <div class="flex border border-stone-200 rounded-xl overflow-hidden group hover:border-red-800 transition-all cursor-pointer" onclick="selectVoucher('AOXINH', 100000, 'Giảm 100k - Ưu đãi Áo Xinh')">
-                <div class="w-24 bg-stone-800 flex flex-col items-center justify-center text-white p-2">
-                    <span class="text-xs uppercase font-bold tracking-tighter">Giảm</span>
-                    <span class="text-xl font-bold">100K</span>
+                    
                 </div>
                 <div class="p-4 flex-1">
-                    <h4 class="text-xs font-bold text-stone-800 uppercase">Ưu đãi Áo Xinh</h4>
-                    <p class="text-[10px] text-stone-400 mt-1">Đơn tối thiểu 1.5 triệu</p>
-                    <p class="text-[9px] text-red-800 font-bold mt-2 italic">HSD: 20/02/2026</p>
+                    <h4 class="text-xs font-bold text-stone-800 uppercase">{{ $p->TenKhuyenMai }}</h4>
+                    <p class="text-[10px] text-stone-400 mt-1">Đơn tối thiểu {{ number_format($p->Dieukienkhuyenmai,0,',','.') }}đ</p>
+                    <p class="text-[9px] text-red-800 font-bold mt-2 italic">HSD: {{ $p->NgayKetThuc }}</p>
                 </div>
             </div>
+            @endforeach
+           
 
         </div>
     </div>

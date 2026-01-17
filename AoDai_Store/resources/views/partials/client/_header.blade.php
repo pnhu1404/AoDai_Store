@@ -20,15 +20,8 @@
                 </div>
             </div>
             <a href="#" class="hover:text-red-700 transition">Hướng dẫn chọn size</a>
-            @if (!request()->routeIs('contact.index'))
-<<<<<<< Updated upstream
-            <a href="{{ route('contact.index') }}"
-            class="hover:text-red-700 transition">
-            Liên hệ
-            </a>
-@endif
 
-=======
+            @if (!request()->routeIs('contact.index'))
                 <a href="{{ route('contact.index') }}" class="hover:text-red-700 transition">
                     Liên hệ
                 </a>
@@ -38,7 +31,6 @@
                     Giới thiệu
                 </a>
             @endif
->>>>>>> Stashed changes
         </div>
 
         <div class="flex items-center space-x-5">

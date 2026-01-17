@@ -14,6 +14,7 @@ class Contact extends Model
         'HoTen',
         'Email',
         'NoiDung',
+        'NgayTao',
     ];
 
     public $timestamps = false;
