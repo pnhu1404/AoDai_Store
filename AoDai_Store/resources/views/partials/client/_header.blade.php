@@ -26,8 +26,11 @@
                     Liên hệ
                 </a>
             @endif
-
-
+           @if (!request()->routeIs('gioithieu'))
+                <a href="{{ route('gioithieu') }}" class="hover:text-red-700 transition">
+                    Giới thiệu
+                </a>
+            @endif
         </div>
 
         <div class="flex items-center space-x-5">
