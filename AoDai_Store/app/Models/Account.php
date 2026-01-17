@@ -22,6 +22,10 @@ class Account extends Authenticatable
         'CreatedDate',
     ];
 
+     protected $casts = [
+        'CreatedDate' => 'datetime',
+    ];
+    
     // Laravel mặc định dùng password → đổi sang MatKhau
     public function getAuthPassword()
     {

@@ -22,10 +22,11 @@
             <a href="#" class="hover:text-red-700 transition">Hướng dẫn chọn size</a>
 
             @if (!request()->routeIs('contact.index'))
-                <a href="{{ route('contact.index') }} class="hover:text-red-700 transition">
-                  Liên hệ
+                <a href="{{ route('contact.index') }}" class="hover:text-red-700 transition">
+                    Liên hệ
                 </a>
             @endif
+
 
         </div>
 
