@@ -5,7 +5,7 @@
 @section('content')
 <div class="max-w-7xl mx-auto py-12 space-y-16">
 
-    {{-- ===== PHẦN 1: GIỚI THIỆU ===== --}}
+    
     <section>
         <h1 class="text-3xl font-bold mb-6">
             {{ $gioiThieu->TieuDe ?? 'Giới thiệu' }}
@@ -16,7 +16,7 @@
         </div>
     </section>
 
-    {{-- ===== PHẦN 2: BLOG ===== --}}
+    
     <section>
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-bold">Bài viết Blog</h2>
@@ -45,7 +45,7 @@
         </div>
     </section>
 
-    {{-- ===== PHẦN 3: BÀI VIẾT SẢN PHẨM ===== --}}
+    
     <section>
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-bold">Bài viết về sản phẩm</h2>

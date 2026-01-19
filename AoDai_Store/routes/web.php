@@ -17,8 +17,9 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\AdminPostController;
-use App\Http\Controllers\AdminContactController;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\AdminRatingController;
 //login
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
@@ -134,4 +135,30 @@ Route::delete('/admin/bai-viet/{id}', [AdminPostController::class, 'destroy'])
     ->name('admin.baiviet.destroy');
 //profile
 Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+//favorite
+Route::post('/favorite/toggle/{id}', [FavoriteController::class, 'toggle'])
+    ->name('favorite.toggle')
+    ->middleware('auth');
+
+Route::get('/favorites', [FavoriteController::class, 'index'])
+    ->name('favorite.index')
+    ->middleware('auth');    
+//rating
+Route::post('/rating/{MaSanPham}', 
+    [App\Http\Controllers\RatingController::class, 'store']
+)->name('rating.store')->middleware('auth');
+//cancel oders
+Route::patch('/orders/{id}/cancel', [OrderController::class, 'cancel'])
+    ->name('orders.cancel')
+    ->middleware('auth');
+//hide comments (admin)
+Route::middleware(['auth'])->prefix('admin')->group(function () {
+    Route::get('/comments', [AdminRatingController::class, 'index'])
+        ->name('admin.comments.index');
+
+    Route::patch('/comments/{id}/hide', [AdminRatingController::class, 'hide'])
+        ->name('admin.comments.hide');
+    Route::post('/ratings/{id}/show', [AdminRatingController::class, 'show'])->name('admin.comments.show');
+});
+
 

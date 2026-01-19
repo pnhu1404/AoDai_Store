@@ -59,6 +59,12 @@
                     <i class="fas fa-newspaper mr-3"></i>
                     Quản lý bài viết
                     </a>
+                    <a href="{{ route('admin.comments.index') }}"
+                    class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                        <i class="fas fa-comments mr-3"></i>
+                    Quản lý bình luận
+                    </a>
+
                     <a href="#" class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition mt-10 text-red-400">
                         <i class="fas fa-sign-out-alt mr-3"></i> Đăng xuất
                     </a>
