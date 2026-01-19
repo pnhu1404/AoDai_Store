@@ -49,7 +49,7 @@
                 <select name="loai_giam" class="border border-stone-200 rounded-xl px-4 py-2 text-sm focus:ring-stone-500 focus:border-stone-500 text-stone-600">
                     <option value="">Tất cả loại ưu đãi</option>
                     <option value="1" {{ request('loai_giam') == '1' ? 'selected' : '' }}>Giảm theo %</option>
-                    <option value="2" {{ request('loai_giam') == '2' ? 'selected' : '' }}>Giảm theo số tiền</option>
+                    <option value="0" {{ request('loai_giam') == '0' ? 'selected' : '' }}>Giảm theo số tiền</option>
                 </select>
 
                 <select name="status" class="border border-stone-200 rounded-xl px-4 py-2 text-sm focus:ring-stone-500 focus:border-stone-500 text-stone-600">
@@ -75,7 +75,7 @@
                 <thead>
                     <tr class="bg-stone-50/50 text-stone-500 text-[10px] uppercase tracking-[0.2em] font-bold border-b border-stone-100">
                         <th class="px-6 py-5">Chi tiết Khuyến mãi</th>
-                        <th class="px-6 py-5 text-center">Mã Code</th>
+                        
                         <th class="px-6 py-5 text-center">Mức ưu đãi</th>
                         <th class="px-6 py-5 text-center">Số lượng</th>
                         <th class="px-6 py-5 text-center">Thời hạn</th>
@@ -93,11 +93,7 @@
                                 <span class="text-stone-600 font-bold">{{ number_format($promotion->Dieukienkhuyenmai, 0, ',', '.') }}đ</span>
                             </p>
                         </td>
-                        <td class="px-6 py-5 text-center">
-                            <span class="px-3 py-1.5 bg-stone-800 text-white rounded-lg text-[10px] font-mono font-bold tracking-[0.1em] uppercase">
-                                {{ $promotion->MaCode }}
-                            </span>
-                        </td>
+                        
                         <td class="px-6 py-5 text-center">
                             @if($promotion->LoaiGiam == 1) 
                                 <div class="flex flex-col items-center">
@@ -133,23 +129,47 @@
                                 </span>
                             @endif
                         </td>
+                       =
                         <td class="px-6 py-5">
                             <div class="flex justify-end space-x-3">
-                                <a href="{{ route('promotions.edit', $promotion->MaKhuyenMai) }}" class="text-stone-400 hover:text-blue-600 transition-all transform hover:scale-110">
+
+                                {{-- Sửa --}}
+                                <a href="{{ route('promotions.edit', $promotion->MaKhuyenMai) }}"
+                                class="text-stone-400 hover:text-blue-600 transition-all transform hover:scale-110" 
+                                 title="Sửa"
+                                 >
                                     <i class="fas fa-pencil-alt text-xs"></i>
                                 </a>
-                                
-                                <button type="button" 
-                                        onclick="confirmDelete('{{ $promotion->MaKhuyenMai }}', '{{ $promotion->TenKhuyenMai }}')" 
-                                        class="text-stone-400 hover:text-red-700 transition-all transform hover:scale-110">
-                                    <i class="fas fa-trash-alt text-xs"></i>
-                                </button>
 
-                                <form id="delete-{{ $promotion->MaKhuyenMai }}" action="{{ route('promotions.destroy', $promotion->MaKhuyenMai) }}" method="POST" class="hidden">
-                                    @csrf @method('DELETE')
-                                </form>
+                                {{-- Xóa --}}
+                                @if ($promotion->TrangThai==1)
+                                    <button type="button"
+                                            onclick="confirmDelete('{{ $promotion->MaKhuyenMai }}', '{{ $promotion->TenKhuyenMai }}')"
+                                            class="text-stone-400 hover:text-red-700 transition-all transform hover:scale-110" 
+                                             title="Dừng"
+                                             >
+                                        <i class="fas fa-trash-alt text-xs"></i>
+                                    </button>
+                                @endif
+
+                                {{-- Khôi phục --}}
+                                @if ($promotion->TrangThai==0)
+                                    <form action="{{ route('promotions.restore', $promotion->MaKhuyenMai) }}" method="POST">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit"
+                                                class="text-stone-400 hover:text-green-600 transition-all transform hover:scale-110"
+                                                title="Khôi phục">
+                                            <i class="fas fa-undo text-xs"></i>
+                                        </button>
+                                    </form>
+                                @endif
+
+                               
                             </div>
                         </td>
+
+
                     </tr>
                     @empty
                     <tr>
@@ -172,7 +192,7 @@
     function confirmDelete(id, name) {
         Swal.fire({
             title: '<span class="serif">Xác nhận gỡ bỏ</span>',
-            html: `Mã ưu đãi <b>${name}</b> sẽ bị xóa khỏi hệ thống?`,
+            html: `Mã ưu đãi <b>${name}</b> sẽ bị tạm dừng?`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Đồng ý',
