@@ -16,7 +16,7 @@
                     AD HERITAGE
                 </div>
                 <nav class="mt-6">
-                    <a href="{{ route('admin.home') }}" class="flex items-center py-3 px-6 bg-blue-600 text-white">
+                    <a href="{{ route('admin.dashboard') }}" class="flex items-center py-3 px-6 bg-blue-600 text-white">
                         <i class="fas fa-chart-line mr-3"></i> Dashboard
                     </a>
                     <a href="{{ route('admin.products.index') }}" class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition">

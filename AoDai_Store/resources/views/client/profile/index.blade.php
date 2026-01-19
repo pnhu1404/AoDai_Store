@@ -1,5 +1,5 @@
 @extends('layouts.client')
-
+@section('title', 'Trang cá nhân')
 @section('content')
 <div class="max-w-6xl mx-auto py-8">
 

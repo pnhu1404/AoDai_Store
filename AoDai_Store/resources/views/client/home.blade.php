@@ -58,48 +58,122 @@
             </form>
         </div>
     </section>
-
+    {{-- SẢN PHẨM BÁN CHẠY --}}
     <section class="max-w-7xl mx-auto py-16 px-4">
         <div class="text-center mb-12">
-            <h2 class="serif text-3xl font-bold text-stone-800 uppercase tracking-widest">Sản Phẩm Thiết Kế</h2>
+            <h2 class="serif text-3xl font-bold text-stone-800 uppercase tracking-widest">
+                Sản Phẩm Bán Chạy
+            </h2>
             <div class="h-1 w-20 bg-red-800 mx-auto mt-4"></div>
         </div>
 
-        <div id="product-data-container">
-            @section('product_list')
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                    @forelse($data["product"] as $s)
-                    <div class="group bg-white overflow-hidden shadow-sm hover:shadow-xl transition duration-300 border border-stone-100 flex flex-col h-full">
-                        <div class="relative h-96 overflow-hidden">
-                            <img src="{{ asset('img/products/' . $s->HinhAnh) }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            @forelse($data['bestSellers'] as $s)
+                <div class="group bg-white overflow-hidden shadow-sm hover:shadow-xl transition duration-300 border border-stone-100 flex flex-col h-full">
+                    <div class="relative h-96 overflow-hidden">
+                        <img src="{{ asset('img/products/' . $s->HinhAnh) }}"
+                            class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
+                    </div>
+
+                    <div class="p-6 text-center flex-grow flex flex-col justify-between">
+                        <div>
+                            <h3 class="serif text-md font-semibold text-stone-700 uppercase tracking-tight mb-1">
+                                {{ $s->TenSanPham }}
+                            </h3>
+                            <p class="text-[10px] text-stone-400 uppercase tracking-[0.1em] mb-3 italic">
+                                {{ $s->chatlieu->TenChatLieu ?? 'Vải lụa truyền thống' }}
+                            </p>
                         </div>
-                        <div class="p-6 text-center flex-grow flex flex-col justify-between">
-                            <div>
-                                <h3 class="serif text-md font-semibold text-stone-700 uppercase tracking-tight mb-1">{{$s->TenSanPham}}</h3>
-                                <p class="text-[10px] text-stone-400 uppercase tracking-[0.1em] mb-3 italic">
-                                    {{ $s->chatlieu->TenChatLieu ?? 'Vải lụa truyền thống' }}
-                                </p>
-                            </div>
-                            <div>
-                                <p class="text-red-800 font-bold text-lg mb-4">{{ number_format($s->GiaBan, 0, ',', '.') }}đ</p>
-                                <div class="pt-4 border-t border-stone-50">
-                                    <a href="{{ route('product.detail', $s->MaSanPham) }}" class="inline-block border-b border-stone-800 text-[10px] hover:text-red-700 hover:border-red-700 transition-all uppercase tracking-[0.2em] pb-1 font-bold">Xem chi tiết</a>
-                                </div>
+
+                        <div>
+                            <p class="text-red-800 font-bold text-lg mb-4">
+                                {{ number_format($s->GiaBan, 0, ',', '.') }}đ
+                            </p>
+                            <div class="pt-4 border-t border-stone-50">
+                                <a href="{{ route('product.detail', $s->MaSanPham) }}"
+                                class="inline-block border-b border-stone-800 text-[10px]
+                                        hover:text-red-700 hover:border-red-700 transition-all
+                                        uppercase tracking-[0.2em] pb-1 font-bold">
+                                    Xem chi tiết
+                                </a>
                             </div>
                         </div>
                     </div>
-                    @empty
-                        <div class="col-span-full text-center py-20 text-stone-500 italic">Không tìm thấy sản phẩm phù hợp.</div>
-                    @endforelse
                 </div>
+            @empty
+                <div class="col-span-full text-center py-20 text-stone-500 italic">
+                    Không có sản phẩm bán chạy.
+                </div>
+            @endforelse
+        </div>
 
-                <div class="mt-12 flex justify-center ajax-pagination">
-                    {{ $data["product"]->appends(request()->all())->links() }}
-                </div>
-            @show
+        <div class="mt-10 text-center">
+            <a href="{{ route('products.index') }}"
+            class="inline-block border border-stone-800 px-8 py-3 text-sm uppercase tracking-widest
+                    hover:bg-stone-800 hover:text-white transition-all duration-300 rounded-full font-bold">
+                Xem tất cả
+            </a>
         </div>
     </section>
 
+    {{-- SẢN PHẨM MỚI --}}
+    <section class="max-w-7xl mx-auto py-16 px-4">
+        <div class="text-center mb-12">
+            <h2 class="serif text-3xl font-bold text-stone-800 uppercase tracking-widest">
+                Sản Phẩm Mới
+            </h2>
+            <div class="h-1 w-20 bg-red-800 mx-auto mt-4"></div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            @forelse($data['newProducts'] as $s)
+                <div class="group bg-white overflow-hidden shadow-sm hover:shadow-xl transition duration-300 border border-stone-100 flex flex-col h-full">
+                    <div class="relative h-96 overflow-hidden">
+                        <img src="{{ asset('img/products/' . $s->HinhAnh) }}"
+                            class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
+                    </div>
+
+                    <div class="p-6 text-center flex-grow flex flex-col justify-between">
+                        <div>
+                            <h3 class="serif text-md font-semibold text-stone-700 uppercase tracking-tight mb-1">
+                                {{ $s->TenSanPham }}
+                            </h3>
+                            <p class="text-[10px] text-stone-400 uppercase tracking-[0.1em] mb-3 italic">
+                                {{ $s->chatlieu->TenChatLieu ?? 'Vải lụa truyền thống' }}
+                            </p>
+                        </div>
+
+                        <div>
+                            <p class="text-red-800 font-bold text-lg mb-4">
+                                {{ number_format($s->GiaBan, 0, ',', '.') }}đ
+                            </p>
+                            <div class="pt-4 border-t border-stone-50">
+                                <a href="{{ route('product.detail', $s->MaSanPham) }}"
+                                class="inline-block border-b border-stone-800 text-[10px]
+                                        hover:text-red-700 hover:border-red-700 transition-all
+                                        uppercase tracking-[0.2em] pb-1 font-bold">
+                                    Xem chi tiết
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="col-span-full text-center py-20 text-stone-500 italic">
+                    Không có sản phẩm mới.
+                </div>
+            @endforelse
+        </div>
+        <div class="mt-10 text-center">
+            <a href="{{ route('products.index') }}"
+            class="inline-block border border-stone-800 px-8 py-3 text-sm uppercase tracking-widest
+                    hover:bg-stone-800 hover:text-white transition-all duration-300 rounded-full font-bold">
+                Xem tất cả
+            </a>
+        </div>
+    </section>
+
+    {{-- KHÁM PHÁ DANH MỤC --}}
     <section class="py-16 bg-stone-50 border-t border-stone-200">
         <div class="max-w-7xl mx-auto px-4 text-center">
             <div class="mb-12">
@@ -153,11 +227,11 @@
                 timer = setTimeout(() => fetchProducts("{{ route('home') }}"), 500);
             });
 
-            $(document).on('click', '.ajax-pagination a', function(e) {
+            $(document).on('click', '#product-data-container .ajax-pagination a', function(e) {
                 e.preventDefault();
                 fetchProducts($(this).attr('href'));
-                $('html, body').animate({ scrollTop: $("#product-section").offset().top - 100 }, 500);
             });
+
         });
     </script>
 @endsection

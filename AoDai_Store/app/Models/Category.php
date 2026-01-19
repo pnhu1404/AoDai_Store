@@ -21,4 +21,5 @@ class Category extends Model
         'TrangThai',
         'CreatedDate',
     ];
+    
 }
