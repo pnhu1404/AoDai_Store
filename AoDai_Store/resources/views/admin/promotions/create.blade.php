@@ -3,6 +3,31 @@
 @section('title', 'Thêm Khuyến mãi mới')
 
 @section('content')
+@if (session('success'))
+    <div class="max-w-4xl mx-auto mb-6">
+        <div class="flex items-center justify-between bg-green-50 border border-green-200 text-green-800 px-6 py-4 rounded-2xl shadow-sm">
+            <div class="flex items-center space-x-3">
+                <i class="fas fa-check-circle text-green-600"></i>
+                <span class="text-sm font-medium">
+                    {{ session('success') }}
+                </span>
+            </div>
+            <button onclick="this.parentElement.remove()" class="text-green-500 hover:text-green-700">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+@endif
+@if ($errors->any())
+    <div class="mb-4 p-4 bg-red-50 border-l-4 border-red-500 text-red-700">
+        <p class="font-bold">Có lỗi xảy ra:</p>
+        <ul class="list-disc ml-5">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 <div class="max-w-4xl mx-auto">
     <div class="flex items-center justify-between mb-8">
         <div>
@@ -27,12 +52,7 @@
                         placeholder="Ví dụ: Ưu đãi mùa hè 2024">
                 </div>
 
-                <div>
-                    <label class="block text-[11px] uppercase tracking-widest font-bold text-stone-400 mb-2">Mã Code (Voucher)</label>
-                    <input type="text" name="MaCode" required
-                        class="w-full px-4 py-3 rounded-xl border border-stone-200 focus:ring-2 focus:ring-stone-900 focus:border-stone-900 outline-none transition-all font-mono uppercase"
-                        placeholder="SUMMER24">
-                </div>
+                
 
                 <div>
                     <label class="block text-[11px] uppercase tracking-widest font-bold text-stone-400 mb-2">Số lượng phát hành</label>
@@ -44,7 +64,7 @@
                     <label class="block text-[11px] uppercase tracking-widest font-bold text-stone-400 mb-2">Loại hình ưu đãi</label>
                     <select name="LoaiGiam" id="LoaiGiam" class="w-full px-4 py-3 rounded-xl border border-stone-200 focus:ring-2 focus:ring-stone-900 focus:border-stone-900 outline-none transition-all">
                         <option value="1">Giảm theo phần trăm (%)</option>
-                        <option value="2">Giảm theo số tiền cố định (đ)</option>
+                        <option value="0">Giảm theo số tiền cố định (đ)</option>
                     </select>
                 </div>
 
@@ -109,10 +129,22 @@
 </div>
 
 <script>
-    // Ẩn/Hiện ô Giảm tối đa tùy theo loại giảm giá
-    document.getElementById('LoaiGiam').addEventListener('change', function() {
-        const wrapper = document.getElementById('max_discount_wrapper');
-        wrapper.style.display = this.value == '1' ? 'block' : 'none';
-    });
+    const loaiGiamSelect = document.getElementById('LoaiGiam');
+    const maxDiscountWrapper = document.getElementById('max_discount_wrapper');
+
+    function toggleMaxDiscount() {
+        // Hiện nếu là 1 (%), Ẩn nếu là 0 (tiền mặt)
+        if (loaiGiamSelect.value == '1') {
+            maxDiscountWrapper.style.display = 'block';
+        } else {
+            maxDiscountWrapper.style.display = 'none';
+        }
+    }
+
+    // Lắng nghe sự kiện thay đổi
+    loaiGiamSelect.addEventListener('change', toggleMaxDiscount);
+    
+    // Gọi hàm ngay khi trang vừa load xong
+    toggleMaxDiscount();
 </script>
 @endsection

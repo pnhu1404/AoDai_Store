@@ -188,7 +188,7 @@
                 {{ $isDisabled ? 'opacity-50 cursor-not-allowed grayscale' : 'hover:border-red-800 cursor-pointer' }}" 
 
                 @if(!$isDisabled) 
-                    onclick="selectVoucher('{{$p->MaKhuyenMai}}', {{$p->GiaTriGiam}}, '{{$p->TenKhuyenMai}}', {{$p->LoaiGiam}}, {{$p->Dieukienkhuyenmai}})" 
+                    onclick="selectVoucher('{{$p->MaKhuyenMai}}',{{ $p->GiamToiDa?$p->GiamToiDa:0 }}, {{$p->GiaTriGiam}}, '{{$p->TenKhuyenMai}}', {{$p->LoaiGiam}})" 
                 @endif>
             
             <div class="w-24 {{ $isDisabled ? 'bg-stone-400' : 'bg-red-800' }} flex flex-col items-center justify-center text-white p-2">
@@ -204,6 +204,9 @@
                 <div class="p-4 flex-1">
                     <h4 class="text-xs font-bold text-stone-800 uppercase">{{ $p->TenKhuyenMai }}</h4>
                     <p class="text-[10px] text-stone-400 mt-1">Đơn tối thiểu {{ number_format($p->Dieukienkhuyenmai,0,',','.') }}đ</p>
+                    @if ($p->LoaiGiam==1)
+                    <span class="text-[9px] mt-1 italic">Tối đa {{ $p->GiamToiDa ? number_format($p->GiamToiDa,0,',','.') . 'đ' : 'không giới hạn' }}</span>
+                    @endif
                     <p class="text-[9px] text-red-800 font-bold mt-2 italic">HSD: {{ $p->NgayKetThuc }}</p>
                 </div>
             </div>
@@ -219,7 +222,7 @@
         document.getElementById('voucherModal').classList.toggle('hidden');
     }
 
-    function selectVoucher(code, amount, description,type) {
+    function selectVoucher(code, maxAmount, amount, description, type) {
         // Cập nhật giao diện
        
         document.getElementById('selected_voucher').classList.remove('hidden');
@@ -234,14 +237,19 @@
          let discountValue = document.getElementById('discount_value');
         let finalTotal = document.getElementById('final_total');
         let finalt = document.getElementById('final_payment');
-
+        alert(maxAmount)
         discountRow.classList.remove('hidden');
         discountAmount.innerText = amount.toLocaleString('vi-VN');
         // discountValue.value = amount.toLocaleString('vi-VN');
           let displayText = '';
         if(type==1){
             displayText=amount +'%';
-            amount = Math.floor(basePrice * (amount / 100));
+            if( maxAmount>0&&maxAmount < (basePrice * (amount / 100))){
+                amount = maxAmount;
+            }
+            else if(maxAmount==0){
+                amount = Math.floor(basePrice * (amount / 100));
+            }
             finalTotal.innerText = (basePrice - amount).toLocaleString('vi-VN') + 'đ';
             discountValue.value = amount.toLocaleString('vi-VN');
             finalt.value= basePrice - amount;

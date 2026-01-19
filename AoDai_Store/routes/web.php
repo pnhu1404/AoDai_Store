@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminAccountController;
+use App\Http\Controllers\Adminpromotion;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AdminProductController;
@@ -17,8 +18,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\AdminPostController;
-use App\Http\Controllers\AdminContactController;
-use App\Http\Controllers\ProfileController;
+
 //login
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
@@ -90,6 +90,9 @@ Route::delete('/admin/categories/delete/{MaSanPham}', [AdminCategoryController::
 
 //promotion
 Route::resource('/admin/promotions', App\Http\Controllers\Adminpromotion::class)->names('promotions');
+Route::patch('/admin/promotions/{id}/restore',
+    [Adminpromotion::class, 'restore']
+)->name('promotions.restore');
 //order
 Route::resource('/admin/orders', App\Http\Controllers\AdminOrder::class)->names('orders');
 
