@@ -3,6 +3,12 @@
 @section('title', 'Nét đẹp truyền thống Việt')
 
 @section('content')
+@php
+    $isSearching = request()->filled('search')
+        || request()->filled('category')
+        || request()->filled('color')
+        || request()->filled('sort');
+@endphp
     <section class="relative h-[600px] flex items-center justify-center bg-gray-200">
         <div class="absolute inset-0 z-0">
             <img src="https://static.dchic.vn/uploads/media/2025/12/BLOG%20WEB%20MO%20BAN%20SOM%20AO%20DAI-325256125.jpg" 
@@ -59,8 +65,8 @@
             </form>
         </div>
     </section>
-    {{-- SẢN PHẨM BÁN CHẠY --}}
-    <section class="max-w-7xl mx-auto py-16 px-4">
+    <div id="product-data-container">
+        <section class="max-w-7xl mx-auto py-16 px-4">
         <div class="text-center mb-12">
             <h2 class="serif text-3xl font-bold text-stone-800 uppercase tracking-widest">
                 Sản Phẩm Bán Chạy
@@ -173,6 +179,8 @@
             </a>
         </div>
     </section>
+    </div>
+    
 
     {{-- KHÁM PHÁ DANH MỤC --}}
     <section class="py-16 bg-stone-50 border-t border-stone-200">
