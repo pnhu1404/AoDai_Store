@@ -61,19 +61,6 @@
                     @enderror
                 </div>
 
-                
-                <div>
-                    <label class="block font-semibold mb-2 text-gray-700">
-                        Số điện thoại
-                    </label>
-                    <input type="text"
-                           name="dien_thoai"
-                           value="{{ old('dien_thoai') }}"
-                           class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none"
-                           placeholder="0123 456 789">
-                </div>
-
-               
                 <div class="col-span-2">
                     <label class="block font-semibold mb-2 text-gray-700">
                         Nội dung liên hệ

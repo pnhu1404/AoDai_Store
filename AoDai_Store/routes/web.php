@@ -12,6 +12,13 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\AdminMaterialController;
 use App\Http\Controllers\AdminColorController;
+use App\Http\Controllers\AdminContactController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StatisticsController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\AdminPostController;
+use App\Http\Controllers\AdminContactController;
+use App\Http\Controllers\ProfileController;
 //login
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
@@ -20,7 +27,7 @@ Route::get('/admin', function () {
     return view('admin.home'); // Blade admin
 })->middleware(['auth']);
 Route::get('/', function () {
- return view('client.home'); // Blade user
+    return view('client.home'); // Blade user
 })->middleware('auth');
 //register
 Route::get('/register', [RegisterController::class, 'showRegisterForm'])->name('register');
@@ -44,6 +51,11 @@ Route::get('/admin/accounts', [AdminAccountController::class, 'index'])->name('a
 Route::get('/admin/accounts/edit/{MaTaiKhoan}', [AdminAccountController::class, 'edit'])->name('admin.accounts.edit');
 Route::post('/admin/accounts/update/{MaTaiKhoan}', [AdminAccountController::class, 'update'])->name('admin.accounts.update');
 Route::post('/admin/accounts/lock/{MaTaiKhoan}', [AdminAccountController::class, 'lock'])->name('admin.accounts.lock');
+//contact admin
+Route::get('/admin/contacts', [AdminContactController::class, 'index'])->name('admin.contacts.index');
+Route::get('/admin/contacts/{MaLienHe}/edit', [AdminContactController::class, 'edit'])->name('admin.contacts.edit');
+Route::put('/admin/contacts/{MaLienHe}', [AdminContactController::class, 'update'])->name('admin.contacts.update');
+Route::delete('/admin/contacts/{MaLienHe}', [AdminContactController::class, 'destroy'])->name('admin.contacts.destroy');
 
 Route::get('/',[ProductController::class,'index'])->name('home');
 Route::get('/aodai/{id}',[ProductController::class,'detail'])->name('product.detail');
@@ -62,7 +74,6 @@ Route::post('/admin/products/store', [AdminProductController::class, 'store'])->
 Route::get('/admin/products/edit/{MaSanPham}', [AdminProductController::class, 'edit'])->name('admin.products.edit');
 Route::put('/admin/products/update/{MaSanPham}', [AdminProductController::class, 'update'])->name('admin.products.update');
 Route::delete('/admin/products/delete/{MaSanPham}', [AdminProductController::class, 'destroy'])->name('admin.products.destroy');
-Route::post('/admin/products/toggle-status/{id}', [AdminProductController::class, 'toggleStatus'])->name('admin.products.toggleStatus');
 
 
 //check out 
@@ -75,7 +86,6 @@ Route::post('/admin/categories/store', [AdminCategoryController::class, 'store']
 Route::get('/admin/categories/edit/{MaSanPham}', [AdminCategoryController::class, 'edit'])->name('admin.categories.edit');
 Route::put('/admin/categories/update/{MaSanPham}', [AdminCategoryController::class, 'update'])->name('admin.categories.update');
 Route::delete('/admin/categories/delete/{MaSanPham}', [AdminCategoryController::class, 'destroy'])->name('admin.categories.destroy');
-Route::post('/admin/categories/toggle-status/{id}', [AdminCategoryController::class, 'toggleStatus'])->name('admin.categories.toggleStatus');
 
 
 //promotion
@@ -91,10 +101,37 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 });
 
-//promotion
-Route::resource('/admin/promotions', App\Http\Controllers\Adminpromotion::class)->names('promotions');
-//order
-Route::resource('/admin/orders', App\Http\Controllers\AdminOrder::class)->names('orders');
+
 //contact
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+//profile
+Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+//statistics
+Route::get('/admin/statistics', [StatisticsController::class, 'index'])
+    ->name('statistics.index');
+// post-client
+Route::get('/gioi-thieu', [PostController::class, 'gioiThieu'])->name('gioithieu');
+Route::get('/blog', [PostController::class, 'index'])->name('blog.index');
+Route::get('/blog/{slug}', [PostController::class, 'show'])->name('blog.show');
+// post-admin
+Route::get('/admin/bai-viet', [AdminPostController::class, 'index'])
+    ->name('admin.baiviet.index');
+
+Route::get('/admin/bai-viet/create', [AdminPostController::class, 'create'])
+    ->name('admin.baiviet.create');
+
+Route::post('/admin/bai-viet', [AdminPostController::class, 'store'])
+    ->name('admin.baiviet.store');
+
+Route::get('/admin/bai-viet/{id}/edit', [AdminPostController::class, 'edit'])
+    ->name('admin.baiviet.edit');
+
+Route::put('/admin/bai-viet/{id}', [AdminPostController::class, 'update'])
+    ->name('admin.baiviet.update');
+
+Route::delete('/admin/bai-viet/{id}', [AdminPostController::class, 'destroy'])
+    ->name('admin.baiviet.destroy');
+//profile
+Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+
