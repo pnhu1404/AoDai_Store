@@ -3,7 +3,6 @@
 @section('title', 'Danh mục: ' . $category->TenLoaiSP)
 
 @section('content')
-    {{-- Header của danh mục --}}
     <section class="bg-stone-100 py-12 border-b border-stone-200">
         <div class="max-w-7xl mx-auto px-4 text-center">
             <h1 class="serif text-4xl font-bold text-stone-800 uppercase tracking-widest">

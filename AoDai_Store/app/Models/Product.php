@@ -53,6 +53,6 @@ class Product extends Model
         'HinhAnh',
         'TrangThai',
         'CreatedDate',
-        'MoTa'
+        'MoTa',
     ];
 }

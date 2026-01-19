@@ -42,8 +42,9 @@
                     <select name="category" class="filter-select border-stone-300 focus:border-red-800 focus:ring-0 rounded-lg text-sm min-w-[150px] cursor-pointer bg-white">
                         <option value="">Tất cả danh mục</option>
                         @foreach($data['categories'] as $cat)
-                            <option value="{{ $cat->MaLoaiSP }}" {{ request('category') == $cat->MaLoaiSP ? 'selected' : '' }}>
-                                {{ $cat->TenLoaiSP }}
+                            <option value="{{ $cat['MaLoaiSP'] }}"
+                                {{ request('category') == $cat['MaLoaiSP'] ? 'selected' : '' }}>
+                                {{ $cat['TenLoaiSP'] }}
                             </option>
                         @endforeach
                     </select>
