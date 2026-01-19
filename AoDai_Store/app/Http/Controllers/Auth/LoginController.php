@@ -50,7 +50,7 @@ class LoginController extends Controller
              $cartController->mergeCartAfterLogin($oldSessionId);
              $user = Auth::user();
             if($user->Role == 'Admin'){
-                return redirect()->intended('/admin');
+                return redirect()->intended('admin.dashboard');
             } elseif ($user->Role == 'User') {
                 return redirect()->intended('/');
             }

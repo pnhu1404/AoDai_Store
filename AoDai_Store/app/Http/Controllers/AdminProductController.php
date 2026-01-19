@@ -14,9 +14,10 @@ class AdminProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::with(['chatlieu', 'loaisanpham']);
+        $query = Product::with(['chatlieu', 'loaisanpham', 'loaimau', 'sizes']);
         $categories = Category::all();
-
+        $materials = Material::all();
+        $colors = Color::all();
         $query->withSum('sizes as tong_so_luong', 'sanpham_size.SoLuong');
 
         if ($request->filled('search')) {
@@ -34,11 +35,19 @@ class AdminProductController extends Controller
             $query->where('MaLoaiSP', $request->category);
         }
 
+        if ($request->filled('material')) {
+            $query->where('MaChatLieu', $request->material);
+        }
+
+        if ($request->filled('color')) {
+            $query->where('MaLoaiMau', $request->color);
+        }
+
         $products = $query->orderBy('CreatedDate', 'desc')->paginate(10);
         $products->appends($request->all());
         $totalProducts = Product::count();
-
-        return view('admin.products.index', compact('products', 'totalProducts', 'categories'));
+        $activeProducts = Product::where('TrangThai', 1)->count();
+        return view('admin.products.index', compact('products', 'totalProducts', 'categories', 'materials', 'colors', 'activeProducts'));
     }
 
 
@@ -96,7 +105,9 @@ class AdminProductController extends Controller
                 ProductImage::create([
                     'MaSanPham' => $product->MaSanPham,
                     'TenHinh' => $fileNameSub,
+                    'DuongDan' => 'img/details/' . $fileNameSub,
                 ]);
+                
             }
         }
 
@@ -112,18 +123,18 @@ class AdminProductController extends Controller
             ->with('success', 'Thêm áo dài và ảnh thành công');
     }
     public function edit($MaSanPham)
-{
-    $product = Product::with('hinhanhsanpham')->where('MaSanPham', $MaSanPham)->firstOrFail();
+    {
+        $product = Product::with('hinhanhsanpham')->where('MaSanPham', $MaSanPham)->firstOrFail();
 
-    return view('admin.products.edit', [
-        'product' => $product,
-        'materials' => Material::all(),
-        'categories' => Category::all(),
-        'suppliers' => Supplier::all(),
-        'colors' => Color::all(),
-        'sizes' => Size::all(),
-    ]);
-}
+        return view('admin.products.edit', [
+            'product' => $product,
+            'materials' => Material::all(),
+            'categories' => Category::all(),
+            'suppliers' => Supplier::all(),
+            'colors' => Color::all(),
+            'sizes' => Size::all(),
+        ]);
+    }
     public function update(Request $request, $MaSanPham)
     {
         $product = Product::findOrFail($MaSanPham);
@@ -131,9 +142,9 @@ class AdminProductController extends Controller
         $request->validate([
             'TenSanPham' => 'required|string|max:255',
             'MoTa' => 'required|string',
-            'HinhAnh' => 'nullable|image|max:2048',
-            'replace_images.*' => 'nullable|image|max:2048',
-            'AlbumHinh.*' => 'nullable|image|max:2048',
+            'HinhAnh' => 'nullable|image|max:10240',
+            'replace_images.*' => 'nullable|image|max:10240',
+            'AlbumHinh.*' => 'nullable|image|max:10240',
             'GiaBan' => 'required|numeric',
             'MaLoaiSP' => 'required|exists:loaisanpham,MaLoaiSP',
             'MaChatLieu' => 'required|exists:chatlieu,MaChatLieu',
@@ -189,7 +200,8 @@ class AdminProductController extends Controller
                 $file->move(public_path('img/details'), $newFileName);
 
                 $imageRecord->update([
-                    'TenHinh' => $newFileName
+                    'TenHinh' => $newFileName,
+                    'DuongDan' => 'img/details/' . $newFileName,
                 ]);
             }
         }
@@ -219,7 +231,8 @@ class AdminProductController extends Controller
 
                 ProductImage::create([
                     'MaSanPham' => $product->MaSanPham,
-                    'TenHinh' => $fileName
+                    'TenHinh' => $fileName,
+                    'DuongDan' => 'img/details/' . $fileName,
                 ]);
             }
         }
@@ -236,12 +249,29 @@ class AdminProductController extends Controller
 
     public function destroy($MaSanPham)
     {
-        Product::findOrFail($MaSanPham)->delete();
+        try {
+            $product = Product::findOrFail($MaSanPham);
+            $product->delete();
 
-        return redirect()->route('admin.products.index')
-            ->with('success', 'Xóa áo dài thành công');
+            return response()->json([
+                'success' => true,
+                'message' => 'Mẫu thiết kế đã được xóa thành công.'
+            ]);
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không thể xóa vì sản phẩm này đang có trong giỏ hàng hoặc hóa đơn.'
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi hệ thống: ' . $e->getMessage()
+            ], 500);
+        }
     }
-    public function toggleStatus($MaSanPham) {
+    public function toggleStatus($MaSanPham)
+    {
         $products = Product::findOrFail($MaSanPham);
         $products->TrangThai = $products->TrangThai == 1 ? 0 : 1;
         $products->save();

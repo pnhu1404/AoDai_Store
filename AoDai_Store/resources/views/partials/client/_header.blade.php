@@ -34,11 +34,6 @@
         </div>
 
         <div class="flex items-center space-x-5">
-            <button class="text-stone-600 hover:text-red-700" title="Tìm kiếm">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                </svg>
-            </button>
             <div class="relative group">
                 <div class="relative group">
                     <!-- ICON -->
@@ -48,7 +43,6 @@
                         </svg>
                     </div>
 
-                    <!-- DROPDOWN -->
                     <div
                         class="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-xl
                             opacity-0 invisible group-hover:opacity-100 group-hover:visible
@@ -75,7 +69,10 @@
                                 <a href="/profile" class="block px-4 py-2 hover:bg-red-50">
                                     Thông tin tài khoản
                                 </a>
-
+                                <a href="{{ route('favorite.index') }}"
+                                class="block px-4 py-2 hover:bg-gray-100">
+                                Sản phẩm yêu thích
+                                </a>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
                                     <button type="submit"

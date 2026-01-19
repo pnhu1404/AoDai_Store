@@ -17,4 +17,10 @@ class Size extends Model
         return $this->belongsToMany( Product::class,'sanpham_size', 'MaSize', 'MaSanPham')
             ->withPivot('SoLuong');
     }
+
+    protected $fillable = [
+        'TenSize',
+        'MoTa',
+        'TrangThai'
+    ];
 }

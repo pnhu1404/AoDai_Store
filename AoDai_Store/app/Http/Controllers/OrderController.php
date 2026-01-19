@@ -8,7 +8,6 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
 class OrderController extends Controller
 {
     //
@@ -90,5 +89,25 @@ class OrderController extends Controller
     $cartController = new CartController();
     $cartController->clearCart();
         return redirect()->route('home')->with('success', 'Đặt hàng thành công!');
+    }
+     public function cancel($id)
+    {
+        $order = DB::table('hoadon')
+            ->where('MaHoaDon', $id)
+            ->where('MaTaiKhoan', Auth::id())
+            ->where('TrangThai', 'ChoXacNhan')
+            ->first();
+
+        if (!$order) {
+            return back()->with('error', 'Không thể hủy đơn hàng này.');
+        }
+
+        DB::table('hoadon')
+            ->where('MaHoaDon', $id)
+            ->update([
+                'TrangThai' => 'DaHuy'
+            ]);
+
+        return back()->with('success', 'Đã hủy đơn hàng thành công.');
     }
 }

@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-
+use App\Models\InfoWeb;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -19,6 +19,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        try {
+            view()->share('infoWeb', InfoWeb::first());
+        } catch (\Exception $e) {
+            // Khi chưa kết nối DB thì bỏ qua
+            view()->share('infoWeb', null);
+        }
     }
+
 }
