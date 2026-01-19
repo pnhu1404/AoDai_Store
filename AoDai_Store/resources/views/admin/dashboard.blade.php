@@ -1,52 +1,164 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - @yield('title')</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-100 font-sans">
+@extends('layouts.admin')
 
-    <div class="flex min-h-screen">
-        <aside class="w-64 bg-slate-900 text-white fixed h-full">
-            <div class="p-6 text-2xl font-bold border-b border-slate-800 text-center">
-                AD HERITAGE
-            </div>
-            <nav class="mt-6">
-                <a href="{{ route('admin.home') }}" class="flex items-center py-3 px-6 bg-blue-600 text-white">
-                    <i class="fas fa-chart-line mr-3"></i> Dashboard
-                </a>
-                <a href="{{ route('product.home') }}" class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition">
-                    <i class="fas fa-tshirt mr-3"></i> Quản lý sản phẩm
-                </a>
-                <a href="#" class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition">
-                    <i class="fas fa-shopping-cart mr-3"></i> Đơn hàng
-                </a>
-                <a href="#" class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition">
-                    <i class="fas fa-users mr-3"></i> Khách hàng
-                </a>
-                <a href="#" class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition mt-10 text-red-400">
-                    <i class="fas fa-sign-out-alt mr-3"></i> Đăng xuất
-                </a>
-            </nav>
-        </aside>
+@section('title', 'Dashboard')
 
-        <main class="flex-1 ml-64">
-            <header class="bg-white shadow-sm px-8 py-4 flex justify-between items-center">
-                <h2 class="text-xl font-semibold text-gray-700">@yield('title')</h2>
-                <div class="flex items-center">
-                    <span class="mr-4 text-gray-600">Xin chào, Admin</span>
-                    <img src="https://ui-avatars.com/api/?name=Admin" class="w-8 h-8 rounded-full">
-                </div>
-            </header>
+@section('content')
+<div class="space-y-10">
 
-            <div class="p-8">
-                @yield('content')
-            </div>
-        </main>
+    {{-- HEADER --}}
+    <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold text-gray-800">Tổng quan hệ thống</h1>
     </div>
 
-</body>
-</html>
+    {{-- THỐNG KÊ --}}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        {{-- SẢN PHẨM --}}
+        <div class="bg-white rounded-2xl shadow-sm border p-6 flex items-center justify-between">
+            <div>
+                <p class="text-sm text-gray-500 uppercase">Sản phẩm</p>
+                <p class="text-3xl font-bold text-gray-800 mt-1">{{ $totalProducts }}</p>
+            </div>
+            <div class="w-14 h-14 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center">
+                <i class="fas fa-box text-2xl"></i>
+            </div>
+        </div>
+
+        {{-- DANH MỤC --}}
+        <div class="bg-white rounded-2xl shadow-sm border p-6 flex items-center justify-between">
+            <div>
+                <p class="text-sm text-gray-500 uppercase">Danh mục</p>
+                <p class="text-3xl font-bold text-gray-800 mt-1">{{ $totalCategories }}</p>
+            </div>
+            <div class="w-14 h-14 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center">
+                <i class="fas fa-list text-2xl"></i>
+            </div>
+        </div>
+
+        {{-- TÀI KHOẢN --}}
+        <div class="bg-white rounded-2xl shadow-sm border p-6 flex items-center justify-between">
+            <div>
+                <p class="text-sm text-gray-500 uppercase">Tài khoản</p>
+                <p class="text-3xl font-bold text-gray-800 mt-1">{{ $totalAccounts }}</p>
+            </div>
+            <div class="w-14 h-14 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
+                <i class="fas fa-users text-2xl"></i>
+            </div>
+        </div>
+
+        {{-- ĐƠN HÀNG --}}
+        <div class="bg-white rounded-2xl shadow-sm border p-6 flex items-center justify-between">
+            <div>
+                <p class="text-sm text-gray-500 uppercase">Đơn hàng</p>
+                <p class="text-3xl font-bold text-gray-800 mt-1">{{ $totalOrders }}</p>
+            </div>
+            <div class="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                <i class="fas fa-receipt text-2xl"></i>
+            </div>
+        </div>
+
+        {{-- NHÀ CUNG CẤP --}}
+        <div class="bg-white rounded-2xl shadow-sm border p-6 flex items-center justify-between">
+            <div>
+                <p class="text-sm text-gray-500 uppercase">Nhà cung cấp</p>
+                <p class="text-3xl font-bold text-gray-800 mt-1">{{ $totalSuppliers }}</p>
+            </div>
+            <div class="w-14 h-14 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center">
+                <i class="fas fa-truck text-2xl"></i>
+            </div>
+        </div>
+
+        {{-- KHUYẾN MÃI --}}
+        <div class="bg-white rounded-2xl shadow-sm border p-6 flex items-center justify-between">
+            <div>
+                <p class="text-sm text-gray-500 uppercase">Khuyến mãi</p>
+                <p class="text-3xl font-bold text-gray-800 mt-1">{{ $totalPromotions }}</p>
+            </div>
+            <div class="w-14 h-14 rounded-full bg-red-100 text-red-600 flex items-center justify-center">
+                <i class="fas fa-tags text-2xl"></i>
+            </div>
+        </div>
+
+    </div>
+
+    {{-- THÔNG TIN WEBSITE --}}
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100">
+        <div class="px-6 py-4 border-b font-bold text-gray-700 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-sky-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Thông tin Website
+        </div>
+
+        <div class="p-6">
+            <form method="POST" action="{{ route('admin.dashboard.update') }}">
+                @csrf
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    
+                    {{-- ĐỊA CHỈ --}}
+                    <div class="flex flex-col">
+                        <label class="block text-sm font-semibold text-gray-600 mb-2">
+                            Địa chỉ shop
+                        </label>
+                        <input type="text"
+                            name="DiaChiShop"
+                            value="{{ old('DiaChiShop', $infoWeb->DiaChiShop) }}"
+                            placeholder="Nhập địa chỉ..."
+                            class="w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all">
+                    </div>
+
+                    {{-- GIỜ MỞ CỬA --}}
+                    <div class="flex flex-col">
+                        <label class="block text-sm font-semibold text-gray-600 mb-2">
+                            Thời gian mở cửa
+                        </label>
+                        <input type="text"
+                            name="GioMoCua"
+                            value="{{ old('GioMoCua', $infoWeb->GioMoCua) }}"
+                            placeholder="Ví dụ: 08:00 - 22:00"
+                            class="w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all">
+                    </div>
+
+                    {{-- EMAIL --}}
+                    <div class="flex flex-col">
+                        <label class="block text-sm font-semibold text-gray-600 mb-2">
+                            Email liên hệ
+                        </label>
+                        <input type="email"
+                            name="Email"
+                            value="{{ old('Email', $infoWeb->Email) }}"
+                            placeholder="example@gmail.com"
+                            class="w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all">
+                    </div>
+
+                    {{-- HOTLINE --}}
+                    <div class="flex flex-col">
+                        <label class="block text-sm font-semibold text-gray-600 mb-2">
+                            Hotline (Số điện thoại)
+                        </label>
+                        <input type="text"
+                            name="SoDienThoai"
+                            value="{{ old('SoDienThoai', $infoWeb->SoDienThoai) }}"
+                            placeholder="09xx xxx xxx"
+                            class="w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all">
+                    </div>
+                </div>
+
+                {{-- NÚT LƯU --}}
+                <div class="mt-8 flex justify-end border-t pt-6">
+                    <button type="submit"
+                            class="bg-sky-600 hover:bg-sky-700 text-white font-bold px-10 py-2.5 rounded-lg shadow-lg transform active:scale-95 transition-all flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        Lưu thay đổi
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+</div>
+@endsection

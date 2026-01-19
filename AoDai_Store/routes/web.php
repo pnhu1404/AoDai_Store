@@ -14,16 +14,14 @@ use App\Http\Controllers\AdminMaterialController;
 use App\Http\Controllers\AdminColorController;
 use App\Http\Controllers\AdminContactController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\AdminInfoWebController;
 //login
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-Route::get('/admin', function () {
-    return view('admin.home'); // Blade admin
-})->middleware(['auth']);
-Route::get('/', function () {
-    return view('client.home'); // Blade user
-})->middleware('auth');
+Route::get('/admin', [AdminDashboardController::class, 'index'])->name('admin.dashboard')->middleware(['auth']);
+Route::post('/admin/dashboard', [AdminInfoWebController::class, 'update'])->name('admin.dashboard.update');
 //register
 Route::get('/register', [RegisterController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
@@ -51,8 +49,9 @@ Route::get('/admin/contacts', [AdminContactController::class, 'index'])->name('a
 Route::get('/admin/contacts/{MaLienHe}/edit', [AdminContactController::class, 'edit'])->name('admin.contacts.edit');
 Route::put('/admin/contacts/{MaLienHe}', [AdminContactController::class, 'update'])->name('admin.contacts.update');
 Route::delete('/admin/contacts/{MaLienHe}', [AdminContactController::class, 'destroy'])->name('admin.contacts.destroy');
-
-Route::get('/',[ProductController::class,'index'])->name('home');
+//product client
+Route::get('/', [ProductController::class, 'index'])->name('home');
+Route::get('/products', [ProductController::class, 'productList'])->name('products.index');
 Route::get('/aodai/{id}',[ProductController::class,'detail'])->name('product.detail');
 Route::post('/cart/add/{id}',[CartController::class,'addToCart'])->name('cart.add');
 Route::delete('/cart/remove/{id}',[CartController::class,'removeFromCart'])->name('cart.remove');
@@ -62,7 +61,7 @@ Route::post('/update-quantity', [CartController::class, 'updateQuantity'])->name
 Route::get('/category/{id}', [ProductController::class, 'showByCategory'])->name('category.show');
 Route::get('/products/category', [ProductController::class, 'category']) ->name('products.category');
 // Quản lý áo dài (sản phẩm)
-Route::get('/admin', [AdminProductController::class, 'index'])->name('admin.home');
+// Route::get('/admin', [AdminProductController::class, 'index'])->name('admin.home');
 Route::get('/admin/products', [AdminProductController::class, 'index'])->name('admin.products.index');
 Route::get('/admin/products/create', [AdminProductController::class, 'create'])->name('admin.products.create');
 Route::post('/admin/products/store', [AdminProductController::class, 'store'])->name('admin.products.store');
@@ -70,11 +69,10 @@ Route::get('/admin/products/edit/{MaSanPham}', [AdminProductController::class, '
 Route::put('/admin/products/update/{MaSanPham}', [AdminProductController::class, 'update'])->name('admin.products.update');
 Route::delete('/admin/products/delete/{MaSanPham}', [AdminProductController::class, 'destroy'])->name('admin.products.destroy');
 
-
-//check out 
+//check out
 Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout.home')->middleware('auth');
 
-Route::get('/admin', [AdminCategoryController::class, 'index'])->name('admin.home');
+// Route::get('/admin', [AdminCategoryController::class, 'index'])->name('admin.home');
 Route::get('/admin/categories', [AdminCategoryController::class, 'index'])->name('admin.categories.index');
 Route::get('/admin/categories/create', [AdminCategoryController::class, 'create'])->name('admin.categories.create');
 Route::post('/admin/categories/store', [AdminCategoryController::class, 'store'])->name('admin.categories.store');

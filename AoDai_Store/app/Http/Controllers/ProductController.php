@@ -36,8 +36,19 @@ class ProductController extends Controller
         }
 
         $data["product"] = $query->paginate(8);
-        $data["categories"] = Category::all();
         $data["colors"] = Color::all();
+
+         $data['bestSellers'] = Product::orderBy('CreatedDate', 'desc')
+        ->take(8)
+        ->get();
+
+        $data['newProducts'] = Product::orderBy('CreatedDate', 'desc')
+            ->take(8)
+            ->get();
+
+        $data['categories'] = Category::with(['sanpham' => function ($q) {
+            $q->take(4);
+        }])->take(4)->get();
 
         // XỬ LÝ AJAX
         if ($request->ajax()) {
@@ -86,4 +97,14 @@ class ProductController extends Controller
 
         return view('client.products.category', compact('categories', 'products'));
     }
+    public function productList()
+    {
+        $categories = Category::all();
+
+        $products = Product::with(['chatlieu', 'loaisanpham'])
+                        ->paginate(8);
+
+        return view('client.products.index', compact('categories', 'products'));
+    }
+
 }
