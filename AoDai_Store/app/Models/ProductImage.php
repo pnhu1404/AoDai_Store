@@ -15,7 +15,8 @@ class ProductImage extends Model
 
     protected $fillable = [
         'MaSanPham', 
-        'TenHinh'
+        'TenHinh',
+        'DuongDan'
        
     ];
     public function sanpham() {

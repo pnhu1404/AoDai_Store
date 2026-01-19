@@ -52,7 +52,7 @@
                     <thead>
                         <tr class="bg-stone-50/50 text-stone-500 text-[10px] uppercase tracking-[0.2em] font-bold border-b border-stone-100">
                             <th class="px-6 py-5">Tên danh mục</th>
-                            <th class="px-6 py-5">Trạng thái</th> {{-- Cột trạng thái mới --}}
+                            <th class="px-6 py-5">Trạng thái</th>
                             <th class="px-6 py-5 text-center">Sản phẩm</th>
                             <th class="px-6 py-5 text-center">Ngày tạo</th>
                             <th class="px-6 py-5 text-right">Thao tác</th>
@@ -69,7 +69,6 @@
                                         <p class="text-[10px] text-stone-400 font-mono mt-0.5">#{{ $category->MaLoaiSP }}</p>
                                     </div>
                                 </td>
-                                {{-- Badge Trạng thái --}}
                                 <td class="px-6 py-5">
                                     @if($category->TrangThai == 1)
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide bg-green-50 text-green-700 border border-green-100">
@@ -91,7 +90,6 @@
                                 </td>
                                 <td class="px-6 py-5">
                                     <div class="flex justify-end space-x-2">
-                                        {{-- Nút Ẩn/Hiện nhanh --}}
                                         <button onclick="toggleStatus('{{ $category->MaLoaiSP }}', {{ $category->TrangThai }})"
                                             title="{{ $category->TrangThai == 1 ? 'Tạm dừng bán' : 'Kích hoạt bán' }}"
                                             class="flex items-center px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest {{ $category->TrangThai == 1 ? 'text-amber-600 border-amber-100 hover:bg-amber-600' : 'text-green-600 border-green-100 hover:bg-green-600' }} hover:text-white transition-all rounded-lg border">
@@ -128,126 +126,145 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        // Hàm chuyển đổi trạng thái Ẩn/Hiện
-        function toggleStatus(id, currentStatus) {
-            const newStatus = currentStatus === 1 ? 0 : 1;
-            const actionText = newStatus === 1 ? 'hiển thị và bán lại' : 'tạm ẩn';
-            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-            Swal.fire({
-                title: '<span class="serif">Cập nhật trạng thái</span>',
-                html: `<div class="text-stone-500 text-sm">Bạn muốn ${actionText} danh mục này?</div>`,
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'Xác nhận',
-                cancelButtonText: 'Hủy',
-                confirmButtonColor: '#1c1917',
-                customClass: { popup: 'glass-popup', confirmButton: 'btn-delete-confirm', cancelButton: 'btn-delete-cancel' },
-                buttonsStyling: false,
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch(`/admin/categories/toggle-status/${id}`, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': token,
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify({ status: newStatus })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            Swal.fire({ icon: 'success', title: 'Thành công', text: data.message, timer: 1000, showConfirmButton: false, customClass: { popup: 'glass-popup' } });
-                            refreshTable();
-                        }
-                    })
-                    .catch(error => {
-                        Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Không thể cập nhật trạng thái', customClass: { popup: 'glass-popup' } });
+    @if(session('success'))
+    Swal.fire({
+        icon: 'success',
+        title: '<span class="serif text-2xl">Thành công!</span>',
+        text: "{{ session('success') }}",
+        timer: 2000,
+        showConfirmButton: false,
+        customClass: { popup: 'glass-popup' }
+    });
+    @endif
+
+    @if(session('error'))
+    Swal.fire({
+        icon: 'error',
+        title: '<span class="serif text-2xl text-red-800">Thông báo lỗi</span>',
+        text: "{{ session('error') }}",
+        confirmButtonText: 'Đóng',
+        buttonsStyling: false,
+        customClass: {
+            popup: 'glass-popup',
+            confirmButton: 'btn-delete-confirm'
+        }
+    });
+    @endif
+
+    function toggleStatus(id, currentStatus) {
+        const newStatus = currentStatus === 1 ? 0 : 1;
+
+        Swal.fire({
+            title: '<span class="serif">Cập nhật trạng thái</span>',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Xác nhận',
+            cancelButtonText: 'Hủy',
+            buttonsStyling: false,
+            reverseButtons: true,
+            customClass: {
+                popup: 'glass-popup',
+                confirmButton: 'btn-delete-confirm',
+                cancelButton: 'btn-delete-cancel'
+            }
+        }).then(result => {
+            if (!result.isConfirmed) return;
+
+            fetch(`/admin/categories/toggle-status/${id}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ status: newStatus })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Đã cập nhật',
+                        timer: 1000,
+                        showConfirmButton: false,
+                        customClass: { popup: 'glass-popup' }
                     });
+                    refreshTable();
                 }
             });
-        }
+        });
+    }
 
-        function refreshTable() {
-            const container = document.getElementById('category-table-container');
-            const currentUrl = window.location.href;
-            fetch(currentUrl)
-                .then(response => response.text())
-                .then(html => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const newContent = doc.getElementById('category-table-container').innerHTML;
-                    container.innerHTML = newContent;
-                })
-                .catch(error => console.error('Lỗi khi tải lại bảng:', error));
-        }
+    function refreshTable() {
+        const container = document.getElementById('category-table-container');
 
-        function confirmDelete(id, name) {
-            Swal.fire({
-                title: '<span class="serif">Xác nhận gỡ bỏ</span>',
-                html: `<div class="mt-3 text-stone-500 text-sm">Danh mục <b class="text-stone-900 italic">"${name}"</b> sẽ bị xóa khỏi hệ thống. <br><span class="text-red-600 font-bold">Lưu ý: Hành động này không thể hoàn tác!</span></div>`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Đồng ý xóa',
-                cancelButtonText: 'Hủy bỏ',
-                confirmButtonColor: '#1c1917',
-                cancelButtonColor: '#f3f4f6',
-                reverseButtons: true,
-                customClass: {
-                    popup: 'glass-popup',
-                    confirmButton: 'btn-delete-confirm',
-                    cancelButton: 'btn-delete-cancel'
-                },
-                buttonsStyling: false,
-                showLoaderOnConfirm: true,
-                preConfirm: () => {
-                    const url = `/admin/categories/delete/${id}`;
-                    const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                    return fetch(url, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': token,
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        }
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            return response.json().then(err => { throw new Error(err.message || 'Lỗi không xác định') });
-                        }
-                        return response.json();
-                    })
-                    .catch(error => {
-                        Swal.showValidationMessage(`Lỗi: ${error.message}`);
-                    });
-                },
-                allowOutsideClick: () => !Swal.isLoading()
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    if (result.value.success) {
-                        Swal.fire({
-                            title: 'Thành công!',
-                            text: result.value.message,
-                            icon: 'success',
-                            timer: 1500,
-                            showConfirmButton: false,
-                            customClass: { popup: 'glass-popup' }
-                        });
-                        refreshTable();
-                    } else {
-                        Swal.fire({
-                            title: 'Thất bại!',
-                            text: result.value.message,
-                            icon: 'error',
-                            customClass: { popup: 'glass-popup' }
-                        });
-                    }
-                }
+        fetch(window.location.href)
+            .then(res => res.text())
+            .then(html => {
+                const doc = new DOMParser().parseFromString(html, 'text/html');
+                container.innerHTML = doc.getElementById('category-table-container').innerHTML;
             });
-        }
+    }
+
+    function confirmDelete(id, name) {
+        Swal.fire({
+            title: '<span class="serif">Xác nhận xóa bỏ</span>',
+            html: `
+                <div class="mt-3 text-stone-500 text-sm">
+                    Danh mục <b class="text-stone-900 italic">"${name}"</b> sẽ bị xóa khỏi hệ thống.
+                    <br>
+                    <span class="text-red-600 font-bold">Lưu ý: Không thể hoàn tác!</span>
+                </div>
+            `,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Đồng ý xóa',
+            cancelButtonText: 'Hủy',
+            buttonsStyling: false,
+            reverseButtons: true,
+            customClass: {
+                popup: 'glass-popup',
+                confirmButton: 'btn-delete-confirm',
+                cancelButton: 'btn-delete-cancel'
+            }
+        }).then(result => {
+            if (!result.isConfirmed) return;
+
+            fetch(`/admin/categories/delete/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (!data.success) throw new Error(data.message);
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Đã xóa!',
+                    timer: 1500,
+                    showConfirmButton: false,
+                    customClass: { popup: 'glass-popup' }
+                });
+
+                refreshTable();
+            })
+            .catch(err => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Không thể xóa',
+                    text: err.message,
+                    customClass: { popup: 'glass-popup' }
+                });
+            });
+        });
+    }
     </script>
+
 
     <style>
         .serif { font-family: 'Playfair Display', serif; }
@@ -257,7 +274,7 @@
             border-radius: 24px !important;
             padding: 2rem !important;
             border: 1px solid rgba(255, 255, 255, 0.3) !important;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1) !important;
         }
         .btn-delete-confirm {
             background-color: #1c1917 !important;
@@ -271,9 +288,9 @@
             letter-spacing: 0.1em;
             transition: all 0.3s;
         }
-        .btn-delete-confirm:hover {
-            background-color: #991b1b !important;
-            transform: translateY(-2px);
+        .btn-delete-confirm:hover { 
+            background-color: #991b1b !important; 
+            transform: translateY(-2px); 
         }
         .btn-delete-cancel {
             background-color: #f3f4f6 !important;

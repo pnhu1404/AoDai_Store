@@ -13,8 +13,11 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::with('chatlieu');
-
+        $query = Product::with('chatlieu', 'loaisanpham')->where('TrangThai', 1)
+            ->whereHas('loaisanpham', function($c) {
+                $c->where('TrangThai', 1);
+        });
+        
         if ($request->filled('search')) {
             $query->where('TenSanPham', 'like', '%' . $request->search . '%');
         }
@@ -36,7 +39,7 @@ class ProductController extends Controller
         }
 
         $data["product"] = $query->paginate(8);
-        $data["categories"] = Category::all();
+        $data['categories'] = Category::where('TrangThai', 1)->get();
         $data["colors"] = Color::all();
 
         // XỬ LÝ AJAX

@@ -26,11 +26,11 @@
                            class="w-full bg-stone-100 border border-stone-100 rounded-xl p-3 text-sm font-mono text-stone-400 cursor-not-allowed">
                 </div>
 
-                <div class="col-span-1">
-                    <label class="block text-[10px] uppercase tracking-widest font-bold mb-2 text-stone-500">Trạng thái hiển thị</label>
-                    <select name="TrangThai" class="w-full bg-stone-50 border border-stone-100 rounded-xl p-3 focus:ring-2 focus:ring-stone-200 outline-none text-sm cursor-pointer font-medium">
-                        <option value="1" {{ old('TrangThai', $category->TrangThai) == 1 ? 'selected' : '' }}>Đang kinh doanh</option>
-                        <option value="0" {{ old('TrangThai', $category->TrangThai) == 0 ? 'selected' : '' }}>Tạm dừng bán</option>
+                <div>
+                    <label class="block text-[10px] uppercase tracking-widest font-bold mb-2 text-stone-500">Trạng thái kinh doanh</label>
+                    <select name="TrangThai" class="w-full bg-stone-50 border border-stone-100 rounded-xl p-3 focus:ring-2 focus:ring-stone-200 outline-none text-sm">
+                        <option value="1" {{ $category->TrangThai == 1 ? 'selected' : '' }}>Đang kinh doanh</option>
+                        <option value="0" {{ $category->TrangThai == 0 ? 'selected' : '' }}>Tạm dừng</option>
                     </select>
                 </div>
 

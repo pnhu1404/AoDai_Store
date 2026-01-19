@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminAccountController;
+use App\Http\Controllers\AdminSizeController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AdminProductController;
@@ -62,26 +63,33 @@ Route::post('/update-quantity', [CartController::class, 'updateQuantity'])->name
 Route::get('/category/{id}', [ProductController::class, 'showByCategory'])->name('category.show');
 Route::get('/products/category', [ProductController::class, 'category']) ->name('products.category');
 // Quản lý áo dài (sản phẩm)
-Route::get('/admin', [AdminProductController::class, 'index'])->name('admin.home');
 Route::get('/admin/products', [AdminProductController::class, 'index'])->name('admin.products.index');
 Route::get('/admin/products/create', [AdminProductController::class, 'create'])->name('admin.products.create');
 Route::post('/admin/products/store', [AdminProductController::class, 'store'])->name('admin.products.store');
 Route::get('/admin/products/edit/{MaSanPham}', [AdminProductController::class, 'edit'])->name('admin.products.edit');
 Route::put('/admin/products/update/{MaSanPham}', [AdminProductController::class, 'update'])->name('admin.products.update');
 Route::delete('/admin/products/delete/{MaSanPham}', [AdminProductController::class, 'destroy'])->name('admin.products.destroy');
-
+Route::post('/admin/products/toggle-status/{MaSanPham}', [AdminProductController::class, 'toggleStatus'])->name('admin.products.toggleStatus');
 
 //check out 
 Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout.home')->middleware('auth');
 
-Route::get('/admin', [AdminCategoryController::class, 'index'])->name('admin.home');
 Route::get('/admin/categories', [AdminCategoryController::class, 'index'])->name('admin.categories.index');
 Route::get('/admin/categories/create', [AdminCategoryController::class, 'create'])->name('admin.categories.create');
 Route::post('/admin/categories/store', [AdminCategoryController::class, 'store'])->name('admin.categories.store');
-Route::get('/admin/categories/edit/{MaSanPham}', [AdminCategoryController::class, 'edit'])->name('admin.categories.edit');
-Route::put('/admin/categories/update/{MaSanPham}', [AdminCategoryController::class, 'update'])->name('admin.categories.update');
-Route::delete('/admin/categories/delete/{MaSanPham}', [AdminCategoryController::class, 'destroy'])->name('admin.categories.destroy');
+Route::get('/admin/categories/edit/{MaLoaiSP}', [AdminCategoryController::class, 'edit'])->name('admin.categories.edit');
+Route::put('/admin/categories/update/{MaLoaiSP}', [AdminCategoryController::class, 'update'])->name('admin.categories.update');
+Route::delete('/admin/categories/delete/{MaLoaiSP}', [AdminCategoryController::class, 'destroy'])->name('admin.categories.destroy');
+Route::post('/admin/categories/toggle-status/{MaLoaiSP}', [AdminCategoryController::class, 'toggleStatus'])->name('admin.categories.toggleStatus');
 
+//size
+Route::get('/admin/sizes', [AdminSizeController::class, 'index'])->name('admin.sizes.index');
+Route::get('/admin/sizes/create', [AdminSizeController::class, 'create'])->name('admin.sizes.create');
+Route::post('/admin/sizes/store', [AdminSizeController::class, 'store'])->name('admin.sizes.store');
+Route::get('/admin/sizes/edit/{MaSize}', [AdminSizeController::class, 'edit'])->name('admin.sizes.edit');
+Route::put('/admin/sizes/update/{MaSize}', [AdminSizeController::class, 'update'])->name('admin.sizes.update');
+Route::delete('/admin/sizes/delete/{MaSize}', [AdminSizeController::class, 'destroy'])->name('admin.sizes.destroy');
+Route::post('/admin/sizes/toggle-status/{MaSize}', [AdminSizeController::class, 'toggleStatus'])->name('admin.sizes.toggleStatus');
 
 //promotion
 Route::resource('/admin/promotions', App\Http\Controllers\Adminpromotion::class)->names('promotions');
