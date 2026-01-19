@@ -46,6 +46,7 @@
                     <th class="border p-2">Ngày đặt hàng</th>
                     <th class="border p-2">Tổng tiền</th>
                     <th class="border p-2">Trạng thái</th>
+                    <th class="border p-2">Hành động</th>
                 </tr>
             </thead>
             <tbody>
@@ -55,6 +56,23 @@
                     <td class="border p-2">{{ $order->NgayTao }}</td>
                     <td class="border p-2">{{ number_format($order->TongTien) }} đ</td>
                     <td class="border p-2">{{ $order->TrangThai }}</td>
+
+                    <td class="border p-2 text-center">
+                     @if($order->TrangThai === 'ChoXacNhan')
+                    <form action="{{ route('orders.cancel', $order->MaHoaDon) }}"
+                    method="POST"
+                    onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này?')">
+                    @csrf
+                    @method('PATCH')
+
+                <button class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">
+                    Hủy đơn
+                </button>
+            </form>
+            @else
+            <span class="text-gray-400 italic">—</span>
+           @endif
+            </td>
                 </tr>
                 @empty
                 <tr>

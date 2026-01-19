@@ -23,7 +23,9 @@ class AdminSupplierController extends Controller
         });
     }
 
-    $suppliers = $query->orderBy('MaNCC', 'desc')->get();
+     $suppliers = $query->orderBy('MaNCC', 'desc')
+                       ->paginate(10)
+                       ->withQueryString();
     $totalSuppliers = Supplier::where('TrangThai', 1)->count();
 
     return view('admin.suppliers.index', compact('suppliers', 'totalSuppliers'));

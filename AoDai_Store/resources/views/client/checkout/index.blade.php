@@ -131,11 +131,7 @@
                                 <button type="button" onclick="toggleVoucherModal()" class="text-[10px] text-red-800 font-bold hover:underline italic">Chọn mã giảm giá ></button>
                             </div>
                             
-                            <div class="flex gap-2 mb-4">
-                                <input type="text" id="coupon_input" placeholder="Nhập mã ưu đãi" 
-                                    class="flex-1 bg-stone-50 border border-stone-200 rounded-lg px-3 py-2 text-xs focus:border-red-800 outline-none transition-all uppercase font-bold tracking-widest">
-                                <button type="button" id="apply_coupon" class="bg-stone-800 text-white px-4 py-2 rounded-lg text-[10px] font-bold uppercase hover:bg-black transition-all">Áp dụng</button>
-                            </div>
+                            
 
                             <div id="selected_voucher" class="hidden flex items-center justify-between bg-red-50 border border-red-200 rounded-lg p-3">
                                 <div class="flex items-center gap-2">
@@ -150,16 +146,19 @@
                             <div class="flex justify-between text-xs text-stone-500">
                                 <span>Tạm tính</span>
                                 <span>{{ number_format($totalPrice, 0, ',', '.') }}đ</span>
-                                <input type="hidden" name="Tongtien" id="total_payment" value="{{ $totalPrice }}">
+                                <input type="hidden" name="TienHang" id="total_payment" value="{{ $totalPrice }}">
                             </div>
                             <div id="discount_row" class="hidden flex justify-between text-xs text-red-600 font-bold">
                                 <span>Giảm giá</span>
-                                <span>-<span id="discount_amount">0</span>đ</span>
+                                <input type="text" name="MaKhuyenMai" id="coupon_input" hidden>
+                                <span>-<span id="discount_amount">0</span></span>
+                                <input type="text" id="discount_value" name="GiamGia" hidden>
+
                             </div>
                             <div class="flex justify-between items-center pt-4 mt-2 border-t border-stone-200">
                                 <span class="text-sm font-bold text-stone-800 uppercase tracking-tighter">Tổng thanh toán</span>
                                 <span id="final_total" class="text-xl font-bold text-red-800" data-base="{{ $totalPrice }}">{{ number_format($totalPrice, 0, ',', '.') }}đ</span>
-                                
+                                <input type="text" name="TongTien" id="final_payment" hidden>
                             </div>
                         </div>
 
@@ -181,29 +180,35 @@
         </div>
         <div class="p-6 space-y-4 max-h-[60vh] overflow-y-auto custom-scrollbar">
             
-            <div class="flex border border-stone-200 rounded-xl overflow-hidden group hover:border-red-800 transition-all cursor-pointer" onclick="selectVoucher('GIAM50', 50000, 'Giảm 50k - Khai xuân rực rỡ')">
-                <div class="w-24 bg-red-800 flex flex-col items-center justify-center text-white p-2">
-                    <span class="text-xs uppercase font-bold tracking-tighter">Giảm</span>
-                    <span class="text-xl font-bold">50K</span>
-                </div>
-                <div class="p-4 flex-1">
-                    <h4 class="text-xs font-bold text-stone-800 uppercase">Khai xuân rực rỡ</h4>
-                    <p class="text-[10px] text-stone-400 mt-1">Đơn tối thiểu 500k</p>
-                    <p class="text-[9px] text-red-800 font-bold mt-2 italic">HSD: 30/01/2026</p>
-                </div>
-            </div>
+            @foreach ($promotions as $p )
+            @php
+                $isDisabled = $totalPrice < $p->Dieukienkhuyenmai;
+            @endphp
+            <div class="flex border border-stone-200 rounded-xl overflow-hidden group transition-all 
+                {{ $isDisabled ? 'opacity-50 cursor-not-allowed grayscale' : 'hover:border-red-800 cursor-pointer' }}" 
 
-            <div class="flex border border-stone-200 rounded-xl overflow-hidden group hover:border-red-800 transition-all cursor-pointer" onclick="selectVoucher('AOXINH', 100000, 'Giảm 100k - Ưu đãi Áo Xinh')">
-                <div class="w-24 bg-stone-800 flex flex-col items-center justify-center text-white p-2">
+                @if(!$isDisabled) 
+                    onclick="selectVoucher('{{$p->MaKhuyenMai}}', {{$p->GiaTriGiam}}, '{{$p->TenKhuyenMai}}', {{$p->LoaiGiam}}, {{$p->Dieukienkhuyenmai}})" 
+                @endif>
+            
+            <div class="w-24 {{ $isDisabled ? 'bg-stone-400' : 'bg-red-800' }} flex flex-col items-center justify-center text-white p-2">
                     <span class="text-xs uppercase font-bold tracking-tighter">Giảm</span>
-                    <span class="text-xl font-bold">100K</span>
+                    @if ($p->LoaiGiam==1)
+                    <span class="text-xl font-bold">{{ $p->GiaTriGiam }}%</span>
+                    @else
+                    <span class="text-xl font-bold">{{ number_format($p->GiaTriGiam,0,',','.') }}đ</span>
+                    @endif
+
+                    
                 </div>
                 <div class="p-4 flex-1">
-                    <h4 class="text-xs font-bold text-stone-800 uppercase">Ưu đãi Áo Xinh</h4>
-                    <p class="text-[10px] text-stone-400 mt-1">Đơn tối thiểu 1.5 triệu</p>
-                    <p class="text-[9px] text-red-800 font-bold mt-2 italic">HSD: 20/02/2026</p>
+                    <h4 class="text-xs font-bold text-stone-800 uppercase">{{ $p->TenKhuyenMai }}</h4>
+                    <p class="text-[10px] text-stone-400 mt-1">Đơn tối thiểu {{ number_format($p->Dieukienkhuyenmai,0,',','.') }}đ</p>
+                    <p class="text-[9px] text-red-800 font-bold mt-2 italic">HSD: {{ $p->NgayKetThuc }}</p>
                 </div>
             </div>
+            @endforeach
+           
 
         </div>
     </div>
@@ -214,27 +219,48 @@
         document.getElementById('voucherModal').classList.toggle('hidden');
     }
 
-    function selectVoucher(code, amount, description) {
+    function selectVoucher(code, amount, description,type) {
         // Cập nhật giao diện
-        document.getElementById('coupon_input').value = code;
+       
         document.getElementById('selected_voucher').classList.remove('hidden');
         document.getElementById('voucher_name').innerText = description;
         
         // Tính toán lại tiền
         let basePrice = parseInt(document.getElementById('final_total').getAttribute('data-base'));
+        let MaKhuyenMaiInput = document.getElementById('coupon_input');
+        MaKhuyenMaiInput.value = code;
         let discountRow = document.getElementById('discount_row');
         let discountAmount = document.getElementById('discount_amount');
+         let discountValue = document.getElementById('discount_value');
         let finalTotal = document.getElementById('final_total');
+        let finalt = document.getElementById('final_payment');
 
         discountRow.classList.remove('hidden');
         discountAmount.innerText = amount.toLocaleString('vi-VN');
-        finalTotal.innerText = (basePrice - amount).toLocaleString('vi-VN') + 'đ';
+        // discountValue.value = amount.toLocaleString('vi-VN');
+          let displayText = '';
+        if(type==1){
+            displayText=amount +'%';
+            amount = Math.floor(basePrice * (amount / 100));
+            finalTotal.innerText = (basePrice - amount).toLocaleString('vi-VN') + 'đ';
+            discountValue.value = amount.toLocaleString('vi-VN');
+            finalt.value= basePrice - amount;
+            
+        }
+        else{
+            finalTotal.innerText = (basePrice - amount).toLocaleString('vi-VN') + 'đ';
+            displayText=amount.toLocaleString('vi-VN') + 'đ';
+            discountValue.value = amount.toLocaleString('vi-VN');
+             finalt.value= basePrice - amount;
+        }
+        discountAmount.innerText = displayText;
 
         toggleVoucherModal(); // Đóng modal
     }
-
+    
     function removeVoucher() {
         document.getElementById('coupon_input').value = '';
+        document.getElementById('discount_value').value = '0';
         document.getElementById('selected_voucher').classList.add('hidden');
         document.getElementById('discount_row').classList.add('hidden');
         

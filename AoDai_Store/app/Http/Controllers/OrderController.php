@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\OrderDetail;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Auth;
 class OrderController extends Controller
 {
     //
@@ -29,43 +31,84 @@ class OrderController extends Controller
         //     'MaKhuyenMai' => 'nullable|integer',
         // ]);
         // Lưu thông tin đơn hàng vào cơ sở dữ liệu (chưa triển khai)
-        Order::create([
-            'TenNguoiNhan' => $request->input('TenNguoiNhan'),
-            'SDTNguoiNhan' => $request->input('SDTNguoiNhan'),
-            'DiaChiGiaoHang' => $address,
-            'PhuongThucThanhToan' => $request->input('PhuongThucThanhToan'),
-            'GhiChu' => $request->input('GhiChu'),
-            'MaTaiKhoan' => 1,
-            'TienHang' => $request->input('TienHang')+10000,
-            'TongTien' => $request->input('TongTien'),
-            'PhiVanChuyen' => 10000,
-            'GiamGia' =>10000,
-            'MaKhuyenMai' =>10
-        ]);
-        $orderId = Order::latest()->first()->MaHoaDon;
-    // 2. Lấy các mảng dữ liệu từ Form - Thêm giá trị mặc định là mảng rỗng để tránh lỗi null
-        $maSanPhams = $request->input('MaSanPham', []); 
-        $soLuongs   = $request->input('SoLuong', []);   
-        $donGias    = $request->input('DonGia', []);    
-        $thanhTiens = $request->input('ThanhTien', []); 
-        $maSizes   = $request->input('MaSize', []);
+       try {
+    DB::beginTransaction();
 
-// 3. Duyệt vòng lặp
-  
-    if (is_array($maSanPhams)) {
+    // 1. Tạo đơn hàng
+    $order = Order::create([
+        'TenNguoiNhan' => $request->input('TenNguoiNhan'),
+        'SDTNguoiNhan' => $request->input('SDTNguoiNhan'),
+        'DiaChiGiaoHang' => $address,
+        'PhuongThucThanhToan' => $request->input('PhuongThucThanhToan'),
+        'GhiChu' => $request->input('GhiChu'),
+        'MaTaiKhoan' => Auth::id(),
+        'TienHang' => $request->input('TienHang') ,
+        'TongTien' => $request->input('TongTien'),
+        'PhiVanChuyen' => 10000,
+        'GiamGia' => $request->input('GiamGia', 0),
+        'MaKhuyenMai' => $request->input('MaKhuyenMai')
+    ]);
+
+    // Lấy ID vừa tạo trực tiếp từ object $order (An toàn hơn dùng latest()->first())
+    $orderId = $order->MaHoaDon; 
+
+    // 2. Lấy các mảng dữ liệu từ Form
+    $maSanPhams = $request->input('MaSanPham', []); 
+    $soLuongs   = $request->input('SoLuong', []);   
+    $donGias    = $request->input('DonGia', []);    
+    $thanhTiens = $request->input('ThanhTien', []); 
+    $maSizes    = $request->input('MaSize', []);
+
+    // 3. Duyệt vòng lặp lưu chi tiết hóa đơn
+    if (is_array($maSanPhams) && count($maSanPhams) > 0) {
         foreach ($maSanPhams as $key => $maSP) {
             DB::table('chitiethoadon')->insert([
-            'MaHoaDon'  => $orderId,
-            'MaSanPham' => (int)$maSP,
-            'SoLuong'   => (int)$soLuongs[$key],
-            'DonGia'    => (float)$donGias[$key],
-            'MaSize'    => $maSizes[$key],
-            'ThanhTien'=> (float)$thanhTiens[$key],
-        ]);
+                'MaHoaDon'  => $orderId,
+                'MaSanPham' => (int)$maSP,
+                'SoLuong'   => (int)$soLuongs[$key],
+                'DonGia'    => (float)$donGias[$key],
+                'MaSize'    => $maSizes[$key],
+                'ThanhTien' => (float)$thanhTiens[$key],
+            ]);
         }
+    } else {
+        // Nếu không có sản phẩm nào, có thể chủ động ném lỗi để rollback
+        throw new Exception("Đơn hàng phải có ít nhất một sản phẩm.");
     }
+
+    // Nếu mọi thứ ổn, xác nhận lưu vào Database
+    DB::commit();
+
+   
+
+} catch (Exception $e) {
+    // Nếu có bất kỳ lỗi nào xảy ra, hoàn tác lại toàn bộ dữ liệu đã ghi ở trên
+    DB::rollBack();
+
+ 
+}
     $cartController = new CartController();
     $cartController->clearCart();
         return redirect()->route('home')->with('success', 'Đặt hàng thành công!');
+    }
+     public function cancel($id)
+    {
+        $order = DB::table('hoadon')
+            ->where('MaHoaDon', $id)
+            ->where('MaTaiKhoan', Auth::id())
+            ->where('TrangThai', 'ChoXacNhan')
+            ->first();
+
+        if (!$order) {
+            return back()->with('error', 'Không thể hủy đơn hàng này.');
+        }
+
+        DB::table('hoadon')
+            ->where('MaHoaDon', $id)
+            ->update([
+                'TrangThai' => 'DaHuy'
+            ]);
+
+        return back()->with('success', 'Đã hủy đơn hàng thành công.');
     }
 }

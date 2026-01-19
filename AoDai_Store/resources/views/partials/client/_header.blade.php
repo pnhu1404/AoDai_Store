@@ -26,8 +26,11 @@
                     Liên hệ
                 </a>
             @endif
-
-
+           @if (!request()->routeIs('gioithieu'))
+                <a href="{{ route('gioithieu') }}" class="hover:text-red-700 transition">
+                    Giới thiệu
+                </a>
+            @endif
         </div>
 
         <div class="flex items-center space-x-5">
@@ -72,7 +75,10 @@
                                 <a href="/profile" class="block px-4 py-2 hover:bg-red-50">
                                     Thông tin tài khoản
                                 </a>
-
+                                <a href="{{ route('favorite.index') }}"
+                                class="block px-4 py-2 hover:bg-gray-100">
+                                Sản phẩm yêu thích
+                                </a>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
                                     <button type="submit"

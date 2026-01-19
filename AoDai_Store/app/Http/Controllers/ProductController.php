@@ -1,14 +1,14 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Size;
 use App\Models\Color;
 use App\Models\User;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 class ProductController extends Controller
 {
     public function index(Request $request)
@@ -72,11 +72,62 @@ class ProductController extends Controller
             'sizes',
             'hinhanhsanpham'
         ])->where('MaSanPham', $id)->firstOrFail();
-
+          // TĂNG LƯỢT XEM
+        $product->increment('LuotXem');
         $allSizes = Size::where('TrangThai', 1)->get();
+        
+        // ĐIỂM ĐÁNH GIÁ TRUNG BÌNH (17)
+    $avgRating = DB::table('danhgia')
+        ->where('MaSanPham', $product->MaSanPham)
+        ->where('TrangThai', 1)
+        ->avg('SoSao');
 
-        return view('client.products.detail', compact('product', 'allSizes'));
+    // DANH SÁCH ĐÁNH GIÁ (12)
+    $dsDanhGia = DB::table('danhgia')
+        ->join('taikhoan', 'danhgia.MaTaiKhoan', '=', 'taikhoan.MaTaiKhoan')
+        ->where('danhgia.MaSanPham', $product->MaSanPham)
+        ->where('danhgia.TrangThai', 1)
+        ->orderByDesc('NgayDanhGia')
+        ->select(
+            'danhgia.*',
+            'taikhoan.TenDangNhap'
+        )
+        ->get();
+
+    // CHECK ĐÃ MUA CHƯA (16)
+    $daMua = false;
+    if (auth()->check()) {
+        $daMua = DB::table('hoadon')
+            ->join('chitiethoadon', 'hoadon.MaHoaDon', '=', 'chitiethoadon.MaHoaDon')
+            ->where('hoadon.MaTaiKhoan', auth()->id())
+            ->where('chitiethoadon.MaSanPham', $product->MaSanPham)
+            ->where('hoadon.TrangThai', 'HoanThanh')
+            ->exists();
     }
+
+    // (TUỲ CHỌN) LƯỢT YÊU THÍCH (17)
+    $soLuotThich = DB::table('yeuthich')
+        ->where('MaSanPham', $product->MaSanPham)
+        ->count();
+    $isFavorite = false;
+
+    if (Auth::check()) {
+    $isFavorite = DB::table('yeuthich')
+        ->where('MaTaiKhoan', Auth::id())
+        ->where('MaSanPham', $product->MaSanPham)
+        ->exists();
+    }
+    return view('client.products.detail', compact(
+        'product',
+        'allSizes',
+        'avgRating',
+        'dsDanhGia',
+        'daMua',
+        'soLuotThich',
+        'isFavorite'
+    ));
+}
+    
     public function showByCategory(Request $request, $id)
     {
         $category = Category::where('MaLoaiSP', $id)->firstOrFail();

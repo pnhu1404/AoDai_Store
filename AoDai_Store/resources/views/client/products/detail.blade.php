@@ -125,19 +125,34 @@
                         Để lại ghi chú khi thanh toán hoặc nhắn tin trực tiếp để được tư vấn chi tiết.
                     </p>
                 </div>
-
-                <div class="flex gap-4">
+        
+                <div class="flex items-center gap-6">
                     <button type="submit"
                         class="flex-1 bg-stone-900 text-white py-4 font-bold uppercase tracking-widest hover:bg-black">
                         Thêm vào giỏ hàng
                     </button>
+        </form>
+                    <div class="flex gap-6 text-sm text-stone-500 mt-3">
+                        <span>👁 {{ $product->LuotXem }} lượt xem</span>
+                        ❤️ <span id="favorite-count">{{ $soLuotThich }}</span> yêu thích
+                        <span>
+                            ⭐ {{ $avgRating ? number_format($avgRating, 1) : '0.0' }}/5
+                        </span>
+                    </div>
+                <button
+                    type="button"
+                    id="btnFavorite"
+                    data-id="{{ $product->MaSanPham }}"
+                    class="w-14 border border-stone-300 flex items-center justify-center hover:bg-stone-50 text-xl">
+                    <span id="icon-heart">
+                    {{ $isFavorite ? '❤️' : '♡' }}
+                </span>
+                </button>
 
-                    <button type="button"
-                        class="w-14 border border-stone-300 flex items-center justify-center hover:bg-stone-50">
-                        ♡
-                    </button>
-                </div>
-            </form>
+
+
+                 </div>
+         
 
             <div class="pt-6 border-t">
                 <details open class="group">
@@ -160,6 +175,73 @@
             </div>
         </div>
     </div>
+</div>
+{{--  ĐÁNH GIÁ SẢN PHẨM --}}
+<div class="max-w-7xl mx-auto px-4 py-10 border-t mt-12">
+
+    <h2 class="text-2xl font-bold mb-6">Đánh giá sản phẩm</h2>
+
+    {{-- DANH SÁCH ĐÁNH GIÁ --}}
+    @forelse($dsDanhGia as $dg)
+        <div class="border-b py-4">
+            <p class="font-semibold">
+                {{ $dg->TenDangNhap ?? 'Khách hàng' }}
+                <span class="text-yellow-500 ml-2">
+                    @for($i=1;$i<=5;$i++)
+                        {{ $i <= $dg->SoSao ? '★' : '☆' }}
+                    @endfor
+                </span>
+            </p>
+
+            <p class="text-gray-700 mt-1">
+                {{ $dg->NoiDung }}
+            </p>
+
+            @if($dg->HinhAnh)
+                <img src="{{ asset('img/ratings/' . $dg->HinhAnh) }}"
+                     class="w-20 h-20 mt-2 rounded border">
+            @endif
+
+            <p class="text-xs text-gray-400 mt-1">
+                {{ \Carbon\Carbon::parse($dg->NgayDanhGia)->format('d/m/Y') }}
+            </p>
+        </div>
+    @empty
+        <p class="text-gray-500 italic">Chưa có đánh giá nào.</p>
+    @endforelse
+    {{-- FORM ĐÁNH GIÁ --}}
+    @if(auth()->check() && $daMua)
+        <form action="{{ route('rating.store', $product->MaSanPham) }}"
+              method="POST" enctype="multipart/form-data"
+              class="mt-8 bg-stone-50 p-6 rounded">
+            @csrf
+
+            <label class="block font-semibold mb-2">Chọn số sao:</label>
+            <select name="SoSao" required class="border p-2 rounded mb-4">
+                <option value="">-- Chọn --</option>
+                @for($i=5;$i>=1;$i--)
+                    <option value="{{ $i }}">{{ $i }} sao</option>
+                @endfor
+            </select>
+
+            <label class="block font-semibold mb-2">Nhận xét:</label>
+            <textarea name="NoiDung" rows="4"
+                      class="w-full border rounded p-2 mb-4"
+                      required></textarea>
+
+            <label class="block font-semibold mb-2">Ảnh (nếu có):</label>
+            <input type="file" name="HinhAnh" class="mb-4">
+
+            <button type="submit"
+                class="bg-stone-900 text-white px-6 py-2 rounded hover:bg-black">
+                Gửi đánh giá
+            </button>
+        </form>
+    @else
+        <p class="text-sm italic text-gray-500 mt-6">
+            * Chỉ khách hàng đã mua sản phẩm mới được đánh giá
+        </p>
+    @endif
 </div>
 
 <script>
@@ -198,5 +280,34 @@
 
         qtyInput.value = val;
     }
+
+
+    document.getElementById('btnFavorite').addEventListener('click', function () {
+
+    const productId = this.dataset.id;
+    const icon = document.getElementById('icon-heart');
+
+    fetch(`/favorite/toggle/${productId}`, {
+        method: "POST",
+        headers: {
+            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+        }
+    })
+    .then(res => {
+        if (res.status === 401) {
+            alert('Vui lòng đăng nhập để yêu thích sản phẩm!');
+            return;
+        }
+        return res.json();
+    })
+    .then(data => {
+    if (!data) return;
+
+    icon.innerText = data.liked ? '❤️' : '♡';
+    document.getElementById('favorite-count').innerText = data.count;
+});
+    
+});
+
 </script>
 @endsection
