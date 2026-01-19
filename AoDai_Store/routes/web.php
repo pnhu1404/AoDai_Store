@@ -15,16 +15,20 @@ use App\Http\Controllers\AdminMaterialController;
 use App\Http\Controllers\AdminColorController;
 use App\Http\Controllers\AdminContactController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\AdminInfoWebController;
+use App\Http\Controllers\StatisticsController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\AdminPostController;
+use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\AdminRatingController;
 //login
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-Route::get('/admin', function () {
-    return view('admin.home'); // Blade admin
-})->middleware(['auth']);
-Route::get('/', function () {
-    return view('client.home'); // Blade user
-})->middleware('auth');
+Route::get('/admin', [AdminDashboardController::class, 'index'])->name('admin.dashboard')->middleware(['auth']);
+Route::post('/admin/dashboard', [AdminInfoWebController::class, 'update'])->name('admin.dashboard.update');
 //register
 Route::get('/register', [RegisterController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
@@ -52,8 +56,9 @@ Route::get('/admin/contacts', [AdminContactController::class, 'index'])->name('a
 Route::get('/admin/contacts/{MaLienHe}/edit', [AdminContactController::class, 'edit'])->name('admin.contacts.edit');
 Route::put('/admin/contacts/{MaLienHe}', [AdminContactController::class, 'update'])->name('admin.contacts.update');
 Route::delete('/admin/contacts/{MaLienHe}', [AdminContactController::class, 'destroy'])->name('admin.contacts.destroy');
-
-Route::get('/',[ProductController::class,'index'])->name('home');
+//product client
+Route::get('/', [ProductController::class, 'index'])->name('home');
+Route::get('/products', [ProductController::class, 'productList'])->name('products.index');
 Route::get('/aodai/{id}',[ProductController::class,'detail'])->name('product.detail');
 Route::post('/cart/add/{id}',[CartController::class,'addToCart'])->name('cart.add');
 Route::delete('/cart/remove/{id}',[CartController::class,'removeFromCart'])->name('cart.remove');
@@ -71,9 +76,10 @@ Route::put('/admin/products/update/{MaSanPham}', [AdminProductController::class,
 Route::delete('/admin/products/delete/{MaSanPham}', [AdminProductController::class, 'destroy'])->name('admin.products.destroy');
 Route::post('/admin/products/toggle-status/{MaSanPham}', [AdminProductController::class, 'toggleStatus'])->name('admin.products.toggleStatus');
 
-//check out 
+//check out
 Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout.home')->middleware('auth');
 
+//category
 Route::get('/admin/categories', [AdminCategoryController::class, 'index'])->name('admin.categories.index');
 Route::get('/admin/categories/create', [AdminCategoryController::class, 'create'])->name('admin.categories.create');
 Route::post('/admin/categories/store', [AdminCategoryController::class, 'store'])->name('admin.categories.store');
@@ -110,3 +116,57 @@ Route::get('/contact', [ContactController::class, 'index'])->name('contact.index
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 //profile
 Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+//statistics
+Route::get('/admin/statistics', [StatisticsController::class, 'index'])
+    ->name('statistics.index');
+// post-client
+Route::get('/gioi-thieu', [PostController::class, 'gioiThieu'])->name('gioithieu');
+Route::get('/blog', [PostController::class, 'index'])->name('blog.index');
+Route::get('/blog/{slug}', [PostController::class, 'show'])->name('blog.show');
+// post-admin
+Route::get('/admin/bai-viet', [AdminPostController::class, 'index'])
+    ->name('admin.baiviet.index');
+
+Route::get('/admin/bai-viet/create', [AdminPostController::class, 'create'])
+    ->name('admin.baiviet.create');
+
+Route::post('/admin/bai-viet', [AdminPostController::class, 'store'])
+    ->name('admin.baiviet.store');
+
+Route::get('/admin/bai-viet/{id}/edit', [AdminPostController::class, 'edit'])
+    ->name('admin.baiviet.edit');
+
+Route::put('/admin/bai-viet/{id}', [AdminPostController::class, 'update'])
+    ->name('admin.baiviet.update');
+
+Route::delete('/admin/bai-viet/{id}', [AdminPostController::class, 'destroy'])
+    ->name('admin.baiviet.destroy');
+//profile
+Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+//favorite
+Route::post('/favorite/toggle/{id}', [FavoriteController::class, 'toggle'])
+    ->name('favorite.toggle')
+    ->middleware('auth');
+
+Route::get('/favorites', [FavoriteController::class, 'index'])
+    ->name('favorite.index')
+    ->middleware('auth');    
+//rating
+Route::post('/rating/{MaSanPham}', 
+    [App\Http\Controllers\RatingController::class, 'store']
+)->name('rating.store')->middleware('auth');
+//cancel oders
+Route::patch('/orders/{id}/cancel', [OrderController::class, 'cancel'])
+    ->name('orders.cancel')
+    ->middleware('auth');
+//hide comments (admin)
+Route::middleware(['auth'])->prefix('admin')->group(function () {
+    Route::get('/comments', [AdminRatingController::class, 'index'])
+        ->name('admin.comments.index');
+
+    Route::patch('/comments/{id}/hide', [AdminRatingController::class, 'hide'])
+        ->name('admin.comments.hide');
+    Route::post('/ratings/{id}/show', [AdminRatingController::class, 'show'])->name('admin.comments.show');
+});
+
+

@@ -16,6 +16,9 @@
                     AD HERITAGE
                 </div>
                 <nav class="mt-6">
+                    <a href="{{ route('admin.dashboard') }}" class="flex items-center py-3 px-6 bg-blue-600 text-white">
+                        <i class="fas fa-chart-line mr-3"></i> Dashboard
+                    </a>
                     <a href="{{ route('admin.products.index') }}" class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition">
                         <i class="fas fa-tshirt mr-3"></i> Quản lý sản phẩm
                     </a>
@@ -54,6 +57,21 @@
                     <a href="{{ route('promotions.index') }}" class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition">
                         <i class="fas fa-tags mr-3"></i> Khuyến mãi
                     </a>
+                    <a href="{{ route('statistics.index') }}"
+                    class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                    <i class="fas fa-chart-line mr-3"></i> Thống kê
+                    </a>
+                    <a href="{{ route('admin.baiviet.index') }}"
+                    class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                    <i class="fas fa-newspaper mr-3"></i>
+                    Quản lý bài viết
+                    </a>
+                    <a href="{{ route('admin.comments.index') }}"
+                    class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                        <i class="fas fa-comments mr-3"></i>
+                    Quản lý bình luận
+                    </a>
+
                     <a href="#" class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition mt-10 text-red-400">
                         <i class="fas fa-sign-out-alt mr-3"></i> Đăng xuất
                     </a>

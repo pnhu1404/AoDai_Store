@@ -6,8 +6,8 @@ use App\Models\Order;
 use App\Models\OrderDetail;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
 class OrderController extends Controller
 {
     //
@@ -40,12 +40,12 @@ class OrderController extends Controller
         'DiaChiGiaoHang' => $address,
         'PhuongThucThanhToan' => $request->input('PhuongThucThanhToan'),
         'GhiChu' => $request->input('GhiChu'),
-        'MaTaiKhoan' => 1,
-        'TienHang' => $request->input('TienHang') + 10000,
+        'MaTaiKhoan' => Auth::id(),
+        'TienHang' => $request->input('TienHang') ,
         'TongTien' => $request->input('TongTien'),
         'PhiVanChuyen' => 10000,
-        'GiamGia' => 10000,
-        'MaKhuyenMai' => 10
+        'GiamGia' => $request->input('GiamGia', 0),
+        'MaKhuyenMai' => $request->input('MaKhuyenMai')
     ]);
 
     // Lấy ID vừa tạo trực tiếp từ object $order (An toàn hơn dùng latest()->first())
@@ -78,19 +78,36 @@ class OrderController extends Controller
     // Nếu mọi thứ ổn, xác nhận lưu vào Database
     DB::commit();
 
-    return response()->json(['message' => 'Đặt hàng thành công!'], 200);
+   
 
 } catch (Exception $e) {
     // Nếu có bất kỳ lỗi nào xảy ra, hoàn tác lại toàn bộ dữ liệu đã ghi ở trên
     DB::rollBack();
 
-    return response()->json([
-        'message' => 'Có lỗi xảy ra, vui lòng thử lại.',
-        'error' => $e->getMessage()
-    ], 500);
+ 
 }
     $cartController = new CartController();
     $cartController->clearCart();
         return redirect()->route('home')->with('success', 'Đặt hàng thành công!');
+    }
+     public function cancel($id)
+    {
+        $order = DB::table('hoadon')
+            ->where('MaHoaDon', $id)
+            ->where('MaTaiKhoan', Auth::id())
+            ->where('TrangThai', 'ChoXacNhan')
+            ->first();
+
+        if (!$order) {
+            return back()->with('error', 'Không thể hủy đơn hàng này.');
+        }
+
+        DB::table('hoadon')
+            ->where('MaHoaDon', $id)
+            ->update([
+                'TrangThai' => 'DaHuy'
+            ]);
+
+        return back()->with('success', 'Đã hủy đơn hàng thành công.');
     }
 }

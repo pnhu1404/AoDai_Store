@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -38,12 +39,18 @@ class LoginController extends Controller
             'TenDangNhap' => $request->TenDangNhap,
             'password' => $request->MatKhau, // Laravel sẽ tự check hash
         ];
-
+         
+          $cartController = new CartController();
+         
+            $oldSessionId = session()->getId();
         if (Auth::attempt($credentials)) {
+             
+             
             $request->session()->regenerate();
+             $cartController->mergeCartAfterLogin($oldSessionId);
              $user = Auth::user();
             if($user->Role == 'Admin'){
-                return redirect()->intended('/admin');
+                return redirect()->intended('admin.dashboard');
             } elseif ($user->Role == 'User') {
                 return redirect()->intended('/');
             }
