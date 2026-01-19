@@ -19,6 +19,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-         view()->share('infoWeb', InfoWeb::first());
+        try {
+            view()->share('infoWeb', InfoWeb::first());
+        } catch (\Exception $e) {
+            // Khi chưa kết nối DB thì bỏ qua
+            view()->share('infoWeb', null);
+        }
     }
+
 }
