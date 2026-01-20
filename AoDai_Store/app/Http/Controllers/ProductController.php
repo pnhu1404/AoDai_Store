@@ -38,7 +38,7 @@ class ProductController extends Controller
             $query->orderBy('CreatedDate', 'desc');
         }
 
-        $data["product"] = $query->paginate(8);
+        $data["product"] = $query->paginate(8)->withQueryString();
         $data['categories'] = Category::where('TrangThai', 1)->get();
         $data["colors"] = Color::all();
 
@@ -55,16 +55,6 @@ class ProductController extends Controller
                 $q->take(4);
             }
         ])->take(4)->get();
-
-        // XỬ LÝ AJAX
-        if ($request->ajax()) {
-            $view = view('client.home', compact('data'));
-            $sections = $view->getFactory()->make('client.home', compact('data'))->renderSections();
-
-            return response()->json([
-                'html' => view('client.partials.product_list', compact('data'))->render()
-            ]);
-        }
 
         return view('client.home', compact('data'));
     }
