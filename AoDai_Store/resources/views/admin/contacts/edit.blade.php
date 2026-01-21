@@ -21,6 +21,9 @@
             <p class="text-xs text-gray-500 mt-1 italic">
                 Mã liên hệ: #{{ $contact->MaLienHe }}
             </p>
+            <p class="text-xs text-gray-500 mt-1 italic">
+                Mã khách hàng: {{ $contact->MaTaiKhoan ?? 'Khách hàng vãng lai' }}
+            </p>
         </div>
 
         <form action="{{ route('admin.contacts.update', $contact->MaLienHe) }}" method="POST">
