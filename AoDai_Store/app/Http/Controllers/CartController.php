@@ -191,16 +191,19 @@ public function addToCart(Request $request, $id)
         }
         return redirect()->back()->with('success', 'Giỏ hàng đã được làm trống!');
     }
-    public function removeFromCart($id){
+    public function removeFromCart($id,Request $request){
+        $request->input('size_id');
         if(Auth::check()){
             Cart::where('MaSanpham',$id)
                 ->where('MaTaiKhoan',Auth::id())
+                    ->where('MaSize',$request->input('size_id'))
                 ->delete();
         }
         else{
             $sessionId=session()->getId();
             Cart::where('MaSanPham',$id)
                 ->where('SessionID',$sessionId)
+                    ->where('MaSize',$request->input('size_id'))
                 ->delete();
         }
         return redirect()->back()->with('success', 'Sản phẩm đã được xóa khỏi giỏ hàng!');

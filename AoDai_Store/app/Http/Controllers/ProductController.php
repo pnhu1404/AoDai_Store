@@ -101,28 +101,32 @@ class ProductController extends Controller
                 ->exists();
         }
 
-        // (TUỲ CHỌN) LƯỢT YÊU THÍCH (17)
-        $soLuotThich = DB::table('yeuthich')
-            ->where('MaSanPham', $product->MaSanPham)
-            ->count();
-        $isFavorite = false;
+       
+    // (TUỲ CHỌN) LƯỢT YÊU THÍCH (17)
+    $soLuotThich = DB::table('yeuthich')
+        ->where('MaSanPham', $product->MaSanPham)
+        ->count();
+    $isFavorite = false;
 
-        if (Auth::check()) {
-            $isFavorite = DB::table('yeuthich')
-                ->where('MaTaiKhoan', Auth::id())
-                ->where('MaSanPham', $product->MaSanPham)
-                ->exists();
-        }
-        return view('client.products.detail', compact(
-            'product',
-            'allSizes',
-            'avgRating',
-            'dsDanhGia',
-            'daMua',
-            'soLuotThich',
-            'isFavorite'
-        ));
+    if (Auth::check()) {
+    $isFavorite = DB::table('yeuthich')
+        ->where('MaTaiKhoan', Auth::id())
+        ->where('MaSanPham', $product->MaSanPham)
+        ->exists();
     }
+    $relatedProducts = $product->getRelatedProducts(8);
+    return view('client.products.detail', compact(
+        'product',
+        'allSizes',
+        'avgRating',
+        'dsDanhGia',
+        'daMua',
+        'soLuotThich',
+        'isFavorite',
+        'relatedProducts'
+    ));
+}
+    
 
     public function showByCategory(Request $request, $id)
     {

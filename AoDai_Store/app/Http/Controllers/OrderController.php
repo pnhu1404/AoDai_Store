@@ -18,18 +18,18 @@ class OrderController extends Controller
                   $request->input('phuong_xa').', '.
                   $request->input('quan_huyen').', '.
                   $request->input('tinh_thanh');
-        // $request->validate([
-        //     'TenNguoiNhan' => 'required|string|max:255',
-        //     'SDTNguoiNhan' => 'required|string|max:15',
-        //     'PhuongThucThanhToan' => 'required|string|max:100',
-        //     'GhiChu' => 'nullable|string|max:1000',
-        //     'MaTaiKhoan' => 'required|integer',
-        //     'TongTien' => 'required|numeric',
-        //     'PhiVanChuyen' => 'required|numeric',
-        //     'GiamGia' => 'nullable|numeric',
-        //     'MaKhuyenMai' => 'nullable|integer',
-        // ]);
-        // Lưu thông tin đơn hàng vào cơ sở dữ liệu (chưa triển khai)
+        $request->validate([
+            'TenNguoiNhan' => 'required|string|max:255',
+            'SDTNguoiNhan' => 'required|string|max:15',
+            'PhuongThucThanhToan' => 'required|string|max:100',
+            'GhiChu' => 'nullable|string|max:1000',
+            'TongTien' => 'required|numeric',
+            // 'PhiVanChuyen' => 'required|numeric',
+            'TienHang' => 'required|numeric',
+            'GiamGia' => 'nullable|numeric',
+            'MaKhuyenMai' => 'nullable|integer',
+        ]);
+       
        try {
     DB::beginTransaction();
 
@@ -44,8 +44,9 @@ class OrderController extends Controller
         'TienHang' => $request->input('TienHang') ,
         'TongTien' => $request->input('TongTien'),
         'PhiVanChuyen' => 10000,
-        'GiamGia' => $request->input('GiamGia', 0),
-        'MaKhuyenMai' => $request->input('MaKhuyenMai')
+        'GiamGia' => $request->input('GiamGia'),
+        'MaKhuyenMai' => $request->input('MaKhuyenMai'),
+        'NgayThanhToan' => null,
     ]);
 
     // Lấy ID vừa tạo trực tiếp từ object $order (An toàn hơn dùng latest()->first())
@@ -68,6 +69,7 @@ class OrderController extends Controller
                 'DonGia'    => (float)$donGias[$key],
                 'MaSize'    => $maSizes[$key],
                 'ThanhTien' => (float)$thanhTiens[$key],
+                
             ]);
         }
     } else {
@@ -78,6 +80,12 @@ class OrderController extends Controller
     // Nếu mọi thứ ổn, xác nhận lưu vào Database
     DB::commit();
 
+    if ($request->input('PhuongThucThanhToan') == 'vnpay') {
+        return app(VNPAYController::class)->createPayment($order);
+    }
+    $cartController = new CartController();
+    $cartController->clearCart();
+    return redirect()->route('home')->with('success', 'Đặt hàng thành công!');
    
 
 } catch (Exception $e) {
@@ -86,9 +94,7 @@ class OrderController extends Controller
 
  
 }
-    $cartController = new CartController();
-    $cartController->clearCart();
-        return redirect()->route('home')->with('success', 'Đặt hàng thành công!');
+    
     }
      public function cancel($id)
     {
@@ -110,4 +116,23 @@ class OrderController extends Controller
 
         return back()->with('success', 'Đã hủy đơn hàng thành công.');
     }
+        public function submit($id)
+        {
+            $order =Order::where('MaHoaDon', $id)
+                ->where('MaTaiKhoan', Auth::id())
+                ->where('TrangThai', 'DangGiao')
+                ->first();
+    
+            if (!$order) {
+                return back()->with('error', 'Không thể xác nhận đơn hàng này.');
+            }
+    
+            Order::where('MaHoaDon', $id)
+                ->where('MaHoaDon', $id)
+                ->update([
+                    'TrangThai' => 'DaGiao'
+                ]);
+    
+            return back()->with('success', 'Đã xác nhận đơn hàng thành công.');
+        }
 }

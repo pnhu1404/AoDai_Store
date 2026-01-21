@@ -5,6 +5,8 @@
 @section('content')
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{{-- Popup thông báo thanh toán --}}
+
 
 <section class="max-w-7xl mx-auto py-16 px-4 min-h-screen">
     <div class="text-center mb-12">
@@ -37,7 +39,7 @@
             @foreach($cartItems as $item)
             <div class="flex flex-col md:flex-row bg-white shadow-sm border border-stone-100 p-6 group hover:shadow-md transition">
                 <div class="w-full md:w-32 h-44 overflow-hidden mb-4 md:mb-0 bg-stone-100">
-                    <img src="{{ $item->sanpham->HinhAnh }}" class="w-full h-full object-cover" alt="{{ $item->sanpham->TenSanPham }}">
+                    <img src="{{ asset('img/products/' . $item->sanpham->HinhAnh) }}" class="w-full h-full object-cover" alt="{{ $item->sanpham->TenSanPham }}">
                 </div>
 
                 <div class="md:ml-8 flex-1 flex flex-col justify-between">
@@ -48,6 +50,7 @@
                             <form action="{{ Route('cart.remove',$item->sanpham->MaSanPham) }}" method="post" class="form-remove-item">
                                 @csrf
                                 @method('DELETE')
+                                <input type="hidden" name="size_id" value="{{ $item->MaSize }}">
                                 <button type="button" onclick="confirmRemoveItem(this)" class="text-stone-400 hover:text-red-700 transition">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -60,7 +63,7 @@
                             <p>Chất liệu: <span class="text-stone-700">{{ $item->sanpham->chatlieu->TenChatLieu ?? 'N/A' }}</span></p>
                             <p>Màu sắc: <span class="text-stone-700">{{ $item->sanpham->loaimau->TenLoaiMau ?? 'N/A' }}</span></p>
                             <p>Kích cỡ: <span class="font-bold text-red-800">{{ $item->size->TenSize ?? 'N/A' }}</span></p>
-                            <p>Mã SP: <span class="text-stone-700">{{ $item->sanpham->SKU }}</span></p>
+                            
                         </div>
                     </div>
 
@@ -77,9 +80,7 @@
                         </div>
                         
                         <div class="text-right">
-                            <p class="text-xs text-stone-400 line-through">
-                                {{ number_format($item->sanpham->GiaBan * 1.1, 0, ',', '.') }}đ
-                            </p>
+                           
                             <p class="text-red-800 font-bold text-xl">
                                 {{ number_format($item->sanpham->GiaBan * $item->SoLuong, 0, ',', '.') }}đ
                             </p>

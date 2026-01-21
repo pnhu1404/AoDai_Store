@@ -14,7 +14,7 @@ class AdminSizeController extends Controller
 
         if ($request->filled('search')) {
             $query->where('TenSize', 'like', '%' . $request->search . '%')
-                ->orWhere('MaSize', $request->search);
+;
         }
 
         $sizes = $query->orderBy('MaSize', 'desc')->get();

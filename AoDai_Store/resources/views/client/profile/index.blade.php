@@ -69,6 +69,17 @@
                     Hủy đơn
                 </button>
             </form>
+            @elseif($order->TrangThai === 'DangGiao')
+            <form action="{{ route('orders.submit', $order->MaHoaDon) }}"
+                    method="POST"
+                    onsubmit="return confirm('Bạn đã nhận đơn hàng này?')">
+                    @csrf
+                    @method('PATCH')
+
+                <button class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">
+                    Nhận hàng
+                </button>
+            </form>
             @else
             <span class="text-gray-400 italic">—</span>
            @endif

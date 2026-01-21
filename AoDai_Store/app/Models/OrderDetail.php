@@ -20,5 +20,16 @@ class OrderDetail extends Model
         'DonGia',
         'ThanhTien'
     ];
+    public function product()
+    {
+        // Mỗi chi tiết hóa đơn thuộc về một Sản phẩm
+        return $this->belongsTo(Product::class, 'MaSanPham', 'MaSanPham');
+    }
+
+    public function order()
+    {
+        // Mỗi chi tiết hóa đơn thuộc về một Hóa đơn
+        return $this->belongsTo(Order::class, 'MaHoaDon', 'MaHoaDon');
+    }
 
 }
