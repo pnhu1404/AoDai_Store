@@ -3,6 +3,16 @@
 @section('title', 'Chỉnh sửa Khuyến mãi')
 
 @section('content')
+@if ($errors->any())
+    <div class="mb-4 p-4 bg-red-50 border-l-4 border-red-500 text-red-700">
+        <p class="font-bold">Có lỗi xảy ra:</p>
+        <ul class="list-disc ml-5">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 <div class="max-w-4xl mx-auto">
     <div class="flex items-center justify-between mb-8">
         <div>
@@ -27,11 +37,7 @@
                         class="w-full px-4 py-3 rounded-xl border border-stone-200 focus:ring-2 focus:ring-stone-900 outline-none transition-all">
                 </div>
 
-                <div>
-                    <label class="block text-[11px] uppercase tracking-widest font-bold text-stone-400 mb-2">Mã Code</label>
-                    <input type="text" name="MaCode" value="{{ $promotion->MaCode }}" required
-                        class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 font-mono uppercase">
-                </div>
+                
 
                 <div>
                     <label class="block text-[11px] uppercase tracking-widest font-bold text-stone-400 mb-2">Số lượng còn lại</label>
@@ -43,7 +49,7 @@
                     <label class="block text-[11px] uppercase tracking-widest font-bold text-stone-400 mb-2">Loại hình ưu đãi</label>
                     <select name="LoaiGiam" id="LoaiGiamEdit" class="w-full px-4 py-3 rounded-xl border border-stone-200 focus:ring-2 focus:ring-stone-900 outline-none">
                         <option value="1" {{ $promotion->LoaiGiam == 1 ? 'selected' : '' }}>Giảm theo phần trăm (%)</option>
-                        <option value="2" {{ $promotion->LoaiGiam == 2 ? 'selected' : '' }}>Giảm theo số tiền cố định (đ)</option>
+                        <option value="0" {{ $promotion->LoaiGiam == 0 ? 'selected' : '' }}>Giảm theo số tiền cố định (đ)</option>
                     </select>
                 </div>
 
@@ -53,7 +59,7 @@
                         class="w-full px-4 py-3 rounded-xl border border-stone-200 focus:ring-2 focus:ring-stone-900 outline-none transition-all">
                 </div>
 
-                <div id="max_discount_wrapper_edit" style="{{ $promotion->LoaiGiam == 2 ? 'display:none' : '' }}">
+                <div id="max_discount_wrapper_edit" style="{{ $promotion->LoaiGiam == 0 ? 'display:none' : '' }}">
                     <label class="block text-[11px] uppercase tracking-widest font-bold text-stone-400 mb-2">Giảm tối đa (đ)</label>
                     <input type="number" name="GiamToiDa" value="{{ $promotion->GiamToiDa }}"
                         class="w-full px-4 py-3 rounded-xl border border-stone-200 focus:ring-2 focus:ring-stone-900 outline-none transition-all">
@@ -73,6 +79,16 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <div>
+                <label class="block text-[11px] uppercase tracking-widest font-bold text-stone-400 mb-2">
+                    Đơn hàng tối thiểu (đ)
+                </label>
+                <input type="number"
+                    name="Dieukienkhuyenmai"
+                    value="{{ $promotion->Dieukienkhuyenmai }}"
+                    min="0"
+                    class="w-full px-4 py-3 rounded-xl border border-stone-200 focus:ring-2 focus:ring-stone-900 outline-none transition-all">
             </div>
 
             <div class="mt-10 flex justify-end space-x-3">

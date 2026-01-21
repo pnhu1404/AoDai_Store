@@ -13,7 +13,10 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::with('chatlieu');
+        $query = Product::with('chatlieu', 'loaisanpham')->where('TrangThai', 1)
+            ->whereHas('loaisanpham', function ($c) {
+                $c->where('TrangThai', 1);
+            });
 
         if ($request->filled('search')) {
             $query->where('TenSanPham', 'like', '%' . $request->search . '%');
@@ -35,30 +38,23 @@ class ProductController extends Controller
             $query->orderBy('CreatedDate', 'desc');
         }
 
-        $data["product"] = $query->paginate(8);
+        $data["product"] = $query->paginate(8)->withQueryString();
+        $data['categories'] = Category::where('TrangThai', 1)->get();
         $data["colors"] = Color::all();
 
-         $data['bestSellers'] = Product::orderBy('CreatedDate', 'desc')
-        ->take(8)
-        ->get();
+        $data['bestSellers'] = Product::orderBy('CreatedDate', 'desc')
+            ->take(8)
+            ->get();
 
         $data['newProducts'] = Product::orderBy('CreatedDate', 'desc')
             ->take(8)
             ->get();
 
-        $data['categories'] = Category::with(['sanpham' => function ($q) {
-            $q->take(4);
-        }])->take(4)->get();
-
-        // XỬ LÝ AJAX
-        if ($request->ajax()) {
-            $view = view('client.home', compact('data'));
-            $sections = $view->getFactory()->make('client.home', compact('data'))->renderSections();
-
-            return response()->json([
-                'html' => $sections['product_list']
-            ]);
-        }
+        $data['categories'] = Category::with([
+            'sanpham' => function ($q) {
+                $q->take(4);
+            }
+        ])->take(4)->get();
 
         return view('client.home', compact('data'));
     }
@@ -72,62 +68,62 @@ class ProductController extends Controller
             'sizes',
             'hinhanhsanpham'
         ])->where('MaSanPham', $id)->firstOrFail();
-          // TĂNG LƯỢT XEM
+        // TĂNG LƯỢT XEM
         $product->increment('LuotXem');
         $allSizes = Size::where('TrangThai', 1)->get();
-        
+
         // ĐIỂM ĐÁNH GIÁ TRUNG BÌNH (17)
-    $avgRating = DB::table('danhgia')
-        ->where('MaSanPham', $product->MaSanPham)
-        ->where('TrangThai', 1)
-        ->avg('SoSao');
+        $avgRating = DB::table('danhgia')
+            ->where('MaSanPham', $product->MaSanPham)
+            ->where('TrangThai', 1)
+            ->avg('SoSao');
 
-    // DANH SÁCH ĐÁNH GIÁ (12)
-    $dsDanhGia = DB::table('danhgia')
-        ->join('taikhoan', 'danhgia.MaTaiKhoan', '=', 'taikhoan.MaTaiKhoan')
-        ->where('danhgia.MaSanPham', $product->MaSanPham)
-        ->where('danhgia.TrangThai', 1)
-        ->orderByDesc('NgayDanhGia')
-        ->select(
-            'danhgia.*',
-            'taikhoan.TenDangNhap'
-        )
-        ->get();
+        // DANH SÁCH ĐÁNH GIÁ (12)
+        $dsDanhGia = DB::table('danhgia')
+            ->join('taikhoan', 'danhgia.MaTaiKhoan', '=', 'taikhoan.MaTaiKhoan')
+            ->where('danhgia.MaSanPham', $product->MaSanPham)
+            ->where('danhgia.TrangThai', 1)
+            ->orderByDesc('NgayDanhGia')
+            ->select(
+                'danhgia.*',
+                'taikhoan.TenDangNhap'
+            )
+            ->get();
 
-    // CHECK ĐÃ MUA CHƯA (16)
-    $daMua = false;
-    if (auth()->check()) {
-        $daMua = DB::table('hoadon')
-            ->join('chitiethoadon', 'hoadon.MaHoaDon', '=', 'chitiethoadon.MaHoaDon')
-            ->where('hoadon.MaTaiKhoan', auth()->id())
-            ->where('chitiethoadon.MaSanPham', $product->MaSanPham)
-            ->where('hoadon.TrangThai', 'HoanThanh')
-            ->exists();
+        // CHECK ĐÃ MUA CHƯA (16)
+        $daMua = false;
+        if (auth()->check()) {
+            $daMua = DB::table('hoadon')
+                ->join('chitiethoadon', 'hoadon.MaHoaDon', '=', 'chitiethoadon.MaHoaDon')
+                ->where('hoadon.MaTaiKhoan', auth()->id())
+                ->where('chitiethoadon.MaSanPham', $product->MaSanPham)
+                ->where('hoadon.TrangThai', 'HoanThanh')
+                ->exists();
+        }
+
+        // (TUỲ CHỌN) LƯỢT YÊU THÍCH (17)
+        $soLuotThich = DB::table('yeuthich')
+            ->where('MaSanPham', $product->MaSanPham)
+            ->count();
+        $isFavorite = false;
+
+        if (Auth::check()) {
+            $isFavorite = DB::table('yeuthich')
+                ->where('MaTaiKhoan', Auth::id())
+                ->where('MaSanPham', $product->MaSanPham)
+                ->exists();
+        }
+        return view('client.products.detail', compact(
+            'product',
+            'allSizes',
+            'avgRating',
+            'dsDanhGia',
+            'daMua',
+            'soLuotThich',
+            'isFavorite'
+        ));
     }
 
-    // (TUỲ CHỌN) LƯỢT YÊU THÍCH (17)
-    $soLuotThich = DB::table('yeuthich')
-        ->where('MaSanPham', $product->MaSanPham)
-        ->count();
-    $isFavorite = false;
-
-    if (Auth::check()) {
-    $isFavorite = DB::table('yeuthich')
-        ->where('MaTaiKhoan', Auth::id())
-        ->where('MaSanPham', $product->MaSanPham)
-        ->exists();
-    }
-    return view('client.products.detail', compact(
-        'product',
-        'allSizes',
-        'avgRating',
-        'dsDanhGia',
-        'daMua',
-        'soLuotThich',
-        'isFavorite'
-    ));
-}
-    
     public function showByCategory(Request $request, $id)
     {
         $category = Category::where('MaLoaiSP', $id)->firstOrFail();
@@ -153,7 +149,7 @@ class ProductController extends Controller
         $categories = Category::all();
 
         $products = Product::with(['chatlieu', 'loaisanpham'])
-                        ->paginate(8);
+            ->paginate(8);
 
         return view('client.products.index', compact('categories', 'products'));
     }

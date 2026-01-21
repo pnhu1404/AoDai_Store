@@ -22,14 +22,21 @@
                     <a href="{{ route('admin.products.index') }}" class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition">
                         <i class="fas fa-tshirt mr-3"></i> Quản lý sản phẩm
                     </a>
+
                     <a href="{{ route('admin.categories.index') }}" class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition">
-                        <i class="fas fa-tshirt mr-3"></i> Quản lý danh mục
+                        <i class="fas fa-layer-group mr-3"></i> Quản lý danh mục
                     </a>
+
                     <a href="{{ route('admin.materials.index') }}" class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition">
-                        <i class="fas fa-tshirt mr-3"></i> Quản lý chất liệu
+                        <i class="fas fa-scroll mr-3"></i> Quản lý chất liệu
                     </a>
+
                     <a href="{{ route('admin.colors.index') }}" class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition">
-                        <i class="fas fa-tshirt mr-3"></i> Quản lý màu sắc
+                        <i class="fas fa-palette mr-3"></i> Quản lý màu sắc
+                    </a>
+
+                    <a href="{{ route('admin.sizes.index') }}" class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                        <i class="fas fa-ruler-combined mr-3"></i> Quản lý Size
                     </a>
                     <a href="{{ route('admin.accounts.index') }}" class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition">
                         <i class="fas fa-user mr-3"></i> Quản lý tài khoản

@@ -59,7 +59,7 @@
 
                 <div>
                     <label class="block text-[10px] uppercase tracking-widest font-bold mb-2 text-stone-500">Tông màu chủ đạo</label>
-                    <select name="MaLoaiMau" class="w-full bg-stone-50 border border-stone-100 rounded-xl p-3 focus:ring-2 focus:ring-stone-200 outline-none text-sm cursor-pointer">
+                    <select name="MaLoaiMau" required class="w-full bg-stone-50 border border-stone-100 rounded-xl p-3 focus:ring-2 focus:ring-stone-200 outline-none text-sm cursor-pointer">
                         <option value="">-- Chọn màu sắc --</option>
                         @foreach($colors as $item)
                             <option value="{{ $item->MaLoaiMau }}" {{ old('MaLoaiMau') == $item->MaLoaiMau ? 'selected' : '' }}>
@@ -109,7 +109,15 @@
                            class="w-full text-xs text-stone-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-bold file:bg-red-800 file:text-white hover:file:bg-red-900 cursor-pointer">
                     <p class="text-[9px] text-stone-400 mt-2 italic">* Giữ phím Ctrl để chọn nhiều tấm hình chi tiết.</p>
                 </div>
-
+                @if ($errors->any())
+                    <div class="mb-4 p-4 bg-red-100 text-red-800 rounded-lg text-sm">
+                        <ul class="list-disc list-inside">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                 <div class="col-span-2">
                     <label class="block text-[10px] uppercase tracking-widest font-bold mb-2 text-stone-500">Cảm hứng & Chi tiết thiết kế</label>
                     <textarea name="MoTa" rows="4" 
