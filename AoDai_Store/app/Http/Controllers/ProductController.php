@@ -50,11 +50,12 @@ class ProductController extends Controller
             ->take(8)
             ->get();
 
-        $data['categories'] = Category::with([
-            'sanpham' => function ($q) {
-                $q->take(4);
-            }
-        ])->take(4)->get();
+        $data['categories'] = Category::where('TrangThai', 1) 
+            ->with([
+                'sanpham' => function ($q) {
+                    $q->where('TrangThai', 1);
+                }
+            ])->get();
 
         return view('client.home', compact('data'));
     }
@@ -101,32 +102,32 @@ class ProductController extends Controller
                 ->exists();
         }
 
-       
-    // (TUỲ CHỌN) LƯỢT YÊU THÍCH (17)
-    $soLuotThich = DB::table('yeuthich')
-        ->where('MaSanPham', $product->MaSanPham)
-        ->count();
-    $isFavorite = false;
 
-    if (Auth::check()) {
-    $isFavorite = DB::table('yeuthich')
-        ->where('MaTaiKhoan', Auth::id())
-        ->where('MaSanPham', $product->MaSanPham)
-        ->exists();
+        // (TUỲ CHỌN) LƯỢT YÊU THÍCH (17)
+        $soLuotThich = DB::table('yeuthich')
+            ->where('MaSanPham', $product->MaSanPham)
+            ->count();
+        $isFavorite = false;
+
+        if (Auth::check()) {
+            $isFavorite = DB::table('yeuthich')
+                ->where('MaTaiKhoan', Auth::id())
+                ->where('MaSanPham', $product->MaSanPham)
+                ->exists();
+        }
+        $relatedProducts = $product->getRelatedProducts(8);
+        return view('client.products.detail', compact(
+            'product',
+            'allSizes',
+            'avgRating',
+            'dsDanhGia',
+            'daMua',
+            'soLuotThich',
+            'isFavorite',
+            'relatedProducts'
+        ));
     }
-    $relatedProducts = $product->getRelatedProducts(8);
-    return view('client.products.detail', compact(
-        'product',
-        'allSizes',
-        'avgRating',
-        'dsDanhGia',
-        'daMua',
-        'soLuotThich',
-        'isFavorite',
-        'relatedProducts'
-    ));
-}
-    
+
 
     public function showByCategory(Request $request, $id)
     {

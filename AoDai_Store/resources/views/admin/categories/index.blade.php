@@ -3,6 +3,7 @@
 @section('title', 'Danh sách Danh mục Áo Dài')
 
 @section('content')
+<div id="category-table-container" class="space-y-6">
     <div class="space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div class="bg-white p-5 rounded-2xl shadow-sm border border-stone-100 flex items-center">
@@ -11,7 +12,7 @@
                 </div>
                 <div>
                     <p class="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Tổng số danh mục</p>
-                    <p class="text-xl font-bold text-gray-800">{{ $categories->count() }}</p>
+                    <p class="text-xl font-bold text-gray-800">{{ $totalCategories }}</p>
                 </div>
             </div>
             
@@ -21,7 +22,7 @@
                 </div>
                 <div>
                     <p class="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Đang hoạt động</p>
-                    <p class="text-xl font-bold text-stone-800">{{ $categories->where('TrangThai', 1)->count() }}</p>
+                    <p class="text-xl font-bold text-stone-800">{{ $activeCategories }}</p>
                 </div>
             </div>
         </div>
@@ -123,6 +124,8 @@
             </div>
         </div>
     </div>
+</div>
+    
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
@@ -242,7 +245,7 @@
             .then(res => res.json())
             .then(data => {
                 if (!data.success) throw new Error(data.message);
-
+                
                 Swal.fire({
                     icon: 'success',
                     title: 'Đã xóa!',

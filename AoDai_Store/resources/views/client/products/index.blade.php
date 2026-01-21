@@ -56,7 +56,6 @@
             @endforelse
         </div>
 
-        {{-- PHÂN TRANG --}}
         <div class="mt-16 flex justify-center">
             {{ $products->appends(request()->all())->links() }}
         </div>
