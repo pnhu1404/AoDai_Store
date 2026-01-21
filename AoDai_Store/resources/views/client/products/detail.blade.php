@@ -243,6 +243,47 @@
         </p>
     @endif
 </div>
+{{-- SẢN PHẨM LIÊN QUAN --}}
+{{-- SẢN PHẨM LIÊN QUAN --}}
+<div class="max-w-7xl mx-auto px-4 py-14 border-t mt-12">
+    <h2 class="serif text-2xl font-bold uppercase tracking-wide text-stone-800 mb-6">
+        Sản phẩm liên quan
+    </h2>
+
+    <div class="related-slider">
+        <div class="related-track">
+
+            {{-- Vòng lặp lấy dữ liệu thực tế --}}
+            @foreach($relatedProducts as $item)
+                <div class="related-item">
+                    <a href="{{ route('product.detail', $item->MaSanPham) }}"> {{-- --}}
+                        <div class="related-img">
+                            <img src="{{ asset('img/products/' . $item->HinhAnh) }}" 
+                                 alt="{{ $item->TenSanPham }}" 
+                                 class="w-full h-full object-cover"> {{-- --}}
+                        </div>
+
+                        <h3 class="related-title">
+                            {{ $item->TenSanPham }} {{-- --}}
+                        </h3>
+
+                        <p class="related-category">
+                            {{ $item->loaisanpham->TenLoaiSP ?? 'Áo dài' }} {{-- --}}
+                        </p>
+
+                        <p class="related-price">
+                            {{ number_format($item->GiaBan, 0, ',', '.') }} đ {{-- --}}
+                        </p>
+                    </a>
+                </div>
+            @endforeach
+
+            {{-- Nhân đôi dữ liệu để slider chạy mượt (Infinite Loop) --}}
+         
+
+        </div>
+    </div>
+</div>
 
 <script>
     const qtyInput = document.getElementById('quantity');

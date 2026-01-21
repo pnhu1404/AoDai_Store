@@ -121,6 +121,7 @@ class ProductController extends Controller
         ->where('MaSanPham', $product->MaSanPham)
         ->exists();
     }
+    $relatedProducts = $product->getRelatedProducts(8);
     return view('client.products.detail', compact(
         'product',
         'allSizes',
@@ -128,7 +129,8 @@ class ProductController extends Controller
         'dsDanhGia',
         'daMua',
         'soLuotThich',
-        'isFavorite'
+        'isFavorite',
+        'relatedProducts'
     ));
 }
     

@@ -85,7 +85,7 @@
                     </td>
                     <td class="px-6 py-5">
                         <p class="font-bold text-red-800">{{ number_format($order->TongTien, 0, ',', '.') }}đ</p>
-                        <p class="text-[10px] text-stone-400">Giảm: {{ number_format($order->GiamGia, 0, ',', '.') }}đ</p>
+                        <p class="text-[10px] text-stone-400">Giảm: {{ number_format($order->GiamGia*1000, 0, ',', '.') }}đ</p>
                     </td>
                     <td class="px-6 py-5">
                         <span class="text-[10px] uppercase font-bold tracking-tighter text-stone-600 block">{{ $order->PhuongThucThanhToan }}</span>
@@ -119,16 +119,58 @@
                             {{ $statusText[$order->TrangThai] ?? $order->TrangThai }}
                         </span>
                     </td>
+                    
                     <td class="px-6 py-5">
-                        <div class="flex justify-end space-x-2">
-                            <a href="{{ route('orders.show', $order->MaHoaDon) }}" class="w-8 h-8 flex items-center justify-center text-stone-500 hover:bg-stone-900 hover:text-white transition-all rounded-lg border border-stone-200">
-                                <i class="fas fa-eye text-xs"></i>
-                            </a>
-                            <button onclick="updateOrderStatus('{{ $order->MaHoaDon }}')" class="w-8 h-8 flex items-center justify-center text-blue-600 hover:bg-blue-600 hover:text-white transition-all rounded-lg border border-blue-100">
-                                <i class="fas fa-edit text-xs"></i>
-                            </a>
-                        </div>
-                    </td>
+                    <div class="flex justify-end space-x-2">
+
+                        {{-- XEM --}}
+                        <a href="{{ route('orders.show', $order->MaHoaDon) }}"
+                        class="w-8 h-8 flex items-center justify-center text-stone-500 hover:bg-stone-900 hover:text-white transition-all rounded-lg border border-stone-200">
+                            <i class="fas fa-eye text-xs"></i>
+                        </a>
+
+                        {{-- CHỜ XÁC NHẬN --}}
+                        @if($order->TrangThai === 'ChoXacNhan')
+                            {{-- XÁC NHẬN --}}
+                            <form action="{{ route('orders.confirmstatus', $order->MaHoaDon) }}" method="POST">
+                                @csrf
+                                <button type="submit"
+                                    class="w-8 h-8 flex items-center justify-center text-green-600 hover:bg-green-600 hover:text-white transition-all rounded-lg border border-green-200"
+                                    title="Xác nhận đơn">
+                                    <input type="hidden" name="status" value="DaXacNhan">
+                                    <i class="fas fa-check text-xs"></i>
+                                </button>
+                            </form>
+
+                            {{-- HỦY --}}
+                            <form action="{{ route('orders.confirmstatus', $order->MaHoaDon) }}" method="POST"
+                                onsubmit="return confirm('Bạn chắc chắn muốn hủy đơn này?')">
+                                @csrf
+                                <button type="submit"
+                                    class="w-8 h-8 flex items-center justify-center text-red-600 hover:bg-red-600 hover:text-white transition-all rounded-lg border border-red-200"
+                                    title="Hủy đơn">
+                                    <input type="hidden" name="status" value="DaHuy">
+                                    <i class="fas fa-times text-xs"></i>
+                                </button>
+                            </form>
+                        @endif
+
+                        {{-- ĐÃ XÁC NHẬN --}}
+                        @if($order->TrangThai === 'DaXacNhan')
+                            <form action="{{ route('orders.confirmstatus', $order->MaHoaDon) }}" method="POST">
+                                @csrf
+                                <button type="submit"
+                                    class="w-8 h-8 flex items-center justify-center text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all rounded-lg border border-indigo-200"
+                                    title="Chuyển sang đang giao">
+                                    <input type="hidden" name="status" value="DangGiao">
+                                    <i class="fas fa-truck text-xs"></i>
+                                </button>
+                            </form>
+                        @endif
+
+                    </div>
+                </td>
+
                 </tr>
                 @empty
                 <tr>
@@ -146,4 +188,7 @@
         {{ $orders->links() }}
     </div>
 </div>
+
+
+
 @endsection
