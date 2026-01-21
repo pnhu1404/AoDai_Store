@@ -24,6 +24,7 @@
             <thead>
                 <tr class="bg-gray-50 text-gray-600 text-xs uppercase font-bold">
                     <th class="px-6 py-4">Người gửi</th>
+                    <th class="px-6 py-4">Mã khách hàng</th>
                     <th class="px-6 py-4">Email</th>
                     <th class="px-6 py-4">Nội dung</th>
                     <th class="px-6 py-4">Ngày tạo</th>
@@ -39,6 +40,14 @@
                         <td class="px-6 py-4">
                             <p class="font-bold text-gray-800">{{ $item->HoTen }}</p>
                             <p class="text-xs text-gray-400 font-mono">ID: {{ $item->MaLienHe }}</p>
+                        </td>
+                        {{-- MÃ KHÁCH HÀNG --}}
+                        <td class="px-6 py-4 text-sm text-gray-600">
+                            @if ($item->MaTaiKhoan)
+                                {{ $item->MaTaiKhoan }}
+                            @else
+                                <span class="text-gray-400 italic">Khách hàng vãng lai</span>
+                            @endif
                         </td>
 
                         {{-- EMAIL --}}
@@ -62,7 +71,7 @@
 
                                 <a href="{{ route('admin.contacts.edit', $item->MaLienHe) }}"
                                    class="flex items-center px-3 py-2 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200">
-                                    <i class="fas fa-edit mr-1"></i> Xem / Sửa
+                                    <i class="fas fa-edit mr-1"></i> Sửa
                                 </a>
 
                                 <button type="button"onclick='confirmDelete({{ $item->MaLienHe }}, @json($item->TenLienHe))'

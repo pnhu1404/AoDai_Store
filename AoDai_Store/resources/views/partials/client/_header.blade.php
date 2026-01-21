@@ -33,6 +33,7 @@
             @endif
         </div>
 
+<<<<<<< Updated upstream
         <div class="flex items-center space-x-5">
             <button class="text-stone-600 hover:text-red-700" title="Tìm kiếm">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -88,6 +89,33 @@
                                 </form>
                             @endauth
                         </div>
+=======
+        <div class="flex items-center space-x-6">
+            <div class="relative group py-2">
+                <div class="cursor-pointer text-stone-600 hover:text-red-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                    </svg>
+                </div>
+                <div class="absolute hidden group-hover:block right-0 top-full w-48 pt-2 z-50">
+                    <div class="bg-white border rounded-lg shadow-xl py-2">
+                        @guest
+                            <a href="javascript:void(0)"
+                                onclick="openLoginModal()"
+                                class="block px-4 py-2 text-sm hover:bg-red-50">
+                                    Đăng nhập
+                                </a>
+                            <a href="{{ route('register') }}" class="block px-4 py-2 text-sm hover:bg-red-50">Đăng ký</a>
+                        @endguest
+                        @auth
+                            <div class="px-4 py-2 text-xs text-stone-400 uppercase tracking-widest font-bold">Xin chào, {{ Auth::user()->HoTen }}</div>
+                            <a href="/profile" class="block px-4 py-2 text-sm hover:bg-red-50">Tài khoản</a>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="w-full text-left px-4 py-2 text-sm hover:bg-red-50">Đăng xuất</button>
+                            </form>
+                        @endauth
+>>>>>>> Stashed changes
                     </div>
                 </div>
 
