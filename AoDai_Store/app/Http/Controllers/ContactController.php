@@ -20,9 +20,9 @@ class ContactController extends Controller
         ]);
 
         Contact::create([
-            'MaKH'    => Auth::check() ? Auth::id() : null,
-            'HoTen'   => Auth::check() ? Auth::user()->name : $request->ho_ten,
-            'Email'   => Auth::check() ? Auth::user()->email : $request->email,
+            'MaTaiKhoan'    => Auth::check() ? Auth::id() : null,
+            'HoTen'   => Auth::check() ? Auth::user()->HoTen : $request->ho_ten,
+            'Email'   => Auth::check() ? Auth::user()->Email : $request->email,
             'NoiDung' => $request->noi_dung,
         ]);
 

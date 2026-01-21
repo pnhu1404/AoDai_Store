@@ -72,9 +72,6 @@
                     Quản lý bình luận
                     </a>
 
-                    <a href="#" class="flex items-center py-3 px-6 text-slate-300 hover:bg-slate-800 hover:text-white transition mt-10 text-red-400">
-                        <i class="fas fa-sign-out-alt mr-3"></i> Đăng xuất
-                    </a>
                 </nav>
             </aside>
 
@@ -85,6 +82,14 @@
                         <span class="mr-4 text-gray-600">Xin chào, Admin</span>
                         <img src="https://ui-avatars.com/api/?name=Admin" class="w-8 h-8 rounded-full">
                     </div>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <div class="px-2 py-1">
+                            <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold text-red-600 border border-red-100 hover:bg-red-600 hover:text-white transition-all shadow-sm">
+                                <span>Đăng xuất</span>
+                            </button>
+                        </div>
+                    </form>
                 </header>
 
                 <div class="p-8">

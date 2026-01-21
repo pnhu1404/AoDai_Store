@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Account;
-
+use Illuminate\Support\Facades\Hash;
 class LoginController extends Controller
 {
     // Hiển thị form đăng nhập
@@ -20,18 +20,38 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'TenDangNhap' => 'required|string',
-            'MatKhau' => 'required|string',
+            'TenDangNhap' => 'required|string|max:50|regex:/^[a-zA-Z0-9_]+$/',
+            'MatKhau'     => 'required|string|min:6|max:32',
+        ], [
+            'TenDangNhap.required' => 'Vui lòng nhập tên đăng nhập.',
+            'TenDangNhap.regex'    => 'Tên đăng nhập chỉ được chứa chữ cái, số và dấu gạch dưới.',
+            'TenDangNhap.max'      => 'Tên đăng nhập không được vượt quá :max ký tự.',
+
+            'MatKhau.required'    => 'Vui lòng nhập mật khẩu.',
+            'MatKhau.min'         => 'Mật khẩu phải ít nhất :min ký tự.',
+            'MatKhau.max'         => 'Mật khẩu không được vượt quá :max ký tự.',
         ]);
 
-        // Lấy user theo TenDangNhap và TrangThai
-        $user = Account::where('TenDangNhap', $request->TenDangNhap)
-                        ->where('TrangThai', 1)
-                        ->first();
+        // Check user tồn tại
+        $user = Account::where('TenDangNhap', $request->TenDangNhap)->first();
 
         if (!$user) {
             return back()->withErrors([
-                'TenDangNhap' => 'Tên đăng nhập hoặc mật khẩu sai / tài khoản không hoạt động',
+                'TenDangNhap' => 'Tên đăng nhập không tồn tại.',
+            ]);
+        }
+
+        // Check trạng thái tài khoản
+        if ($user->TrangThai != 1) {
+            return back()->withErrors([
+                'TenDangNhap' => 'Tài khoản đã bị khóa hoặc ngưng hoạt động.',
+            ]);
+        }
+
+        // Check mật khẩu
+        if (!Hash::check($request->MatKhau, $user->MatKhau)) {
+            return back()->withErrors([
+                'MatKhau' => 'Mật khẩu không chính xác.',
             ]);
         }
 
@@ -50,9 +70,9 @@ class LoginController extends Controller
              $cartController->mergeCartAfterLogin($oldSessionId);
              $user = Auth::user();
             if($user->Role == 'Admin'){
-                return redirect()->intended('admin.dashboard');
+                return redirect()->route('admin.dashboard');
             } elseif ($user->Role == 'User') {
-                return redirect()->intended('/');
+                return redirect('/');
             }
         }
 
