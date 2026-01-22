@@ -110,4 +110,27 @@ class OrderController extends Controller
 
         return back()->with('success', 'Đã hủy đơn hàng thành công.');
     }
+<<<<<<< Updated upstream
+=======
+        public function submit($id)
+        {
+            $order =Order::where('MaHoaDon', $id)
+                ->where('MaTaiKhoan', Auth::id())
+                ->where('TrangThai', 'DangGiao')
+                ->first();
+    
+            if (!$order) {
+                return back()->with('error', 'Không thể xác nhận đơn hàng này.');
+            }
+    
+            Order::where('MaHoaDon', $id)
+                ->where('MaHoaDon', $id)
+                ->update([
+                    'TrangThai' => 'DaGiao'
+                ]);
+    
+            return back()->with('success', 'Đã xác nhận đơn hàng thành công.');
+        }
+   
+>>>>>>> Stashed changes
 }
