@@ -50,11 +50,12 @@ class ProductController extends Controller
             ->take(8)
             ->get();
 
-        $data['categories'] = Category::with([
-            'sanpham' => function ($q) {
-                $q->take(4);
-            }
-        ])->take(4)->get();
+        $data['categories'] = Category::where('TrangThai', 1) 
+            ->with([
+                'sanpham' => function ($q) {
+                    $q->where('TrangThai', 1);
+                }
+            ])->get();
 
         return view('client.home', compact('data'));
     }
@@ -101,6 +102,7 @@ class ProductController extends Controller
                 ->exists();
         }
 
+
         // (TUỲ CHỌN) LƯỢT YÊU THÍCH (17)
         $soLuotThich = DB::table('yeuthich')
             ->where('MaSanPham', $product->MaSanPham)
@@ -113,6 +115,7 @@ class ProductController extends Controller
                 ->where('MaSanPham', $product->MaSanPham)
                 ->exists();
         }
+        $relatedProducts = $product->getRelatedProducts(8);
         return view('client.products.detail', compact(
             'product',
             'allSizes',
@@ -120,9 +123,11 @@ class ProductController extends Controller
             'dsDanhGia',
             'daMua',
             'soLuotThich',
-            'isFavorite'
+            'isFavorite',
+            'relatedProducts'
         ));
     }
+
 
     public function showByCategory(Request $request, $id)
     {

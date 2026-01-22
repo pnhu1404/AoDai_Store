@@ -22,8 +22,9 @@ class AdminCategoryController extends Controller
 
         $categories = $query->orderBy('CreatedDate', 'desc')->get();
         $totalCategories = Category::count();
+        $activeCategories = Category::where('TrangThai', 1)->count();
 
-        return view('admin.categories.index', compact('categories', 'totalCategories'));
+        return view('admin.categories.index', compact('categories', 'totalCategories', 'activeCategories'));
     }
     public function create()
     {
@@ -38,7 +39,7 @@ class AdminCategoryController extends Controller
         ], [
             'TenLoaiSP.unique' => 'Danh mục này đã tồn tại trong hệ thống',
             'TenLoaiSP.required' => 'Vui lòng nhập tên danh mục',
-            'MoTa.required' => 'Vui lòng nhập mô tả' 
+            'MoTa.required' => 'Vui lòng nhập mô tả'
         ]);
 
         $data = $request->only(['TenLoaiSP', 'MoTa']);
@@ -62,7 +63,7 @@ class AdminCategoryController extends Controller
             'MoTa' => 'required|string',
         ], [
             'TenLoaiSP.unique' => 'Danh mục đã tồn tại trong hệ thống, vui lòng nhập tên khác',
-            'TenLoaiSP.required' => 'Tên danh mục không được bỏ trống' 
+            'TenLoaiSP.required' => 'Tên danh mục không được bỏ trống'
         ]);
 
         $data = $request->only(['TenLoaiSP', 'MoTa']);
@@ -87,10 +88,9 @@ class AdminCategoryController extends Controller
         }
 
         $category->delete();
-
         return response()->json([
             'success' => true,
-            'message' => 'Xóa thành công!'
+            'message' => 'Xóa thành công!',
         ]);
     }
     public function toggleStatus($MaLoaiSP)

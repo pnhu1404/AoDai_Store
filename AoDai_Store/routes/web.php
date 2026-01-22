@@ -2,9 +2,11 @@
 
 use App\Http\Controllers\AdminAccountController;
 
+use App\Http\Controllers\AdminOrder;
 use App\Http\Controllers\Adminpromotion;
 use App\Http\Controllers\AdminSizeController;
 
+use App\Http\Controllers\VNPAYController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AdminProductController;
@@ -109,9 +111,14 @@ Route::patch('/admin/promotions/{id}/restore',
 )->name('promotions.restore');
 //order
 Route::resource('/admin/orders', App\Http\Controllers\AdminOrder::class)->names('orders');
+Route::post('/admin/orders/status/{id}', [AdminOrder::class, 'confirmstatus'])->name('orders.confirmstatus');
 
+//order client
 Route::resource(('/order'), App\Http\Controllers\OrderController::class)->names('order');
 
+//vnpay
+Route::post('/vnpay-payment', [VNPAYController::class, 'createPayment'])->name('vnpay.pay');
+Route::get('/vnpay-return', [VNPAYController::class, 'vnpayReturn']); // Nhận kết quả
 //suppliers
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('suppliers', AdminSupplierController::class);
@@ -166,6 +173,9 @@ Route::post('/rating/{MaSanPham}',
 //cancel oders
 Route::patch('/orders/{id}/cancel', [OrderController::class, 'cancel'])
     ->name('orders.cancel')
+    ->middleware('auth');
+Route::patch('/orders/{id}/submit', [OrderController::class, 'submit'])
+    ->name('orders.submit')
     ->middleware('auth');
 //hide comments (admin)
 Route::middleware(['auth'])->prefix('admin')->group(function () {

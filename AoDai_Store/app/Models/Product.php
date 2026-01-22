@@ -40,7 +40,18 @@ class Product extends Model
     {
         return $this->belongsTo(Supplier::class, 'MaNCC', 'MaNCC');
     }
-
+    public function getRelatedProducts($limit = 4)
+    {
+        return Product::where('MaSanPham', '<>', $this->MaSanPham) // Không lấy chính nó
+            ->where(function($query) {
+                $query->where('MaLoaiSP', $this->MaLoaiSP) // Ưu tiên cùng loại
+                    ->orWhere('MaChatLieu', $this->MaChatLieu); // Hoặc cùng chất liệu
+            })
+            ->where('TrangThai', '1')
+            ->inRandomOrder() // Hiển thị ngẫu nhiên để tăng sự đa dạng
+            ->limit($limit)
+            ->get();
+    }
     protected $fillable = [
         'TenSanPham',
         'GiaBan',
