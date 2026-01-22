@@ -13,7 +13,7 @@ class LoginController extends Controller
     // Hiển thị form đăng nhập
     public function showLoginForm()
     {
-        return view('auth.login');
+        return redirect('/?login=1');
     }
 
     // Xử lý đăng nhập
