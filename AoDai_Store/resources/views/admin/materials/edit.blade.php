@@ -84,12 +84,16 @@
 
             {{-- Nút --}}
             <div class="mt-8 flex flex-col sm:flex-row gap-4 border-t pt-6">
-                <button type="submit"
+                <button type="button"
+                        onclick="confirmSave()"
                         class="flex-1 bg-emerald-600 text-white py-3.5 rounded-lg font-bold
-                               hover:bg-emerald-700 shadow-lg hover:shadow-emerald-200 transition-all
-                               flex justify-center items-center uppercase tracking-widest">
+                            hover:bg-emerald-700 shadow-lg hover:shadow-emerald-200 transition-all
+                            flex justify-center items-center uppercase tracking-widest">
                     <i class="fas fa-sync-alt mr-2"></i> Lưu thay đổi
                 </button>
+
+
+
 
                 <a href="{{ route('admin.materials.index') }}"
                    class="px-10 py-3.5 border border-gray-300 text-gray-500 rounded-lg
@@ -107,4 +111,27 @@
         </p>
     </div>
 </div>
+{{-- SWEETALERT --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+function confirmSave(id, name) {
+    Swal.fire({
+        title: 'Xác nhận lưu',
+        text: `Bạn có chắc muốn lưu thay đổi cho chất liệu này không?`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#0284c7',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Lưu',
+        cancelButtonText: 'Hủy'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById(`update-form-${id}`).submit();
+        }
+    });
+}
+</script>
+
 @endsection
+

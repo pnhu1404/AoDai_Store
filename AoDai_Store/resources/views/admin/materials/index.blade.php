@@ -161,5 +161,6 @@ function confirmDelete(id, name) {
         }
     });
 }
+
 </script>
 @endsection

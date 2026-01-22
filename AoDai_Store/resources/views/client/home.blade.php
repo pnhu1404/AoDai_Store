@@ -106,9 +106,6 @@
                     </div>
                 @endforelse
             </div>
-            <div class="mt-10 ajax-pagination text-center">
-                {{ $data['product']->links() }}
-            </div>
             <div class="mt-10 text-center">
                 <a href="{{ route('products.index') }}"
                 class="inline-block border border-stone-800 px-8 py-3 text-sm uppercase tracking-widest
@@ -119,7 +116,7 @@
         </section>
     </div>
     
-
+        {{-- SẢN PHẨM BÁN CHẠY --}}
     <section class="max-w-7xl mx-auto py-16 px-4">
         <div class="text-center mb-12">
             <h2 class="serif text-3xl font-bold text-stone-800 uppercase tracking-widest">
