@@ -186,5 +186,8 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         ->name('admin.comments.hide');
     Route::post('/ratings/{id}/show', [AdminRatingController::class, 'show'])->name('admin.comments.show');
 });
-
+//order and rating
+Route::get('/san-pham-da-mua', 
+    [OrderController::class, 'purchasedProducts']
+)->name('orders.reviews');
 
