@@ -59,14 +59,16 @@
                 }
             }
         });
-    </script>
-    @if (session('openLoginModal'))
-    <script>
         document.addEventListener('DOMContentLoaded', () => {
-            openLoginModal();
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('login')) {
+                openLoginModal();
+
+                // XÓA ?login khỏi URL (tránh bật lại khi refresh)
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
         });
     </script>
-    @endif
 
     {{-- AUTO OPEN WHEN LOGIN ERROR --}}
     @if ($errors->any())
