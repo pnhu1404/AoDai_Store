@@ -75,7 +75,6 @@
                 <thead>
                     <tr class="bg-stone-50/50 text-stone-500 text-[10px] uppercase tracking-[0.2em] font-bold border-b border-stone-100">
                         <th class="px-6 py-5">Chi tiết Khuyến mãi</th>
-                        
                         <th class="px-6 py-5 text-center">Mức ưu đãi</th>
                         <th class="px-6 py-5 text-center">Số lượng</th>
                         <th class="px-6 py-5 text-center">Thời hạn</th>

@@ -18,13 +18,11 @@ class AdminProductController extends Controller
         $categories = Category::all();
         $materials = Material::all();
         $colors = Color::all();
-        $query->withSum('sizes as tong_so_luong', 'sanpham_size.SoLuong');
 
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('TenSanPham', 'like', '%' . $search . '%')
-                    ->orWhere('MaSanPham', 'like', '%' . $search . '%')
                     ->orWhereHas('chatlieu', function ($sub) use ($search) {
                         $sub->where('TenChatLieu', 'like', '%' . $search . '%');
                     });
