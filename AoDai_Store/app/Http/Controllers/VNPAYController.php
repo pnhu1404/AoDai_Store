@@ -47,7 +47,7 @@ public function createPayment($order)
 
     $vnp_Url = config('services.vnpay.url') . "?" . $query;
     $vnp_HashSecret = config('services.vnpay.hash_secret');
-    
+
     // Tính toán hash dựa trên chuỗi đã encode
     $vnpSecureHash = hash_hmac('sha512', $hashdata, $vnp_HashSecret);
     $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
