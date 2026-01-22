@@ -78,6 +78,7 @@
                                 <a href="{{ route('favorite.index') }}"
                                 class="block px-4 py-2 hover:bg-gray-100">
                                 Sản phẩm yêu thích
+<<<<<<< Updated upstream
                                 </a>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
@@ -88,6 +89,23 @@
                                 </form>
                             @endauth
                         </div>
+=======
+                            </a>
+                           <a href="{{ route('orders.reviews') }}" 
+                               class="block px-4 py-2 text-sm text-stone-700 hover:bg-red-50">
+                                Sản phẩm đã mua
+                            </a>
+                            <hr class="my-1 border-stone-100">
+
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" 
+                                        class="w-full text-left px-4 py-2 text-sm text-stone-700 hover:bg-red-50">
+                                    Đăng xuất
+                                </button>
+                            </form>
+                        @endauth
+>>>>>>> Stashed changes
                     </div>
                 </div>
 

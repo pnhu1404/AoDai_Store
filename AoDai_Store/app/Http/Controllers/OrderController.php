@@ -113,4 +113,54 @@ class OrderController extends Controller
 
         return back()->with('success', 'Đã hủy đơn hàng thành công.');
     }
+<<<<<<< Updated upstream
+=======
+        public function submit($id)
+        {
+            $order =Order::where('MaHoaDon', $id)
+                ->where('MaTaiKhoan', Auth::id())
+                ->where('TrangThai', 'DangGiao')
+                ->first();
+    
+            if (!$order) {
+                return back()->with('error', 'Không thể xác nhận đơn hàng này.');
+            }
+    
+            Order::where('MaHoaDon', $id)
+                ->where('MaHoaDon', $id)
+                ->update([
+                    'TrangThai' => 'DaGiao'
+                ]);
+    
+            return back()->with('success', 'Đã xác nhận đơn hàng thành công.');
+        }
+        
+
+public function purchasedProducts()
+{
+    $userId = auth()->id();
+
+    $products = DB::table('chitiethoadon')
+        ->join('hoadon', 'hoadon.MaHoaDon', '=', 'chitiethoadon.MaHoaDon')
+        ->join('sanpham', 'sanpham.MaSanPham', '=', 'chitiethoadon.MaSanPham')
+        ->leftJoin('danhgia', function ($join) use ($userId) {
+            $join->on('danhgia.MaSanPham', '=', 'sanpham.MaSanPham')
+                 ->where('danhgia.MaTaiKhoan', '=', $userId);
+        })
+        ->where('hoadon.MaTaiKhoan', $userId)
+        ->where('hoadon.TrangThai', 'HoanThanh')
+        ->select(
+            'sanpham.MaSanPham',
+            'sanpham.TenSanPham',
+            'sanpham.HinhAnh',
+            'sanpham.GiaBan',
+            'danhgia.SoSao',
+            'danhgia.NoiDung'
+        )
+        ->paginate(8);
+
+    return view('client.products.purchased', compact('products'));
+
+}
+>>>>>>> Stashed changes
 }

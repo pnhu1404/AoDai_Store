@@ -13,7 +13,17 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
+<<<<<<< Updated upstream
         $query = Product::with('chatlieu');
+=======
+        $query = Product::with('chatlieu', 'loaisanpham','nhacungcap')->where('TrangThai', 1)
+            ->whereHas('loaisanpham', function ($c) {
+                $c->where('TrangThai', 1);
+            })
+            ->whereHas('nhacungcap', function ($ncc) {
+             $ncc->where('TrangThai', 1);
+            });
+>>>>>>> Stashed changes
 
         if ($request->filled('search')) {
             $query->where('TenSanPham', 'like', '%' . $request->search . '%');
@@ -83,6 +93,7 @@ class ProductController extends Controller
         )
         ->get();
 
+<<<<<<< Updated upstream
     // CHECK ĐÃ MUA CHƯA (16)
     $daMua = false;
     if (auth()->check()) {
@@ -92,6 +103,43 @@ class ProductController extends Controller
             ->where('chitiethoadon.MaSanPham', $product->MaSanPham)
             ->where('hoadon.TrangThai', 'HoanThanh')
             ->exists();
+=======
+        // CHECK ĐÃ MUA CHƯA (16)
+        $daMua = false;
+        if (auth()->check()) {
+            $daMua = DB::table('hoadon')
+                ->join('chitiethoadon', 'hoadon.MaHoaDon', '=', 'chitiethoadon.MaHoaDon')
+                ->where('hoadon.MaTaiKhoan', auth()->id())
+                ->where('chitiethoadon.MaSanPham', $product->MaSanPham)
+                ->where('hoadon.TrangThai', 'DaGiao')
+                ->exists();
+        }
+
+
+        // (TUỲ CHỌN) LƯỢT YÊU THÍCH (17)
+        $soLuotThich = DB::table('yeuthich')
+            ->where('MaSanPham', $product->MaSanPham)
+            ->count();
+        $isFavorite = false;
+
+        if (Auth::check()) {
+            $isFavorite = DB::table('yeuthich')
+                ->where('MaTaiKhoan', Auth::id())
+                ->where('MaSanPham', $product->MaSanPham)
+                ->exists();
+        }
+        $relatedProducts = $product->getRelatedProducts(8);
+        return view('client.products.detail', compact(
+            'product',
+            'allSizes',
+            'avgRating',
+            'dsDanhGia',
+            'daMua',
+            'soLuotThich',
+            'isFavorite',
+            'relatedProducts'
+        ));
+>>>>>>> Stashed changes
     }
 
     // (TUỲ CHỌN) LƯỢT YÊU THÍCH (17)
