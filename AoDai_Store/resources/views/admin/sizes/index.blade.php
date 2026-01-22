@@ -3,7 +3,7 @@
 @section('title', 'Quản lý Kích cỡ Áo Dài')
 
 @section('content')
-    <div class="space-y-6">
+    <div class="space-y-6" id ="size-table-container">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div class="bg-white p-5 rounded-2xl shadow-sm border border-stone-100 flex items-center">
                 <div class="p-3 bg-stone-50 rounded-xl text-stone-600 mr-4">
@@ -11,7 +11,7 @@
                 </div>
                 <div>
                     <p class="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Tổng số size</p>
-                    <p class="text-xl font-bold text-gray-800">{{ $sizes->count() }}</p>
+                    <p class="text-xl font-bold text-gray-800">{{ $totalSizeCount }}</p>
                 </div>
             </div>
             
@@ -21,7 +21,7 @@
                 </div>
                 <div>
                     <p class="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Đang áp dụng</p>
-                    <p class="text-xl font-bold text-stone-800">{{ $sizes->where('TrangThai', 1)->count() }}</p>
+                    <p class="text-xl font-bold text-stone-800">{{ $activeSizeCount }}</p>
                 </div>
             </div>
         </div>
