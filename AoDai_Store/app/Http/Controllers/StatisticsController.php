@@ -30,13 +30,22 @@ class StatisticsController extends Controller
         // Số lượt mua (số đơn)
         $soLuotMua = (clone $baseQuery)->count();
         // lượt mua theo tháng
-        $luotMuaTheoThang = DB::table('hoadon')
-        ->selectRaw('MONTH(NgayTao) as thang, COUNT(*) as so_luot_mua')
-        ->where('TrangThai', 'DaGiao')
-        ->whereYear('NgayTao', date('Y'))
-        ->groupBy('thang')
-        ->orderBy('thang')
-        ->get();
+        // LƯỢT MUA THEO SẢN PHẨM THEO THÁNG
+        $luotMuaTheoThang = DB::table('chitiethoadon')
+            ->join('hoadon', 'hoadon.MaHoaDon', '=', 'chitiethoadon.MaHoaDon')
+            ->join('sanpham', 'sanpham.MaSanPham', '=', 'chitiethoadon.MaSanPham')
+            ->where('hoadon.TrangThai', 'DaGiao')
+            ->whereYear('hoadon.NgayTao', date('Y'))
+            ->selectRaw('
+                MONTH(hoadon.NgayTao) as thang,
+                sanpham.TenSanPham,
+                SUM(chitiethoadon.SoLuong) as so_luot_mua
+            ')
+            ->groupBy('thang', 'sanpham.TenSanPham')
+            ->orderBy('thang')
+            ->orderByDesc('so_luot_mua')
+            ->get();
+
 
         // Doanh thu theo tháng (năm hiện tại)
         $doanhThuTheoThang = DB::table('hoadon')
@@ -46,7 +55,7 @@ class StatisticsController extends Controller
             ->groupBy('thang')
             ->orderBy('thang')
             ->get();
-
+        // LƯỢT MUA THEO SẢN PHẨM
         return view('admin.statistics.index', compact(
   'tongDoanhThu',
  'soLuotMua',
