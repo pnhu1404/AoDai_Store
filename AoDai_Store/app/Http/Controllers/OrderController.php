@@ -6,8 +6,8 @@ use App\Models\Order;
 use App\Models\OrderDetail;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 class OrderController extends Controller
 {
     //
@@ -18,18 +18,18 @@ class OrderController extends Controller
                   $request->input('phuong_xa').', '.
                   $request->input('quan_huyen').', '.
                   $request->input('tinh_thanh');
-        // $request->validate([
-        //     'TenNguoiNhan' => 'required|string|max:255',
-        //     'SDTNguoiNhan' => 'required|string|max:15',
-        //     'PhuongThucThanhToan' => 'required|string|max:100',
-        //     'GhiChu' => 'nullable|string|max:1000',
-        //     'MaTaiKhoan' => 'required|integer',
-        //     'TongTien' => 'required|numeric',
-        //     'PhiVanChuyen' => 'required|numeric',
-        //     'GiamGia' => 'nullable|numeric',
-        //     'MaKhuyenMai' => 'nullable|integer',
-        // ]);
-        // Lưu thông tin đơn hàng vào cơ sở dữ liệu (chưa triển khai)
+        $request->validate([
+            'TenNguoiNhan' => 'required|string|max:255',
+            'SDTNguoiNhan' => 'required|string|max:15',
+            'PhuongThucThanhToan' => 'required|string|max:100',
+            'GhiChu' => 'nullable|string|max:1000',
+            'TongTien' => 'required|numeric',
+            // 'PhiVanChuyen' => 'required|numeric',
+            'TienHang' => 'required|numeric',
+            'GiamGia' => 'nullable|numeric',
+            'MaKhuyenMai' => 'nullable|integer',
+        ]);
+       
        try {
     DB::beginTransaction();
 
@@ -40,12 +40,13 @@ class OrderController extends Controller
         'DiaChiGiaoHang' => $address,
         'PhuongThucThanhToan' => $request->input('PhuongThucThanhToan'),
         'GhiChu' => $request->input('GhiChu'),
-        'MaTaiKhoan' => 1,
-        'TienHang' => $request->input('TienHang') + 10000,
+        'MaTaiKhoan' => Auth::id(),
+        'TienHang' => $request->input('TienHang') ,
         'TongTien' => $request->input('TongTien'),
         'PhiVanChuyen' => 10000,
-        'GiamGia' => 10000,
-        'MaKhuyenMai' => 10
+        'GiamGia' => $request->input('GiamGia'),
+        'MaKhuyenMai' => $request->input('MaKhuyenMai'),
+        'NgayThanhToan' => null,
     ]);
 
     // Lấy ID vừa tạo trực tiếp từ object $order (An toàn hơn dùng latest()->first())
@@ -68,6 +69,7 @@ class OrderController extends Controller
                 'DonGia'    => (float)$donGias[$key],
                 'MaSize'    => $maSizes[$key],
                 'ThanhTien' => (float)$thanhTiens[$key],
+                
             ]);
         }
     } else {
@@ -78,20 +80,21 @@ class OrderController extends Controller
     // Nếu mọi thứ ổn, xác nhận lưu vào Database
     DB::commit();
 
-    return response()->json(['message' => 'Đặt hàng thành công!'], 200);
+    if ($request->input('PhuongThucThanhToan') == 'vnpay') {
+        return app(VNPAYController::class)->createPayment($order);
+    }
+    $cartController = new CartController();
+    $cartController->clearCart();
+    return redirect()->route('home')->with('success', 'Đặt hàng thành công!');
+   
 
 } catch (Exception $e) {
     // Nếu có bất kỳ lỗi nào xảy ra, hoàn tác lại toàn bộ dữ liệu đã ghi ở trên
     DB::rollBack();
 
-    return response()->json([
-        'message' => 'Có lỗi xảy ra, vui lòng thử lại.',
-        'error' => $e->getMessage()
-    ], 500);
+ 
 }
-    $cartController = new CartController();
-    $cartController->clearCart();
-        return redirect()->route('home')->with('success', 'Đặt hàng thành công!');
+    
     }
      public function cancel($id)
     {
@@ -113,8 +116,6 @@ class OrderController extends Controller
 
         return back()->with('success', 'Đã hủy đơn hàng thành công.');
     }
-<<<<<<< Updated upstream
-=======
         public function submit($id)
         {
             $order =Order::where('MaHoaDon', $id)
@@ -134,7 +135,7 @@ class OrderController extends Controller
     
             return back()->with('success', 'Đã xác nhận đơn hàng thành công.');
         }
-        
+
 
 public function purchasedProducts()
 {
@@ -162,5 +163,5 @@ public function purchasedProducts()
     return view('client.products.purchased', compact('products'));
 
 }
->>>>>>> Stashed changes
+
 }

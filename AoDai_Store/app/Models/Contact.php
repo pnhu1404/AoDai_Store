@@ -10,7 +10,7 @@ class Contact extends Model
     protected $primaryKey = 'MaLienHe';
 
     protected $fillable = [
-        'MaKH',
+        'MaTaiKhoan',
         'HoTen',
         'Email',
         'NoiDung',

@@ -14,14 +14,17 @@ class AdminCategoryController extends Controller
         $query = Category::withCount('sanpham');
 
         if ($request->filled('search')) {
-            $query->where('TenLoaiSP', 'like', '%' . $request->search . '%')
-                ->orWhere('MaLoaiSP', $request->search);
+            $query->where(function ($q) use ($request) {
+                $q->where('TenLoaiSP', 'like', '%' . $request->search . '%')
+                    ->orWhere('MaLoaiSP', $request->search);
+            });
         }
 
         $categories = $query->orderBy('CreatedDate', 'desc')->get();
         $totalCategories = Category::count();
+        $activeCategories = Category::where('TrangThai', 1)->count();
 
-        return view('admin.categories.index', compact('categories', 'totalCategories'));
+        return view('admin.categories.index', compact('categories', 'totalCategories', 'activeCategories'));
     }
     public function create()
     {
@@ -31,16 +34,18 @@ class AdminCategoryController extends Controller
     {
 
         $request->validate([
-            'TenLoaiSP' => 'required|string|max:255',
+            'TenLoaiSP' => 'required|string|max:255|unique:loaisanpham,TenLoaiSP',
             'MoTa' => 'required|string',
+        ], [
+            'TenLoaiSP.unique' => 'Danh mục này đã tồn tại trong hệ thống',
+            'TenLoaiSP.required' => 'Vui lòng nhập tên danh mục',
+            'MoTa.required' => 'Vui lòng nhập mô tả'
         ]);
 
-        Category::create([
-            'TenLoaiSP' => $request->TenLoaiSP,
-            'MoTa' => $request->MoTa,
-            'TrangThai' => 1,
-            'CreatedDate' => now(),
-        ]);
+        $data = $request->only(['TenLoaiSP', 'MoTa']);
+        $data['TrangThai'] = $request->TrangThai ?? 1;
+
+        Category::create($data);
 
         return redirect()->route('admin.categories.index')
             ->with('success', 'Thêm danh mục thành công');
@@ -54,14 +59,17 @@ class AdminCategoryController extends Controller
     {
         $category = Category::findOrFail($MaLoaiSP);
         $request->validate([
-            'TenLoaiSP' => 'required|string|max:255',
+            'TenLoaiSP' => 'required|string|max:255|unique:loaisanpham,TenLoaiSP,' . $MaLoaiSP . ',MaLoaiSP',
             'MoTa' => 'required|string',
+        ], [
+            'TenLoaiSP.unique' => 'Danh mục đã tồn tại trong hệ thống, vui lòng nhập tên khác',
+            'TenLoaiSP.required' => 'Tên danh mục không được bỏ trống'
         ]);
-        $category->update([
-            'TenLoaiSP' => $request->TenLoaiSP,
-            'MoTa' => $request->MoTa,
-            'TrangThai' => 1
-        ]);
+
+        $data = $request->only(['TenLoaiSP', 'MoTa']);
+        $data['TrangThai'] = $request->TrangThai ?? 1;
+
+        $category->update($data);
 
         return redirect()->route('admin.categories.index')
             ->with('success', 'Cập nhật danh mục thành công');
@@ -80,10 +88,9 @@ class AdminCategoryController extends Controller
         }
 
         $category->delete();
-
         return response()->json([
             'success' => true,
-            'message' => 'Xóa thành công!'
+            'message' => 'Xóa thành công!',
         ]);
     }
     public function toggleStatus($MaLoaiSP)

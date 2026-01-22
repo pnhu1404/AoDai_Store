@@ -13,9 +13,6 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-<<<<<<< Updated upstream
-        $query = Product::with('chatlieu');
-=======
         $query = Product::with('chatlieu', 'loaisanpham','nhacungcap')->where('TrangThai', 1)
             ->whereHas('loaisanpham', function ($c) {
                 $c->where('TrangThai', 1);
@@ -23,7 +20,6 @@ class ProductController extends Controller
             ->whereHas('nhacungcap', function ($ncc) {
              $ncc->where('TrangThai', 1);
             });
->>>>>>> Stashed changes
 
         if ($request->filled('search')) {
             $query->where('TenSanPham', 'like', '%' . $request->search . '%');
@@ -45,19 +41,24 @@ class ProductController extends Controller
             $query->orderBy('CreatedDate', 'desc');
         }
 
-        $data["product"] = $query->paginate(8);
-        $data["categories"] = Category::all();
+        $data["product"] = $query->paginate(8)->withQueryString();
+        $data['categories'] = Category::where('TrangThai', 1)->get();
         $data["colors"] = Color::all();
 
-        // XỬ LÝ AJAX
-        if ($request->ajax()) {
-            $view = view('client.home', compact('data'));
-            $sections = $view->getFactory()->make('client.home', compact('data'))->renderSections();
+        $data['bestSellers'] = Product::orderBy('CreatedDate', 'desc')
+            ->take(8)
+            ->get();
 
-            return response()->json([
-                'html' => $sections['product_list']
-            ]);
-        }
+        $data['newProducts'] = Product::orderBy('CreatedDate', 'desc')
+            ->take(8)
+            ->get();
+
+        $data['categories'] = Category::where('TrangThai', 1) 
+            ->with([
+                'sanpham' => function ($q) {
+                    $q->where('TrangThai', 1);
+                }
+            ])->get();
 
         return view('client.home', compact('data'));
     }
@@ -71,10 +72,10 @@ class ProductController extends Controller
             'sizes',
             'hinhanhsanpham'
         ])->where('MaSanPham', $id)->firstOrFail();
-          // TĂNG LƯỢT XEM
+        // TĂNG LƯỢT XEM
         $product->increment('LuotXem');
         $allSizes = Size::where('TrangThai', 1)->get();
-        
+
         // ĐIỂM ĐÁNH GIÁ TRUNG BÌNH (17)
     $avgRating = DB::table('danhgia')
         ->where('MaSanPham', $product->MaSanPham)
@@ -93,17 +94,6 @@ class ProductController extends Controller
         )
         ->get();
 
-<<<<<<< Updated upstream
-    // CHECK ĐÃ MUA CHƯA (16)
-    $daMua = false;
-    if (auth()->check()) {
-        $daMua = DB::table('hoadon')
-            ->join('chitiethoadon', 'hoadon.MaHoaDon', '=', 'chitiethoadon.MaHoaDon')
-            ->where('hoadon.MaTaiKhoan', auth()->id())
-            ->where('chitiethoadon.MaSanPham', $product->MaSanPham)
-            ->where('hoadon.TrangThai', 'HoanThanh')
-            ->exists();
-=======
         // CHECK ĐÃ MUA CHƯA (16)
         $daMua = false;
         if (auth()->check()) {
@@ -111,6 +101,7 @@ class ProductController extends Controller
                 ->join('chitiethoadon', 'hoadon.MaHoaDon', '=', 'chitiethoadon.MaHoaDon')
                 ->where('hoadon.MaTaiKhoan', auth()->id())
                 ->where('chitiethoadon.MaSanPham', $product->MaSanPham)
+
                 ->where('hoadon.TrangThai', 'DaGiao')
                 ->exists();
         }
@@ -139,32 +130,10 @@ class ProductController extends Controller
             'isFavorite',
             'relatedProducts'
         ));
->>>>>>> Stashed changes
+
     }
 
-    // (TUỲ CHỌN) LƯỢT YÊU THÍCH (17)
-    $soLuotThich = DB::table('yeuthich')
-        ->where('MaSanPham', $product->MaSanPham)
-        ->count();
-    $isFavorite = false;
 
-    if (Auth::check()) {
-    $isFavorite = DB::table('yeuthich')
-        ->where('MaTaiKhoan', Auth::id())
-        ->where('MaSanPham', $product->MaSanPham)
-        ->exists();
-    }
-    return view('client.products.detail', compact(
-        'product',
-        'allSizes',
-        'avgRating',
-        'dsDanhGia',
-        'daMua',
-        'soLuotThich',
-        'isFavorite'
-    ));
-}
-    
     public function showByCategory(Request $request, $id)
     {
         $category = Category::where('MaLoaiSP', $id)->firstOrFail();
@@ -185,4 +154,14 @@ class ProductController extends Controller
 
         return view('client.products.category', compact('categories', 'products'));
     }
+    public function productList()
+    {
+        $categories = Category::all();
+
+        $products = Product::with(['chatlieu', 'loaisanpham'])
+            ->paginate(8);
+
+        return view('client.products.index', compact('categories', 'products'));
+    }
+
 }

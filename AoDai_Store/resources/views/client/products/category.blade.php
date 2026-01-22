@@ -35,6 +35,9 @@
 
                     <div class="p-6 text-center">
                         <h3 class="serif text-md font-semibold text-stone-700 uppercase mb-2">{{ $s->TenSanPham }}</h3>
+                        <p class="text-[10px] text-stone-400 uppercase tracking-[0.1em] mb-3 italic">
+                                {{ $s->chatlieu->TenChatLieu ?? 'Vải lụa truyền thống' }}
+                            </p>
                         <p class="text-red-800 font-bold text-lg mb-4">{{ number_format($s->GiaBan, 0, ',', '.') }}đ</p>
                         <a href="{{ route('product.detail', $s->MaSanPham) }}" class="inline-block border-b border-stone-800 text-[10px] uppercase font-bold tracking-widest pb-1 hover:text-red-700 hover:border-red-700 transition">
                             Xem chi tiết

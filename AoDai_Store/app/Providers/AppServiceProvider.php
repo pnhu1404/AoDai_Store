@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-
+use App\Models\InfoWeb;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -19,6 +19,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        try {
+            view()->share('infoWeb', InfoWeb::first());
+            view()->share('categories', \App\Models\Category::where('TrangThai', 1)->get());
+        } catch (\Exception $e) {
+            // Khi chưa kết nối DB thì bỏ qua
+            view()->share('infoWeb', null);
+            view()->share('categories', collect());
+        }
     }
+
 }

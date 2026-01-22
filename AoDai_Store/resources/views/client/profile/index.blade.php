@@ -1,5 +1,5 @@
 @extends('layouts.client')
-
+@section('title', 'Trang cá nhân')
 @section('content')
 <div class="max-w-6xl mx-auto py-8">
 
@@ -11,8 +11,8 @@
 
         <div class="grid grid-cols-2 gap-4">
             <div><b>Mã khách hàng:</b> {{ $user->MaTaiKhoan }}</div>
-            <div><b>Họ tên:</b> {{ $user->HoTen ?? $user->HoTen }}</div>
-            <div><b>Email:</b> {{ $user->Email }}</div>
+            <div><b>Họ tên:</b> {{ $user->HoTen ?? 'Chưa cập nhật' }}</div>
+            <div><b>Email:</b> {{ $user->Email ?? 'Chưa cập nhật' }}</div>
             <div><b>Số điện thoại:</b> {{ $user->SoDienThoai ?? 'Chưa cập nhật' }}</div>
             <div><b>Địa chỉ:</b> {{ $user->DiaChi ?? 'Chưa cập nhật' }}</div>
             <div><b>Ngày đăng ký:</b> {{ $user->CreatedDate->format('d/m/Y') }}</div>
@@ -55,7 +55,7 @@
                     <td class="border p-2">{{ $order->MaHoaDon }}</td>
                     <td class="border p-2">{{ $order->NgayTao }}</td>
                     <td class="border p-2">{{ number_format($order->TongTien) }} đ</td>
-                    <td class="border p-2">{{ $order->TrangThai }}</td>
+                    <td class="border p-2">{{ $order->trang_thai_text }}</td>
 
                     <td class="border p-2 text-center">
                      @if($order->TrangThai === 'ChoXacNhan')
@@ -69,6 +69,17 @@
                     Hủy đơn
                 </button>
             </form>
+            @elseif($order->TrangThai === 'DangGiao')
+            <form action="{{ route('orders.submit', $order->MaHoaDon) }}"
+                    method="POST"
+                    onsubmit="return confirm('Bạn đã nhận đơn hàng này?')">
+                    @csrf
+                    @method('PATCH')
+
+                <button class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">
+                    Nhận hàng
+                </button>
+            </form>
             @else
             <span class="text-gray-400 italic">—</span>
            @endif
@@ -76,7 +87,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="4" class="text-center p-4 text-gray-500">
+                    <td colspan="5" class="text-center p-4 text-gray-500">
                         Chưa có đơn hàng
                     </td>
                 </tr>
@@ -84,6 +95,8 @@
             </tbody>
         </table>
     </div>
-
+    <div class="mt-6 flex justify-center">
+        {{ $orders->appends(request()->query())->links() }}
+    </div>
 </div>
 @endsection

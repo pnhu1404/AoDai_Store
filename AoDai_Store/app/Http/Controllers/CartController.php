@@ -17,13 +17,13 @@ class CartController extends Controller
 
 public function addToCart(Request $request, $id)
 {
-    $product = Product::findOrFail($id);
     $quantity = $request->input('SoLuong', 1);
     $size = $request->input('MaSize', null); // Lấy kích thước nếu có
     if (Auth::check()) {
         // Người dùng đã đăng nhập
         $cartItem = Cart::where('MaSanPham', $id)
             ->where('MaTaiKhoan', Auth::id())
+                ->where('MaSize', $size)
             ->first();
         if ($cartItem) {
             // Cập nhật số lượng nếu sản phẩm đã có trong giỏ hàng
@@ -43,6 +43,7 @@ public function addToCart(Request $request, $id)
         $sessionId = session()->getId();
         $cartItem = Cart::where('MaSanPham', $id)
             ->where('SessionID', $sessionId)
+                ->where('MaSize', $size)
             ->first();
         
 
@@ -100,9 +101,41 @@ public function addToCart(Request $request, $id)
     ]);
 }
 
+    public function mergeCartAfterLogin($sessionId)
+{
+    
+    $userId = Auth::id();
+
+    $guestItems = Cart::where('SessionID', $sessionId)->get();
+
+    foreach ($guestItems as $item) {
+        $existing = Cart::where('MaTaiKhoan', $userId)
+            ->where('MaSanPham', $item->MaSanPham)
+            ->where('MaSize', $item->MaSize)
+            ->first();
+
+        if ($existing) {
+            $existing->SoLuong += $item->SoLuong;
+            $existing->save();
+
+            $item->delete();
+        } else {
+            $item->MaTaiKhoan = $userId;
+            $item->SessionID = null;
+            $item->save();
+        }
+    }
+}
+
     public function checkout()
     {
+   
+        
     if(Auth::check()){
+        
+        
+        // Xóa các mục giỏ hàng từ session sau khi chuyển sang tài khoản
+        Cart::where('SessionID', session()->getId())->delete();
         $cartItems = Cart::with('sanpham','size')
             ->where('MaTaiKhoan', Auth::id())->get();
         $promotions = Promotion::where('TrangThai', 1)
@@ -158,16 +191,19 @@ public function addToCart(Request $request, $id)
         }
         return redirect()->back()->with('success', 'Giỏ hàng đã được làm trống!');
     }
-    public function removeFromCart($id){
+    public function removeFromCart($id,Request $request){
+        $request->input('size_id');
         if(Auth::check()){
             Cart::where('MaSanpham',$id)
                 ->where('MaTaiKhoan',Auth::id())
+                    ->where('MaSize',$request->input('size_id'))
                 ->delete();
         }
         else{
             $sessionId=session()->getId();
             Cart::where('MaSanPham',$id)
                 ->where('SessionID',$sessionId)
+                    ->where('MaSize',$request->input('size_id'))
                 ->delete();
         }
         return redirect()->back()->with('success', 'Sản phẩm đã được xóa khỏi giỏ hàng!');
