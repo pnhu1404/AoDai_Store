@@ -48,7 +48,13 @@
 
                             <div>
                                 <label class="block text-xs font-bold text-stone-600 mb-2 ml-1">Số điện thoại *</label>
-                                <input type="tel" name="SDTNguoiNhan" value="{{ old('SDTNguoiNhan', $info->SoDienThoai ?? '') }}" required 
+                                <input type="tel" 
+                                    name="SDTNguoiNhan" 
+                                    value="{{ old('SDTNguoiNhan', $info->SoDienThoai ?? '') }}" 
+                                    required 
+                                    pattern="[0-9]{10,11}" 
+                                    title="Số điện thoại chỉ được chứa chữ số và dài từ 10-11 số"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '');"
                                     class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 focus:bg-white focus:border-red-800 transition-all outline-none text-stone-700">
                             </div>
 
@@ -174,8 +180,10 @@
                             </div>
                             <div class="flex justify-between items-center pt-4 mt-2 border-t border-stone-200">
                                 <span class="text-sm font-bold text-stone-800 uppercase tracking-tighter">Tổng thanh toán</span>
-                                <span id="final_total" class="text-xl font-bold text-red-800" data-base="{{ $totalPrice }}">{{ number_format($totalPrice, 0, ',', '.') }}đ</span>
-                                <input type="text" name="TongTien" id="final_payment" hidden>
+                                <span id="final_total" class="text-xl font-bold text-red-800" data-base="{{ $totalPrice }}">
+                                    {{ number_format($totalPrice, 0, ',', '.') }}đ
+                                </span>
+                                <input type="hidden" name="TongTien" id="final_payment" value="{{ $totalPrice }}">
                             </div>
                         </div>
 
@@ -269,6 +277,8 @@
             }
             finalTotal.innerText = (basePrice - amount).toLocaleString('vi-VN') + 'đ';
             discountValue.value = amount.toLocaleString('vi-VN');
+           
+
             finalt.value= basePrice - amount;
             
         }
@@ -278,19 +288,27 @@
             discountValue.value = amount.toLocaleString('vi-VN');
              finalt.value= basePrice - amount;
         }
+        //  if(amount){
+        //         finalt.value=basePrice;
+        //     }
         discountAmount.innerText = displayText;
 
         toggleVoucherModal(); // Đóng modal
     }
     
     function removeVoucher() {
-        document.getElementById('coupon_input').value = '';
-        document.getElementById('discount_value').value = '0';
-        document.getElementById('selected_voucher').classList.add('hidden');
-        document.getElementById('discount_row').classList.add('hidden');
-        
-        let basePrice = parseInt(document.getElementById('final_total').getAttribute('data-base'));
-        document.getElementById('final_total').innerText = basePrice.toLocaleString('vi-VN') + 'đ';
+    document.getElementById('coupon_input').value = '';
+    document.getElementById('discount_value').value = '0';
+    document.getElementById('selected_voucher').classList.add('hidden');
+    document.getElementById('discount_row').classList.add('hidden');
+    
+    let basePrice = parseInt(document.getElementById('final_total').getAttribute('data-base'));
+    
+    // Cập nhật text hiển thị
+    document.getElementById('final_total').innerText = basePrice.toLocaleString('vi-VN') + 'đ';
+    
+    // CẬP NHẬT: Đảm bảo input hidden cũng quay về giá gốc
+    document.getElementById('final_payment').value = basePrice;
     }
 </script>
 

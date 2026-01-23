@@ -128,7 +128,7 @@
                                 </span>
                             @endif
                         </td>
-                       =
+                       
                         <td class="px-6 py-5">
                             <div class="flex justify-end space-x-3">
 
@@ -142,13 +142,20 @@
 
                                 {{-- Xóa --}}
                                 @if ($promotion->TrangThai==1)
-                                    <button type="button"
-                                            onclick="confirmDelete('{{ $promotion->MaKhuyenMai }}', '{{ $promotion->TenKhuyenMai }}')"
-                                            class="text-stone-400 hover:text-red-700 transition-all transform hover:scale-110" 
-                                             title="Dừng"
-                                             >
-                                        <i class="fas fa-trash-alt text-xs"></i>
-                                    </button>
+                                <form id="delete-form-{{ $promotion->MaKhuyenMai }}" 
+                                action="{{ route('promotions.destroy', $promotion->MaKhuyenMai) }}" 
+                                method="POST">
+                                @csrf
+                                @method('DELETE')
+                                
+                                <button type="button"
+                                        onclick="confirmDelete('{{ $promotion->MaKhuyenMai }}', '{{ $promotion->TenKhuyenMai }}')"
+                                        class="text-stone-400 hover:text-red-700 transition-all transform hover:scale-110" 
+                                        title="Dừng khuyến mãi">
+                                    <i class="fas fa-trash-alt text-xs pointer-events-none"></i>
+                                </button>
+                            </form>
+                                    
                                 @endif
 
                                 {{-- Khôi phục --}}
