@@ -53,29 +53,37 @@
                             </a>
                         @endguest
 
-                        @auth
-                            <div class="px-4 py-2 text-xs text-stone-400 uppercase tracking-widest font-bold">
-                                Xin chào, {{ Auth::user()->HoTen }}
-                            </div>
-                            
-                            <a href="/profile" class="block px-4 py-2 text-sm text-stone-700 hover:bg-red-50">
-                                Thông tin tài khoản
-                            </a>
-                            <a href="{{ route('favorite.index') }}" 
-                               class="block px-4 py-2 text-sm text-stone-700 hover:bg-red-50">
-                                Sản phẩm yêu thích
-                            </a>
-                            
-                            <hr class="my-1 border-stone-100">
+                       @auth
+                    <div class="px-4 py-2 text-xs text-stone-400 uppercase tracking-widest font-bold">
+                        Xin chào, {{ Auth::user()->HoTen }}
+                    </div>
 
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" 
-                                        class="w-full text-left px-4 py-2 text-sm text-stone-700 hover:bg-red-50">
-                                    Đăng xuất
-                                </button>
-                            </form>
-                        @endauth
+                    <a href="/profile" class="block px-4 py-2 text-sm text-stone-700 hover:bg-red-50">
+                        Thông tin tài khoản
+                    </a>
+
+                    <a href="{{ route('favorite.index') }}" 
+                       class="block px-4 py-2 text-sm text-stone-700 hover:bg-red-50">
+                        Sản phẩm yêu thích
+                    </a>
+
+                    <a href="{{ route('orders.reviews') }}" 
+                       class="block px-4 py-2 text-sm text-stone-700 hover:bg-red-50">
+                        Sản phẩm đã mua
+                    </a>
+
+                    <hr class="my-1 border-stone-100">
+
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" 
+                                class="w-full text-left px-4 py-2 text-sm text-stone-700 hover:bg-red-50">
+                            Đăng xuất
+                        </button>
+                    </form>
+                @endauth
+
+
                     </div>
                 </div>
             </div>

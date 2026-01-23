@@ -110,7 +110,7 @@
 function confirmDelete(id, name) {
     Swal.fire({
         title: 'Xác nhận xóa',
-        text: `Bạn có chắc muốn xóa liên hệ của "${name}" không?`,
+        text: `Bạn có chắc muốn xóa liên hệ không?`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#dc2626',

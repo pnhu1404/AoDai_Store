@@ -28,4 +28,16 @@ class Order extends Model
         'Ghichu',
         'PhuongThucThanhToan'
     ];
+    public function getTrangThaiTextAttribute()
+    {
+        return match ($this->TrangThai) {
+            'ChoXacNhan' => 'Chờ xác nhận',
+            'DangGiao' => 'Đang giao',
+            'DaHuy' => 'Đã hủy',
+            'DaXacNhan' => 'Đã xác nhận',
+            'DaGiao' => 'Đã giao',
+            default => $this->TrangThai,
+        };
+    }
+
 }

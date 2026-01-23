@@ -197,7 +197,7 @@
 
             Swal.fire({
                 title: '<span class="serif">Cập nhật trạng thái</span>',
-                html: `<div class="text-stone-500 text-sm">Bạn muốn ${actionText} danh mục này?</div>`,
+                html: `<div class="text-stone-500 text-sm">Bạn muốn ${actionText} sản phẩm này?</div>`,
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonText: 'Xác nhận',

@@ -147,7 +147,8 @@
 
                 {{-- NÚT LƯU --}}
                 <div class="mt-8 flex justify-end border-t pt-6">
-                    <button type="submit"
+                    <button type="button"
+                            onclick="confirmSave()"
                             class="bg-sky-600 hover:bg-sky-700 text-white font-bold px-10 py-2.5 rounded-lg shadow-lg transform active:scale-95 transition-all flex items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
@@ -155,10 +156,34 @@
                         Lưu thay đổi
                     </button>
                 </div>
+
             </form>
         </div>
     </div>
 
 
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+function confirmSave() {
+    Swal.fire({
+        title: 'Xác nhận lưu',
+        text: 'Bạn có chắc muốn lưu thay đổi không?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#0284c7',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Lưu',
+        cancelButtonText: 'Hủy'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.querySelector('form').submit();
+        }
+    });
+}
+
+</script>
 @endsection
+
+
