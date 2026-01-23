@@ -3,19 +3,30 @@
 @section('title', 'Nét đẹp truyền thống Việt')
 
 @section('content')
-    <section class="relative h-[600px] flex items-center justify-center bg-gray-200">
-        <div class="absolute inset-0 z-0">
-            <img src="https://static.dchic.vn/uploads/media/2025/12/BLOG%20WEB%20MO%20BAN%20SOM%20AO%20DAI-325256125.jpg" 
-                 class="w-full h-full object-cover opacity-80" alt="Banner Áo Dài">
+    <section class="css-carousel">
+    <div class="slides">
+
+        <div class="slide">
+            <img src="https://static.dchic.vn/uploads/media/2025/12/BLOG%20WEB%20MO%20BAN%20SOM%20AO%20DAI-325256125.jpg">
+            <div class="content">
+                <h1>Dáng Việt Kiêu Sa</h1>
+                <p>Tôn vinh vẻ đẹp vĩnh cửu của phụ nữ Việt</p>
+                <a href="#product-section">Khám phá ngay</a>
+            </div>
         </div>
-        <div class="relative z-10 text-center text-white px-4">
-            <h1 class="serif text-5xl md:text-7xl mb-4 drop-shadow-lg">Dáng Việt Kiêu Sa</h1>
-            <p class="text-lg mb-8 drop-shadow-md italic">Tôn vinh vẻ đẹp vĩnh cửu của phụ nữ Việt</p>
-            <a href="#product-section" class="bg-red-800 hover:bg-red-900 text-white px-8 py-3 rounded-full transition duration-300 font-bold uppercase tracking-widest text-xs">
-                Khám phá ngay
-            </a>
+
+        <div class="slide">
+            <img src="{{ asset('img/logo/download.jpg') }}">
+            <div class="content">
+                <h1>Thông tin cửa hàng</h1>
+                <p>Ưu đãi hấp dẫn dành cho khách hàng thân thiết</p>
+                <a href="{{ route('gioithieu') }}">Tìm hiểu ngay</a>
+            </div>
         </div>
-    </section>
+
+    </div>
+</section>
+
 
     <section id="product-section" class="bg-stone-50 border-y border-stone-200 py-8 sticky top-0 z-20 shadow-sm">
         <div class="max-w-7xl mx-auto px-4">

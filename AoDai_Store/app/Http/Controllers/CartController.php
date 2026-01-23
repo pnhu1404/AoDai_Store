@@ -214,11 +214,11 @@ public function addToCart(Request $request, $id)
         if(Auth::check()){
 
             $cartItems = Cart::with('sanpham','size')
-            ->where('MaTaiKhoan', Auth::id())->get();
+            ->where('MaTaiKhoan', Auth::id())->paginate(5);
         }
         else{
             $sessionId=session()->getId();
-            $cartItems=Cart::with('sanpham','size')->where('SessionID', $sessionId)->get();
+            $cartItems=Cart::with('sanpham','size')->where('SessionID', $sessionId)->paginate(5);
         }
         $totalPrice = $cartItems->sum(function($item) {
         // Kiểm tra nếu sản phẩm tồn tại để tránh lỗi null
