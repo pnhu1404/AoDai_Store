@@ -13,13 +13,13 @@ class AdminSizeController extends Controller
         $query = Size::query();
 
         if ($request->filled('search')) {
-            $query->where('TenSize', 'like', '%' . $request->search . '%')
-;
+            $query->where('TenSize', 'like', '%' . $request->search . '%');
         }
 
         $sizes = $query->orderBy('MaSize', 'desc')->get();
-
-        return view('admin.sizes.index', compact('sizes'));
+        $totalSizeCount = Size::count();
+        $activeSizeCount = Size::where('TrangThai', 1)->count();
+        return view('admin.sizes.index', compact('sizes', 'totalSizeCount', 'activeSizeCount'));
     }
     public function create()
     {

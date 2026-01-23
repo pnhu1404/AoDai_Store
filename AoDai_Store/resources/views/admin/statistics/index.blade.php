@@ -88,38 +88,48 @@
             </tbody>
         </table>
     </div>
+        <div class="bg-white p-6 rounded-xl shadow">
+    <h3 class="text-xl font-semibold mb-4">
+        Lượt mua sản phẩm theo tháng ({{ date('Y') }})
+    </h3>
 
-    <div class="bg-white p-6 rounded-xl shadow">
-        <h3 class="text-xl font-semibold mb-4">
-            Số lượt mua theo tháng ({{ date('Y') }})
-        </h3>
-
-        <table class="table-auto w-full border">
-            <thead class="bg-gray-100">
+    <table class="table-auto w-full border">
+        <thead class="bg-gray-100">
+            <tr>
+                <th class="border p-2">Tháng</th>
+                <th class="border p-2">Sản phẩm</th>
+                <th class="border p-2">Số lượt mua</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($luotMuaTheoThang as $item)
                 <tr>
-                    <th class="border p-2">Tháng</th>
-                    <th class="border p-2">Số lượt mua</th>
+                    <td class="border p-2 text-center">
+                        Tháng {{ $item->thang }}
+                    </td>
+                    <td class="border p-2">
+                        {{ $item->TenSanPham }}
+                    </td>
+                    <td class="border p-2 text-center font-semibold text-blue-600">
+                        {{ $item->so_luot_mua }}
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                @forelse($luotMuaTheoThang as $item)
-                    <tr>
-                        <td class="border p-2 text-center">
-                            Tháng {{ $item->thang }}
-                        </td>
-                        <td class="border p-2 text-center font-semibold">
-                            {{ $item->so_luot_mua }}
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="2" class="border p-4 text-center text-gray-500">
-                            Không có dữ liệu
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
+            @empty
+                <tr>
+                    <td colspan="3" class="border p-4 text-center text-gray-500">
+                        Không có dữ liệu
+                    </td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
+
+    
+        
+    
+</div>
+
     </div>
 
 </div>

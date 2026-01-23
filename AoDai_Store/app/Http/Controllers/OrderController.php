@@ -23,8 +23,7 @@ class OrderController extends Controller
             'SDTNguoiNhan' => 'required|string|max:15',
             'PhuongThucThanhToan' => 'required|string|max:100',
             'GhiChu' => 'nullable|string|max:1000',
-            'TongTien' => 'required|numeric',
-            // 'PhiVanChuyen' => 'required|numeric',
+            
             'TienHang' => 'required|numeric',
             'GiamGia' => 'nullable|numeric',
             'MaKhuyenMai' => 'nullable|integer',
@@ -135,14 +134,11 @@ class OrderController extends Controller
     
             return back()->with('success', 'Đã xác nhận đơn hàng thành công.');
         }
-<<<<<<< Updated upstream
-=======
-
 
 public function purchasedProducts()
 {
     
-$userId = Auth::id();
+  $userId = Auth::id();
 
     $products = DB::table('chitiethoadon')
         ->join('hoadon', 'hoadon.MaHoaDon', '=', 'chitiethoadon.MaHoaDon')
@@ -167,5 +163,4 @@ $userId = Auth::id();
 
 }
 
->>>>>>> Stashed changes
 }

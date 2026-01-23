@@ -13,9 +13,12 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::with('chatlieu', 'loaisanpham')->where('TrangThai', 1)
+        $query = Product::with('chatlieu', 'loaisanpham','nhacungcap')->where('TrangThai', 1)
             ->whereHas('loaisanpham', function ($c) {
                 $c->where('TrangThai', 1);
+            })
+            ->whereHas('nhacungcap', function ($ncc) {
+             $ncc->where('TrangThai', 1);
             });
 
         if ($request->filled('search')) {
@@ -74,22 +77,22 @@ class ProductController extends Controller
         $allSizes = Size::where('TrangThai', 1)->get();
 
         // ĐIỂM ĐÁNH GIÁ TRUNG BÌNH (17)
-        $avgRating = DB::table('danhgia')
-            ->where('MaSanPham', $product->MaSanPham)
-            ->where('TrangThai', 1)
-            ->avg('SoSao');
+    $avgRating = DB::table('danhgia')
+        ->where('MaSanPham', $product->MaSanPham)
+        ->where('TrangThai', 1)
+        ->avg('SoSao');
 
-        // DANH SÁCH ĐÁNH GIÁ (12)
-        $dsDanhGia = DB::table('danhgia')
-            ->join('taikhoan', 'danhgia.MaTaiKhoan', '=', 'taikhoan.MaTaiKhoan')
-            ->where('danhgia.MaSanPham', $product->MaSanPham)
-            ->where('danhgia.TrangThai', 1)
-            ->orderByDesc('NgayDanhGia')
-            ->select(
-                'danhgia.*',
-                'taikhoan.TenDangNhap'
-            )
-            ->get();
+    // DANH SÁCH ĐÁNH GIÁ (12)
+    $dsDanhGia = DB::table('danhgia')
+        ->join('taikhoan', 'danhgia.MaTaiKhoan', '=', 'taikhoan.MaTaiKhoan')
+        ->where('danhgia.MaSanPham', $product->MaSanPham)
+        ->where('danhgia.TrangThai', 1)
+        ->orderByDesc('NgayDanhGia')
+        ->select(
+            'danhgia.*',
+            'taikhoan.TenDangNhap'
+        )
+        ->get();
 
         // CHECK ĐÃ MUA CHƯA (16)
         $daMua = false;
@@ -98,7 +101,8 @@ class ProductController extends Controller
                 ->join('chitiethoadon', 'hoadon.MaHoaDon', '=', 'chitiethoadon.MaHoaDon')
                 ->where('hoadon.MaTaiKhoan', auth()->id())
                 ->where('chitiethoadon.MaSanPham', $product->MaSanPham)
-                ->where('hoadon.TrangThai', 'HoanThanh')
+
+                ->where('hoadon.TrangThai', 'DaGiao')
                 ->exists();
         }
 
@@ -126,6 +130,7 @@ class ProductController extends Controller
             'isFavorite',
             'relatedProducts'
         ));
+
     }
 
 

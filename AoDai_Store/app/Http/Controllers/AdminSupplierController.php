@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Supplier;
+use App\Models\Product;
 class AdminSupplierController extends Controller
 {
     /**
@@ -107,15 +108,19 @@ class AdminSupplierController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy($id)
-    {
+{
     $supplier = Supplier::findOrFail($id);
     $supplier->update([
         'TrangThai' => 0
     ]);
 
+    // Ẩn toàn bộ sản phẩm của NCC này
+    Product::where('MaNCC', $id)
+           ->update(['TrangThai' => 0]);
+
     return redirect()
         ->route('admin.suppliers.index')
-        ->with('success', 'Đã ngưng hợp tác nhà cung cấp!');
-    }
+        ->with('success', 'Đã ngưng hợp tác và ẩn toàn bộ sản phẩm của nhà cung cấp!');
+}
 
 }
