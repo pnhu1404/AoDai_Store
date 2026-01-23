@@ -135,10 +135,10 @@ class OrderController extends Controller
             return back()->with('success', 'Đã xác nhận đơn hàng thành công.');
         }
 
-
 public function purchasedProducts()
 {
-    $userId = auth()->id();
+    
+  $userId = Auth::id();
 
     $products = DB::table('chitiethoadon')
         ->join('hoadon', 'hoadon.MaHoaDon', '=', 'chitiethoadon.MaHoaDon')
