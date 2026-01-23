@@ -14,11 +14,11 @@ return [
     |
     */
     'vnpay' => [
-    'tmn_code' => env('VNP_TMN_CODE'),
-    'hash_secret' => env('VNP_HASH_SECRET'),
+    'tmn_code' => env('VNP_TMNCODE'),      // Xóa dấu gạch dưới để khớp với .env
+    'hash_secret' => env('VNP_HASHSECRET'), // Xóa dấu gạch dưới để khớp với .env
     'url' => env('VNP_URL'),
-    'return_url' => env('VNP_RETURN_URL'),
-    ],
+    'return_url' => env('VNP_RETURNURL'),   // Khớp với VNP_RETURNURL trong .env
+],
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],

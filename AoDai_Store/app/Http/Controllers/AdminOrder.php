@@ -10,14 +10,28 @@ use Illuminate\Support\Facades\Auth;
 class AdminOrder extends Controller
 {
     //
-    public function index(){
-        $orders = Order::paginate(10);
-        $monthlyRevenue = Order::whereMonth('NgayTao', now()->month)
-                            ->whereYear('NgayTao', now()->year)
-                            ->where('TrangThai', 'DaGiao') // Quan trọng: Chỉ tính đơn thành công
-                            ->sum('TongTien');
-        return view('admin.order.index', compact('orders', 'monthlyRevenue'));
+    public function index(Request $request) 
+{
+    $query = Order::query();
+
+    // 1. Tìm kiếm theo Số điện thoại (nếu có nhập)
+    if ($request->filled('search_phone')) {
+        $query->where('SDTNguoiNhan', 'LIKE', '%' . $request->search_phone . '%');
     }
+
+    // 2. Lọc theo Trạng thái (nếu có chọn)
+    if ($request->filled('status')) {
+        $query->where('TrangThai', $request->status);
+    }
+
+    // Lấy danh sách đơn hàng đã lọc và phân trang
+    // Dùng appends để khi chuyển trang (pagination) vẫn giữ được điều kiện lọc
+    $orders = $query->orderBy('NgayTao', 'desc')->paginate(10)->withQueryString();
+
+  
+
+    return view('admin.order.index', compact('orders'));
+}
     public function updateStatus(Request $request, $id)
     {
         $order = Order::findOrFail($id);
@@ -57,48 +71,16 @@ class AdminOrder extends Controller
 
     return view('admin.order.show', compact('order', 'orderDetails'));
 }
- public function confirmstatus($id, Request $request)
-    {
-      //  dd($request->input('status'));
-        $status = $request->input('status');
-        if($status=='DangGiao'){
-            $order =Order::where('MaHoaDon', $id)
-            
-            ->where('MaTaiKhoan', Auth::id())
-            ->where('TrangThai', 'DaXacNhan')
-            ->first();
-        }
-        else if($status=='DaGiao'){
-            $order =Order::where('MaHoaDon', $id)
-            
-            ->where('MaTaiKhoan', Auth::id())
-            ->where('TrangThai', 'DangGiao')
-            ->first();
-        }
-        else if($status=='DaHuy'){
-             $order =Order::where('MaHoaDon', $id)
-            
-            ->where('MaTaiKhoan', Auth::id())
-            ->whereIn('TrangThai', ['ChoXacNhan','DaXacNhan','DangGiao'])
-            ->first();
-        }
-        else{
-        $order =Order::where('MaHoaDon', $id)
-            
-            ->where('MaTaiKhoan', Auth::id())
-            ->where('TrangThai', 'ChoXacNhan')
-            ->first();
-        }
-
-        if (!$order) {
-            return back()->with('error', 'Không thể hủy đơn hàng này.');
-        }
-
-        Order::where('MaHoaDon', $id)
-            ->update([
-                'TrangThai' => '' . $status . ''
-            ]);
-
-        return back()->with('success', 'Cập nhật trạng thái đơn hàng thành công.');
+ public function confirmstatus(Request $request, $id)
+{
+    $validStatuses = ['ChoXacNhan', 'DaXacNhan', 'DangGiao', 'DaGiao', 'DaHuy'];
+    
+    if (!in_array($request->status, $validStatuses)) {
+        return back()->with('error', 'Trạng thái không hợp lệ');
     }
+
+    Order::where('MaHoaDon', $id)->update(['TrangThai' => $request->status]);
+
+    return back()->with('success', 'Cập nhật trạng thái thành công!');
+}
 }

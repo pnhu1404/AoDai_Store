@@ -89,7 +89,9 @@
                 </div>
             </div>
             @endforeach
-            
+            <div class="mt-8 flex justify-center">
+                {{ $cartItems->links() }}
+            </div>
             <div class="pt-6 border-t border-stone-200">
                 <a href="{{ route('home') }}" class="text-stone-600 hover:text-red-800 transition flex items-center gap-2 font-medium">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

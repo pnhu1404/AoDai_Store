@@ -23,8 +23,7 @@ class OrderController extends Controller
             'SDTNguoiNhan' => 'required|string|max:15',
             'PhuongThucThanhToan' => 'required|string|max:100',
             'GhiChu' => 'nullable|string|max:1000',
-            'TongTien' => 'required|numeric',
-            // 'PhiVanChuyen' => 'required|numeric',
+            
             'TienHang' => 'required|numeric',
             'GiamGia' => 'nullable|numeric',
             'MaKhuyenMai' => 'nullable|integer',
